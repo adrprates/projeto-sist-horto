@@ -1,0 +1,121 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+  background: var(--fundo);
+}
+
+.banner-conteudo {
+  text-align: center;
+  max-width: 640px;
+}
+
+.banner-titulo {
+  font-family: "Poppins", sans-serif;
+  text-transform: uppercase;
+  margin: 0 0 1.5rem;
+}
+
+.banner-titulo-boas-vindas {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+}
+
+.banner-titulo-saudacao {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  color: var(--cinza);
+}
+
+.banner-nome {
+  color: var(--verde);
+}
+
+.banner-card-texto {
+  margin: 2rem auto;
+  padding: 1.2rem 1.8rem;
+  max-width: 500px;
+  background: var(--cinza-escuro);
+  border-radius: 0.8rem;
+  box-shadow: 0 12px 32px rgba(73, 79, 84, 0.28);
+}
+
+.banner-descricao {
+  font-family: "Inter", sans-serif;
+  color: var(--branco);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.botao-destaque {
+  background: var(--verde);
+  border: 2px solid var(--verde);
+  color: var(--branco);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.9rem 2.2rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.botao-destaque:hover {
+  background: var(--branco);
+  color: var(--verde);
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 2.5rem 1.5rem 3.5rem;
+  background: var(--fundo-suave);
+}
+
+.card-inicio {
+  background: var(--branco);
+  border-radius: 0.6rem;
+  padding: 1.8rem;
+  width: 220px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-inicio-icone {
+  color: var(--verde);
+  margin-bottom: 0.8rem;
+}
+
+.card-inicio-titulo {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--texto);
+}
+
+.card-inicio-botao {
+  background: var(--verde);
+  border: 2px solid var(--verde);
+  color: var(--branco);
+  font-weight: 600;
+  padding: 0.6rem 1rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.card-inicio-botao:hover {
+  background: var(--branco);
+  color: var(--verde);
+}

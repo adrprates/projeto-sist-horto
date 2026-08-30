@@ -1,0 +1,8 @@
+.rodape {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--branco);
+  border-top: 1px solid #e6e6e6;
+  color: var(--cinza);
+  font-size: 0.85rem;
+}

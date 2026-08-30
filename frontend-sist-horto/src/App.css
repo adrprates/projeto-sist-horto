@@ -1,14 +1,14 @@
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap");
 
 :root {
-  --azul-escuro: #114b58;
-  --azul: #1c6e78;
-  --verde: #3fa79a;
-  --verde-claro: #a6dcd0;
-  --fundo: #eef7f6;
-  --texto: #1f3336;
-  --texto-cinza: #4d6a6d;
-  --sombra: 0 10px 28px rgba(17, 75, 88, 0.12);
+  --verde: #2e7d32;
+  --verde-escuro: #1e5620;
+  --cinza: #6e7681;
+  --cinza-escuro: #494f54;
+  --fundo: #ffffff;
+  --fundo-suave: #f5f6f4;
+  --texto: #6e7681;
+  --branco: #ffffff;
 }
 
 * {
@@ -17,162 +17,7 @@
 
 body {
   margin: 0;
-  font-family: "Nunito Sans", "Segoe UI", sans-serif;
+  font-family: "Inter", sans-serif;
+  background: var(--fundo);
   color: var(--texto);
-  background: linear-gradient(
-    160deg,
-    var(--fundo) 0%,
-    #e4f2f0 45%,
-    #f3faf8 100%
-  );
-  min-height: 100vh;
-}
-
-.cabecalho {
-  padding: 3.5rem 1rem 2rem;
-  text-align: center;
-}
-
-.titulo {
-  font-family: "Quicksand", "Nunito Sans", sans-serif;
-  font-weight: 700;
-  font-size: 2.2rem;
-  margin: 0 0 0.4rem;
-  background: linear-gradient(
-    100deg,
-    var(--azul-escuro),
-    var(--azul) 45%,
-    var(--verde)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.flex { display: flex; }
-.coluna { flex-direction: column; }
-.alinhar-topo { align-self: flex-start; }
-.margem-topo-auto { margin-top: auto; }
-.margem-baixo-1 { margin-bottom: 0.25rem; }
-.margem-baixo-2 { margin-bottom: 0.6rem; }
-.margem-baixo-4 { margin-bottom: 1.5rem; }
-.italico { font-style: italic; }
-.cinza { color: var(--texto-cinza); }
-.centro { text-align: center; }
-
-.container {
-  padding: 0.5rem 1.5rem 4rem;
-  max-width: 1140px;
-  margin: 0 auto;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2rem;
-}
-
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  border-radius: 1.1rem;
-  background: #ffffff;
-  box-shadow: var(--sombra);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 32px rgba(17, 75, 88, 0.18);
-}
-
-.card-imagem {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 1.1rem 1.1rem 0 0;
-  background: linear-gradient(160deg, var(--verde-claro), var(--fundo));
-}
-
-.card-imagem img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.card-imagem-vazia {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-}
-
-.card-conteudo {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 1.3rem 1.4rem 1.5rem;
-  text-align: left;
-}
-
-.card-titulo {
-  font-family: "Quicksand", sans-serif;
-  font-weight: 600;
-  font-size: 1.15rem;
-  line-height: 1.3;
-  color: var(--azul-escuro);
-}
-
-.card-nome-cientifico {
-  font-size: 0.88rem;
-  color: var(--texto-cinza) !important;
-}
-
-.tag {
-  background: linear-gradient(100deg, var(--verde), var(--azul));
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.7rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.75rem;
-  border-radius: 2rem;
-}
-
-.botao {
-  background: linear-gradient(100deg, var(--azul), var(--azul-escuro));
-  border: none;
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.92rem;
-  border-radius: 2rem;
-  padding: 0.55rem 1.2rem;
-  transition: filter 0.2s ease, transform 0.2s ease;
-}
-
-.botao:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-  color: #fff;
-}
-
-.botao:active {
-  transform: translateY(0);
 }
