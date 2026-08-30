@@ -1,9 +1,9 @@
-package com.bsh.backend_sist_horto.service;
+package com.bsh.backend_sist_horto.gbif_api.service;
 
-import com.bsh.backend_sist_horto.dto.DadosMudaDto;
-import com.bsh.backend_sist_horto.dto.GbifRespostaBuscaDto;
-import com.bsh.backend_sist_horto.dto.GbifRespostaMidiaDto;
-import com.bsh.backend_sist_horto.dto.MudaBaseDto;
+import com.bsh.backend_sist_horto.gbif_api.dto.DadosMudaDto;
+import com.bsh.backend_sist_horto.gbif_api.dto.GbifRespostaBuscaDto;
+import com.bsh.backend_sist_horto.gbif_api.dto.GbifRespostaMidiaDto;
+import com.bsh.backend_sist_horto.gbif_api.dto.MudaBaseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 

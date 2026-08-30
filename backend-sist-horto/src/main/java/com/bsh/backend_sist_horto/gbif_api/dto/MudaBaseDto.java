@@ -1,4 +1,4 @@
-package com.bsh.backend_sist_horto.dto;
+package com.bsh.backend_sist_horto.gbif_api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

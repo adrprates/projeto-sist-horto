@@ -1,7 +1,7 @@
-package com.bsh.backend_sist_horto.controller;
+package com.bsh.backend_sist_horto.gbif_api.controller;
 
-import com.bsh.backend_sist_horto.dto.DadosMudaDto;
-import com.bsh.backend_sist_horto.service.GbifService;
+import com.bsh.backend_sist_horto.gbif_api.dto.DadosMudaDto;
+import com.bsh.backend_sist_horto.gbif_api.service.GbifService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package com.bsh.backend_sist_horto.configuration;
+package com.bsh.backend_sist_horto.gbif_api.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
