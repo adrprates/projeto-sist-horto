@@ -1,7 +1,9 @@
 package com.bsh.backend_sist_horto.gestao_mudas.service;
 
 import com.bsh.backend_sist_horto.gestao_mudas.dto.MudaFilter;
+import com.bsh.backend_sist_horto.gestao_mudas.model.Estoque;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Muda;
+import com.bsh.backend_sist_horto.gestao_mudas.repository.EstoqueRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.MudaRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.specification.MudaSpecification;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.util.Optional;
 public class MudaService {
 
     private final MudaRepository mudaRepository;
+    private EstoqueRepository estoqueRepository;
 
     public MudaService(MudaRepository mudaRepository) {
         this.mudaRepository = mudaRepository;
@@ -31,7 +34,12 @@ public class MudaService {
     }
 
     public Muda salvar(Muda muda) {
-        return mudaRepository.save(muda);
+        Muda mudaSalva = mudaRepository.save(muda);
+        Estoque estoque = new Estoque();
+        estoque.setMuda(mudaSalva);
+        estoque.setQuantidade(0);
+        estoqueRepository.save(estoque);
+        return mudaSalva;
     }
 
     public Muda getMudaPorId(Long id) {
@@ -40,7 +48,7 @@ public class MudaService {
         if (mudaOptional.isPresent()) {
             muda = mudaOptional.get();
         } else {
-            throw new RuntimeException("Muda não econtrara para o id: " + id);
+            throw new RuntimeException("Muda não encontrada para o id: " + id);
         }
         return muda;
     }
