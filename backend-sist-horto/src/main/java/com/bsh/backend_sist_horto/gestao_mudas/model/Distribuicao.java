@@ -34,6 +34,14 @@ public class Distribuicao {
     @JoinColumn(name = "id_beneficiario", nullable = false)
     private Beneficiario beneficiario;
 
+    @OneToOne
+    @JoinColumn(
+            name = "id_solicitacao",
+            nullable = false,
+            unique = true
+    )
+    private Solicitacao solicitacao;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

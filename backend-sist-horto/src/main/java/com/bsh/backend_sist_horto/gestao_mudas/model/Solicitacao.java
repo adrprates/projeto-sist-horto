@@ -29,7 +29,7 @@ public class Solicitacao {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private StatusSolicitacao status;
+    private StatusSolicitacao statusSolicitacao;
 
     @ManyToOne
     @JoinColumn(name = "ano_solicitacao", nullable = false)
