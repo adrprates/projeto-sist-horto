@@ -2,11 +2,14 @@ package com.bsh.backend_sist_horto.gestao_mudas.service;
 
 import com.bsh.backend_sist_horto.gestao_mudas.dto.SolicitacaoFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
+import com.bsh.backend_sist_horto.gestao_mudas.model.ItemSolicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Solicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.SolicitacaoRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.specification.SolicitacaoSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +30,17 @@ public class SolicitacaoService {
         return solicitacaoRepository.findAll(SolicitacaoSpecification.fromFilter(solicitacaoFilter));
     }
 
-    public Solicitacao salvar(Solicitacao solicitacao) {
+    @Transactional
+    public Solicitacao salvar(Solicitacao solicitacao, List<ItemSolicitacao> itensSolicitacao) {
+        solicitacao.setDataSolicitacao(LocalDate.now());
         solicitacao.setStatusSolicitacao(StatusSolicitacao.PENDENTE);
+
+        if(itensSolicitacao != null) {
+            for (ItemSolicitacao itemSolicitacao : itensSolicitacao) {
+                solicitacao.adicionarItem(itemSolicitacao);
+            }
+        }
+
         return solicitacaoRepository.save(solicitacao);
     }
 
@@ -43,7 +55,7 @@ public class SolicitacaoService {
         return solicitacao;
     }
 
-    public void detelar(Solicitacao solicitacao) {
+    public void deletar(Solicitacao solicitacao) {
         solicitacaoRepository.delete(solicitacao);
     }
 }

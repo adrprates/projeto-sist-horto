@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -38,6 +40,14 @@ public class Solicitacao {
     @ManyToOne
     @JoinColumn(name = "id_beneficiario", nullable = false)
     private Beneficiario beneficiario;
+
+    @OneToMany(mappedBy = "solicitacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemSolicitacao> itens = new ArrayList<>();
+
+    public void adicionarItem(ItemSolicitacao item) {
+        itens.add(item);
+        item.setSolicitacao(this);
+    }
 
     @Override
     public boolean equals(Object o) {
