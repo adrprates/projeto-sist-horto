@@ -1,5 +1,6 @@
 package com.bsh.backend_sist_horto.gestao_mudas.model;
 
+import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -9,25 +10,29 @@ import java.time.LocalDate;
 
 @Entity
 @Getter @Setter
-@Table(name = "distribuicoes",
+@Table(name = "solicitacoes",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        columnNames = {"id_beneficiario", "ano_retirada"}
+                        columnNames = {"id_beneficiario", "ano_solicitacao"}
                 )
         })
-public class Distribuicao {
+public class Solicitacao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_distribuicao")
+    @Column(name = "id_solicitacao")
     private Long id;
 
     @NotNull
     @Column(nullable = false)
-    private LocalDate dataRetirada;
+    private LocalDate dataSolicitacao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusSolicitacao status;
 
     @ManyToOne
-    @JoinColumn(name = "ano_retirada", nullable = false)
+    @JoinColumn(name = "ano_solicitacao", nullable = false)
     private ParametroAnual parametroAnual;
 
     @ManyToOne
@@ -38,8 +43,8 @@ public class Distribuicao {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Distribuicao distribuicao = (Distribuicao) o;
-        return id != null && id.equals(distribuicao.id);
+        Solicitacao that = (Solicitacao) o;
+        return id != null && id.equals(that.id);
     }
 
     @Override
