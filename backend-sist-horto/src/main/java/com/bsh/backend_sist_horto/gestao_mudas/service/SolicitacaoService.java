@@ -44,6 +44,12 @@ public class SolicitacaoService {
         return solicitacaoRepository.save(solicitacao);
     }
 
+    @Transactional
+    public void atualizarStatus(Long idSolicitacao, StatusSolicitacao statusSolicitacao) {
+        Solicitacao solicitacao = getSolicitacaoPorId(idSolicitacao);
+        solicitacao.setStatusSolicitacao(statusSolicitacao);
+    }
+
     public Solicitacao getSolicitacaoPorId(Long id) {
         Optional<Solicitacao> solicitacaoOptional = solicitacaoRepository.findById(id);
         Solicitacao solicitacao = null;

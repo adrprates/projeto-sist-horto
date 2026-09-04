@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -41,6 +43,14 @@ public class Distribuicao {
             unique = true
     )
     private Solicitacao solicitacao;
+
+    @OneToMany(mappedBy = "distribuicao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemDistribuicao> itens = new ArrayList<>();
+
+    public void adicionarItem(ItemDistribuicao item) {
+        itens.add(item);
+        item.setDistribuicao(this);
+    }
 
     @Override
     public boolean equals(Object o) {
