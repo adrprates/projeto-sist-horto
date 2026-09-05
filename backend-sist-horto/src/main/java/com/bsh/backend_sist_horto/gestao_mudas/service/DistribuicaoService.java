@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +55,30 @@ public class DistribuicaoService {
         if (distribuicaoRepository.existsBySolicitacaoId(solicitacaoId)) {
             throw new RuntimeException(
                     "Já existe uma distribuição para esta solicitação"
+            );
+        }
+
+        List<String> mudasEmFalta = new ArrayList<>();
+
+        for(ItemSolicitacao itemSolicitado : solicitacao.getItens()){
+            Long mudaId = itemSolicitado.getMuda().getId();
+            Integer quantidadeSolicitada = itemSolicitado.getQuantidade();
+
+            boolean possuiSaldo = estoqueService.verificarDisponibilidade(mudaId, quantidadeSolicitada);
+
+            if(!possuiSaldo){
+                String nomeMuda = itemSolicitado.getMuda().getNomesPopulares().get(0);
+                mudasEmFalta.add(
+                        nomeMuda + " (" +
+                                quantidadeSolicitada + " solicitadas)"
+                );
+            }
+        }
+
+        if(!mudasEmFalta.isEmpty()){
+            throw new RuntimeException(
+                    "Estoque insuficiente para: " +
+                            String.join(", ", mudasEmFalta)
             );
         }
 

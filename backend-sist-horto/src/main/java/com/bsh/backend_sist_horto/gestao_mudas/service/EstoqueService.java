@@ -54,7 +54,7 @@ public class EstoqueService {
         return estoqueRepository.save(estoque);
     }
 
-    public Estoque removerQuantidade(Long idMuda, Integer quantidade) {
+    public void removerQuantidade(Long idMuda, Integer quantidade) {
         Estoque estoque = estoqueRepository.findById(idMuda).orElseThrow(() ->
                 new RuntimeException(
                         "Estoque não encontrado para Muda com o id: " + idMuda
@@ -72,6 +72,17 @@ public class EstoqueService {
             );
         }
         estoque.setQuantidade(novaQuantidade);
-        return estoqueRepository.save(estoque);
+        estoqueRepository.save(estoque);
+    }
+
+    public boolean verificarDisponibilidade(Long idMuda, Integer quantidade) {
+        Estoque estoque = estoqueRepository.findById(idMuda).orElseThrow(() ->
+                new RuntimeException(
+                        "Estoque não encontrado para Muda com o id: " + idMuda
+                ));
+
+        int disponibilidade = estoque.getQuantidade() - quantidade;
+
+        return disponibilidade >= 0;
     }
 }
