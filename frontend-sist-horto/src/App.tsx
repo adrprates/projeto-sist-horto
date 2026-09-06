@@ -1,10 +1,10 @@
-import PaginaInicial from "./pages/PaginaInicial/PaginaInicial";
 import "./App.css";
+import CatalogoMudas from "./pages/CatalogoMudas/CatalogoMudas";
 
 function App() {
   return (
     <div>
-      <PaginaInicial nomeUsuario="Visitante" />
+      <CatalogoMudas />
     </div>
   );
 }

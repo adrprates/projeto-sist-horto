@@ -15,10 +15,11 @@ import java.util.Optional;
 public class MudaService {
 
     private final MudaRepository mudaRepository;
-    private EstoqueRepository estoqueRepository;
+    private final EstoqueRepository estoqueRepository;
 
-    public MudaService(MudaRepository mudaRepository) {
+    public MudaService(MudaRepository mudaRepository,  EstoqueRepository estoqueRepository) {
         this.mudaRepository = mudaRepository;
+        this.estoqueRepository = estoqueRepository;
     }
 
     public List<Muda> listarTodas() {

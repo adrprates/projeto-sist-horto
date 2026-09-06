@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Leaf, Menu, X } from "lucide-react";
+import { Leaf, Menu, X, ClipboardList, User } from "lucide-react";
 import "./Cabecalho.css";
 
 function Cabecalho() {
@@ -22,11 +22,18 @@ function Cabecalho() {
       </button>
 
       <nav className={menuAberto ? "nav nav-aberto" : "nav"}>
-        <a href="#">Início</a>
-        <a href="#">Catálogo de Mudas</a>
-        <a href="#">Minhas Mudas</a>
-        <a href="#">Relatórios</a>
-        <a href="#">Meu Perfil</a>
+        <a href="#">
+          <Leaf size={18} />
+          Catálogo de Mudas
+        </a>
+        <a href="#">
+          <ClipboardList size={18} />
+          Minhas Solicitações
+        </a>
+        <a href="#">
+          <User size={18} />
+          Meu Perfil
+        </a>
       </nav>
     </header>
   );
