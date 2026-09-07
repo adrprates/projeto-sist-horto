@@ -35,11 +35,18 @@ public class MudaService {
     }
 
     public Muda salvar(Muda muda) {
+        boolean novaMuda = muda.getId() == null;
+
         Muda mudaSalva = mudaRepository.save(muda);
-        Estoque estoque = new Estoque();
-        estoque.setMuda(mudaSalva);
-        estoque.setQuantidade(0);
-        estoqueRepository.save(estoque);
+
+        if (novaMuda) {
+            Estoque estoque = new Estoque();
+            estoque.setMuda(mudaSalva);
+            estoque.setQuantidade(0);
+
+            estoqueRepository.save(estoque);
+        }
+
         return mudaSalva;
     }
 

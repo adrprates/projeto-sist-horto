@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Package, Info } from "lucide-react";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
+import { buscarPorEstoque } from "../../services/estoqueService";
 import { rotuloCategoria } from "../../types/CategoriaMuda";
 import ModalDetalhesMuda from "../ModalDetalhesMuda/ModalDetalhesMuda";
 import "./CardMuda.css";
@@ -10,9 +11,9 @@ interface CardMudaProps {
   estaNaSolicitacao: boolean;
   aoAlternarSolicitacao: (muda: DadosMudaResumo) => void;
   isAdmin: boolean;
-  aoAdicionarEstoque?: (muda: DadosMudaResumo) => void;
-  aoRemoverEstoque?: (muda: DadosMudaResumo) => void;
-  aoEditar?: (muda: DadosMudaResumo) => void;
+  aoAdicionarEstoque?: (muda: DadosMudaResumo, quantidade: number) => void;
+  aoRemoverEstoque?: (muda: DadosMudaResumo, quantidade: number) => void;
+  aoGerenciar?: (muda: DadosMudaResumo) => void;
 }
 
 function CardMuda({
@@ -22,10 +23,31 @@ function CardMuda({
   isAdmin,
   aoAdicionarEstoque,
   aoRemoverEstoque,
-  aoEditar,
+  aoGerenciar,
 }: CardMudaProps) {
   const [imagemComErro, setImagemComErro] = useState(false);
   const [modalAberto, setModalAberto] = useState(false);
+  const [quantidadeEstoque, setQuantidadeEstoque] = useState<number>(1);
+  const [estoque, setEstoque] = useState<number>(0);
+
+   useEffect(() => {
+    buscarPorEstoque(muda.id)
+      .then((estoque) => {
+        setEstoque(estoque.quantidade ?? 0);
+      })
+      .catch(() => {
+        setEstoque(0);
+      });
+  }, [muda.id]);
+
+  async function atualizarEstoque() {
+    try {
+      const estoqueAtualizado = await buscarPorEstoque(muda.id);
+      setEstoque(estoqueAtualizado.quantidade ?? 0);
+    } catch {
+      setEstoque(0);
+    }
+  }
 
   const nomesParaExibir = muda.nomesPopulares.slice(0, 3).join(", ");
 
@@ -52,7 +74,7 @@ function CardMuda({
 
         <p className="card-estoque">
           <Package size={16} />
-          Disponíveis: {muda.estoqueDisponivel}
+          Disponíveis: {estoque}
         </p>
 
         <div className="card-acoes">
@@ -80,21 +102,46 @@ function CardMuda({
 
         {isAdmin && (
           <div className="card-acoes-admin">
-            <button type="button" onClick={() => aoAdicionarEstoque?.(muda)}>
+            <input
+              type="number"
+              min="1"
+              value={quantidadeEstoque}
+              onChange={(e) => setQuantidadeEstoque(Number(e.target.value))}
+              className="input-admin-quantidade-estoque"
+            />
+            <button
+              type="button"
+              className="botao-admin-adicionar"
+              onClick={async () => {
+                await aoAdicionarEstoque?.(muda, quantidadeEstoque);
+                await atualizarEstoque();
+              }}
+            >
               + Estoque
             </button>
-            <button type="button" onClick={() => aoRemoverEstoque?.(muda)}>
+            <button
+              type="button"
+              className="botao-admin-remover"
+              onClick={async () => {
+                await aoRemoverEstoque?.(muda, quantidadeEstoque);
+                await atualizarEstoque();
+              }}
+            >
               - Estoque
             </button>
-            <button type="button" onClick={() => aoEditar?.(muda)}>
-              Editar
+            <button
+              type="button"
+              className="botao-admin-gerenciar"
+              onClick={() => aoGerenciar?.(muda)}
+            >
+              Gerenciar
             </button>
           </div>
         )}
       </div>
 
       {modalAberto && (
-        <ModalDetalhesMuda idMuda={muda.id} aoFechar={() => setModalAberto(false)} />
+        <ModalDetalhesMuda idMuda={String(muda.id)} aoFechar={() => setModalAberto(false)} />
       )}
     </div>
   );

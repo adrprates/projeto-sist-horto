@@ -1,0 +1,257 @@
+.formulario-pagina {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.formulario-carregando {
+  text-align: center;
+  color: var(--cinza);
+  padding: 60px 0;
+}
+
+.formulario-cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.botao-voltar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--cinza);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  align-self: flex-start;
+}
+
+.botao-voltar:hover {
+  color: var(--verde);
+}
+
+.formulario-titulo {
+  font-size: 24px;
+  color: var(--texto);
+  margin: 0;
+}
+
+.formulario-erro {
+  background: #fdecea;
+  color: var(--vermelho);
+  border: 1px solid #f5c6c1;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.formulario-secao {
+  background: var(--branco);
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.formulario-secao h3 {
+  margin: 0 0 16px;
+  font-size: 15px;
+  color: var(--verde);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.campo:last-child {
+  margin-bottom: 0;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.campo input[type="text"],
+.campo input[type="number"],
+.campo select {
+  padding: 10px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  color: var(--texto);
+}
+
+.campo-grade {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.campo-checkboxes {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--texto);
+}
+
+.campo-checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.chips-input {
+  display: flex;
+  gap: 8px;
+}
+
+.chips-input input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.chips-input button {
+  background: var(--verde);
+  border: none;
+  color: var(--branco);
+  padding: 0 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chips-lista {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--fundo-suave);
+  border: 1px solid #d9d9d9;
+  border-radius: 20px;
+  padding: 5px 6px 5px 12px;
+  font-size: 13px;
+  color: var(--texto);
+}
+
+.chip button {
+  background: none;
+  border: none;
+  color: var(--cinza);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.formulario-dica {
+  font-size: 14px;
+  color: var(--texto);
+  margin: 0 0 12px;
+}
+
+.formulario-acoes {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.botao-salvar {
+  background: var(--verde);
+  border: 2px solid var(--verde);
+  color: var(--branco);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px 32px;
+  border-radius: 32px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.botao-salvar:hover:not(:disabled) {
+  background: var(--branco);
+  color: var(--verde);
+}
+
+.botao-salvar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.formulario-zona-perigo {
+  margin-top: 32px;
+  padding: 16px 20px;
+  border: 1px dashed var(--vermelho);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.formulario-zona-perigo p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--cinza);
+}
+
+.botao-excluir {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 2px solid var(--vermelho);
+  color: var(--vermelho);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 32px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  white-space: nowrap;
+}
+
+.botao-excluir:hover {
+  background: var(--vermelho);
+  color: var(--branco);
+}
+
+@media (max-width: 600px) {
+  .campo-grade {
+    grid-template-columns: 1fr;
+  }
+
+  .formulario-zona-perigo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

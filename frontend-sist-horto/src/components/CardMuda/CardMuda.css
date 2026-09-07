@@ -117,7 +117,7 @@
   padding: 8px;
   border-radius: 32px;
   cursor: pointer;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
 .botao-solicitacao:hover {
@@ -126,8 +126,14 @@
 }
 
 .botao-solicitacao-ativo {
+  background: var(--vermelho);
+  border-color: var(--vermelho);
+  color: var(--branco);
+}
+
+.botao-solicitacao-ativo:hover {
   background: var(--branco);
-  color: var(--verde);
+  color: var(--vermelho);
 }
 
 .card-acoes-admin {
@@ -140,15 +146,37 @@
 
 .card-acoes-admin button {
   flex: 1;
-  background: var(--fundo-suave);
-  border: 1px solid #d9d9d9;
-  color: var(--texto);
+  border: none;
   font-size: 12px;
-  padding: 6px;
+  font-weight: 600;
+  padding: 7px 6px;
   border-radius: 8px;
   cursor: pointer;
+  color: var(--branco);
+  transition: filter 0.2s ease;
 }
 
 .card-acoes-admin button:hover {
-  background: #e9ebe6;
+  filter: brightness(0.9);
+}
+
+.input-admin-quantidade-estoque {
+  width: 60px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.botao-admin-adicionar {
+  background: var(--verde);
+}
+
+.botao-admin-remover {
+  background: var(--vermelho);
+}
+
+.botao-admin-gerenciar {
+  background: var(--amarelo);
+  color: #3a2c10;
 }
