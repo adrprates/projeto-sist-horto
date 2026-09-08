@@ -3,12 +3,9 @@ import { Trash2, ArrowLeft, X } from "lucide-react";
 import type { Muda } from "../../types/Muda";
 import { CategoriaMuda, rotuloCategoria } from "../../types/CategoriaMuda";
 import { salvar, deletarMuda, buscarMuda } from "../../services/mudaService";
+import { buscarPorEstoque } from "../../services/estoqueService";
 import { atualizarQuantidade } from "../../services/estoqueService";
 import "./FormularioMuda.css";
-
-interface MudaComEstoque extends Muda {
-  estoqueDisponivel?: number;
-}
 
 interface FormularioMudaProps {
   idMudaEdicao?: number;
@@ -38,15 +35,23 @@ function FormularioMuda({ idMudaEdicao, aoVoltar, aoSalvarComSucesso }: Formular
     }
 
     setCarregando(true);
-    buscarMuda(idMudaEdicao)
-      .then((mudaEncontrada) => {
-        const mudaComEstoque = mudaEncontrada as MudaComEstoque;
-        setCampos(mudaComEstoque);
-        setEstoqueAtual(mudaComEstoque.estoqueDisponivel ?? 0);
-        setNovoValorEstoque(mudaComEstoque.estoqueDisponivel ?? 0);
+
+    Promise.all([
+      buscarMuda(idMudaEdicao),
+      buscarPorEstoque(idMudaEdicao)
+    ])
+      .then(([mudaEncontrada, estoque]) => {
+        setCampos(mudaEncontrada);
+
+        setEstoqueAtual(estoque.quantidade ?? 0);
+        setNovoValorEstoque(estoque.quantidade ?? 0);
       })
-      .catch(() => setErro("Não foi possível carregar os dados da muda."))
-      .finally(() => setCarregando(false));
+      .catch(() => {
+        setErro("Não foi possível carregar os dados da muda.");
+      })
+      .finally(() => {
+        setCarregando(false);
+      });
   }, [ehEdicao, idMudaEdicao]);
 
   function atualizarCampo<K extends keyof Muda>(campo: K, valor: Muda[K]) {

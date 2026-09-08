@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Package, Info } from "lucide-react";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
-import { buscarPorEstoque } from "../../services/estoqueService";
 import { rotuloCategoria } from "../../types/CategoriaMuda";
 import ModalDetalhesMuda from "../ModalDetalhesMuda/ModalDetalhesMuda";
 import "./CardMuda.css";
@@ -28,27 +27,6 @@ function CardMuda({
   const [imagemComErro, setImagemComErro] = useState(false);
   const [modalAberto, setModalAberto] = useState(false);
   const [quantidadeEstoque, setQuantidadeEstoque] = useState<number>(1);
-  const [estoque, setEstoque] = useState<number>(0);
-
-   useEffect(() => {
-    buscarPorEstoque(muda.id)
-      .then((estoque) => {
-        setEstoque(estoque.quantidade ?? 0);
-      })
-      .catch(() => {
-        setEstoque(0);
-      });
-  }, [muda.id]);
-
-  async function atualizarEstoque() {
-    try {
-      const estoqueAtualizado = await buscarPorEstoque(muda.id);
-      setEstoque(estoqueAtualizado.quantidade ?? 0);
-    } catch {
-      setEstoque(0);
-    }
-  }
-
   const nomesParaExibir = muda.nomesPopulares.slice(0, 3).join(", ");
 
   return (
@@ -74,7 +52,7 @@ function CardMuda({
 
         <p className="card-estoque">
           <Package size={16} />
-          Disponíveis: {estoque}
+          Disponíveis: {muda.estoqueDisponivel}
         </p>
 
         <div className="card-acoes">
@@ -112,20 +90,14 @@ function CardMuda({
             <button
               type="button"
               className="botao-admin-adicionar"
-              onClick={async () => {
-                await aoAdicionarEstoque?.(muda, quantidadeEstoque);
-                await atualizarEstoque();
-              }}
+              onClick={() => aoAdicionarEstoque?.(muda, quantidadeEstoque)}
             >
               + Estoque
             </button>
             <button
               type="button"
               className="botao-admin-remover"
-              onClick={async () => {
-                await aoRemoverEstoque?.(muda, quantidadeEstoque);
-                await atualizarEstoque();
-              }}
+              onClick={() => aoRemoverEstoque?.(muda, quantidadeEstoque)}
             >
               - Estoque
             </button>

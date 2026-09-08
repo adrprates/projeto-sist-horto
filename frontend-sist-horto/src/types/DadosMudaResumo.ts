@@ -7,4 +7,5 @@ export interface DadosMudaResumo {
   categoria: CategoriaMuda;
   familia: string;
   linkImagemArvore: string;
+  estoqueDisponivel: number;
 }

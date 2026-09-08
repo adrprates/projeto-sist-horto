@@ -41,35 +41,20 @@ async function handleAdicionarEstoque(
   muda: DadosMudaResumo,
   quantidade: number
 ) {
-  if (quantidade <= 0) {
-    alert("Digite uma quantidade válida para adicionar.");
-    return;
-  }
+  await adicionarQuantidade(muda.id, quantidade);
 
-  try {
-    await adicionarQuantidade(muda.id, quantidade);
-  } catch (erro) {
-    console.error(erro);
-    alert("Erro ao adicionar estoque.");
-  }
+  const mudasAtualizadas = await listarMudas(filtro);
+  setMudas(mudasAtualizadas);
 }
 
 async function handleRemoverEstoque(
   muda: DadosMudaResumo,
   quantidade: number
 ) {
-  if (quantidade <= 0) {
-    alert("Digite uma quantidade válida para remover.");
-    return;
-  }
+  await removerQuantidade(muda.id, quantidade);
 
-  try {
-    await removerQuantidade(muda.id, quantidade);
-
-  } catch (erro) {
-    console.error(erro);
-    alert("Quantidade insuficiente em estoque.");
-  }
+  const mudasAtualizadas = await listarMudas(filtro);
+  setMudas(mudasAtualizadas);
 }
 
   return (

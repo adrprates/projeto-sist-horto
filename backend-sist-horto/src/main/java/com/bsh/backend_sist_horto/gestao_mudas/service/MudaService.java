@@ -1,5 +1,6 @@
 package com.bsh.backend_sist_horto.gestao_mudas.service;
 
+import com.bsh.backend_sist_horto.gestao_mudas.dto.DadosMudaResumo;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.MudaFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Estoque;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Muda;
@@ -8,6 +9,7 @@ import com.bsh.backend_sist_horto.gestao_mudas.repository.MudaRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.specification.MudaSpecification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +32,28 @@ public class MudaService {
         return mudaRepository.buscarPorNomePopular(nomePopular);
     }
 
-    public List<Muda> listarPorFiltro(MudaFilter mudaFilter) {
-        return mudaRepository.findAll(MudaSpecification.fromFilter(mudaFilter));
+    public List<DadosMudaResumo> listarResumo(MudaFilter mudaFilter) {
+        List<Muda> mudas = mudaRepository.findAll(MudaSpecification.fromFilter(mudaFilter));
+
+        List<DadosMudaResumo> dadosMudaResumo = new ArrayList<>();
+
+        for(Muda muda : mudas) {
+            Integer quantidadeEstoque = estoqueRepository
+                    .findById(muda.getId())
+                    .map(Estoque::getQuantidade)
+                    .orElse(0);
+
+            dadosMudaResumo.add(new DadosMudaResumo(
+                    muda.getId(),
+                    muda.getNomesPopulares(),
+                    muda.getCategoria(),
+                    muda.getFamilia(),
+                    muda.getLinkImagemArvore(),
+                    quantidadeEstoque
+            ));
+        }
+
+        return dadosMudaResumo;
     }
 
     public Muda salvar(Muda muda) {

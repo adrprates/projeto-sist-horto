@@ -1,5 +1,6 @@
 package com.bsh.backend_sist_horto.gestao_mudas.controller;
 
+import com.bsh.backend_sist_horto.gestao_mudas.dto.DadosMudaResumo;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.MudaFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Muda;
 import com.bsh.backend_sist_horto.gestao_mudas.service.MudaService;
@@ -20,8 +21,8 @@ public class MudaController {
     }
 
     @GetMapping
-    public List<Muda> listar(MudaFilter mudaFilter) {
-        return mudaService.listarPorFiltro(mudaFilter);
+    public List<DadosMudaResumo> listar(MudaFilter mudaFilter) {
+        return mudaService.listarResumo(mudaFilter);
     }
 
     @GetMapping("/{id}")
