@@ -1,23 +1,26 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Trash2, ArrowLeft, X } from "lucide-react";
 import type { Muda } from "../../types/Muda";
 import { CategoriaMuda, rotuloCategoria } from "../../types/CategoriaMuda";
-import { salvar, deletarMuda, buscarMuda } from "../../services/mudaService";
-import { buscarPorEstoque } from "../../services/estoqueService";
-import { atualizarQuantidade } from "../../services/estoqueService";
+import { salvar, deletarMuda, buscarMuda } from "../../api/mudaService";
+import { buscarPorEstoque } from "../../api/estoqueService";
+import { atualizarQuantidade } from "../../api/estoqueService";
 import "./FormularioMuda.css";
-
-interface FormularioMudaProps {
-  idMudaEdicao?: number;
-  aoVoltar: () => void;
-  aoSalvarComSucesso: () => void;
-}
 
 const MUDA_VAZIA: Muda = {
   nomesPopulares: [],
 };
 
-function FormularioMuda({ idMudaEdicao, aoVoltar, aoSalvarComSucesso }: FormularioMudaProps) {
+export default function FormularioMuda() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  function voltarParaCatalogo() {
+    navigate("/");
+  }
+  
+  const idMudaEdicao = id ? Number(id) : undefined;
   const ehEdicao = idMudaEdicao !== undefined;
 
   const [campos, setCampos] = useState<Muda>(MUDA_VAZIA);
@@ -97,7 +100,7 @@ function FormularioMuda({ idMudaEdicao, aoVoltar, aoSalvarComSucesso }: Formular
         await atualizarQuantidade(idMudaEdicao, novoValorEstoque);
       }
 
-      aoSalvarComSucesso();
+      voltarParaCatalogo();
     } catch {
       setErro("Não foi possível salvar a muda. Tente novamente.");
     } finally {
@@ -120,7 +123,7 @@ function FormularioMuda({ idMudaEdicao, aoVoltar, aoSalvarComSucesso }: Formular
 
     try {
       await deletarMuda(idMudaEdicao);
-      aoSalvarComSucesso();
+      voltarParaCatalogo();
     } catch {
       setErro("Não foi possível excluir a muda.");
     }
@@ -137,7 +140,7 @@ function FormularioMuda({ idMudaEdicao, aoVoltar, aoSalvarComSucesso }: Formular
   return (
     <div className="formulario-pagina">
       <div className="formulario-cabecalho">
-        <button type="button" className="botao-voltar" onClick={aoVoltar}>
+        <button type="button" className="botao-voltar" onClick={() => navigate("/")}>
           <ArrowLeft size={18} />
           Voltar ao catálogo
         </button>
@@ -429,5 +432,3 @@ function FormularioMuda({ idMudaEdicao, aoVoltar, aoSalvarComSucesso }: Formular
     </div>
   );
 }
-
-export default FormularioMuda;

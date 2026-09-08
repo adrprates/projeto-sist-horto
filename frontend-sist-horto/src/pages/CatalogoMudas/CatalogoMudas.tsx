@@ -1,26 +1,28 @@
+import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
 import type { MudaFilter } from "../../types/MudaFilter";
-import { listarMudas } from "../../services/mudaService";
-import { adicionarQuantidade, removerQuantidade } from "../../services/estoqueService";
+import { listarMudas } from "../../api/mudaService";
+import { adicionarQuantidade, removerQuantidade } from "../../api/estoqueService";
 import Cabecalho from "../../components/Cabecalho/Cabecalho";
 import Rodape from "../../components/Rodape/Rodape";
 import FiltrosCatalogo from "../../components/FiltrosCatalogo/FiltrosCatalogo";
 import CardMuda from "../../components/CardMuda/CardMuda";
 import "./CatalogoMudas.css";
 
-interface CatalogoMudasProps {
-  aoAbrirNovaMuda: () => void;
-  aoAbrirEdicaoMuda: (id: number) => void;
-}
-
-function CatalogoMudas({ aoAbrirNovaMuda, aoAbrirEdicaoMuda }: CatalogoMudasProps) {
+export default function CatalogoMudas() {
+  const navigate = useNavigate();
   const [mudas, setMudas] = useState<DadosMudaResumo[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [filtro, setFiltro] = useState<MudaFilter>({});
   const [idsNaSolicitacao, setIdsNaSolicitacao] = useState<number[]>([]);
-
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAuthenticated, hasRole } = useAuth();
+  const isAdmin = hasRole(["ADMINISTRADOR"]);
+  const isBeneficiario = hasRole(["BENEFICIARIO"]);
+  const podeSolicitar =
+  isAuthenticated &&
+  (isBeneficiario || isAdmin);
 
   useEffect(() => {
     setCarregando(true);
@@ -57,20 +59,12 @@ async function handleRemoverEstoque(
   setMudas(mudasAtualizadas);
 }
 
-  return (
+return (
     <div>
       <Cabecalho />
 
       <div className="boas-vindas-compacta">
         <p>Bem-vindo ao Sistema Horto!</p>
-        <label className="alternar-admin">
-          <input
-            type="checkbox"
-            checked={isAdmin}
-            onChange={(evento) => setIsAdmin(evento.target.checked)}
-          />
-          Modo administrador (provisório)
-        </label>
       </div>
 
       <main className="container-catalogo">
@@ -80,7 +74,7 @@ async function handleRemoverEstoque(
           filtro={filtro}
           aoMudarFiltro={setFiltro}
           podeCadastrarMuda={isAdmin}
-          aoClicarNovaMuda={aoAbrirNovaMuda}
+          aoClicarNovaMuda={() => navigate("/mudas/nova")}
         />
 
         {carregando && <p className="mensagem-central">Carregando mudas...</p>}
@@ -97,9 +91,12 @@ async function handleRemoverEstoque(
               estaNaSolicitacao={idsNaSolicitacao.includes(muda.id)}
               aoAlternarSolicitacao={alternarSolicitacao}
               isAdmin={isAdmin}
+              podeSolicitar={podeSolicitar}
               aoAdicionarEstoque={handleAdicionarEstoque}
               aoRemoverEstoque={handleRemoverEstoque}
-              aoGerenciar={(mudaSelecionada) => aoAbrirEdicaoMuda(mudaSelecionada.id)}
+              aoGerenciar={(mudaSelecionada) =>
+                navigate(`/mudas/editar/${mudaSelecionada.id}`)
+  }
             />
           ))}
         </div>
@@ -109,5 +106,3 @@ async function handleRemoverEstoque(
     </div>
   );
 }
-
-export default CatalogoMudas;

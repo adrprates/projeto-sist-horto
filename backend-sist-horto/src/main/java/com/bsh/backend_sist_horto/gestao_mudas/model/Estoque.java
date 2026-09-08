@@ -1,5 +1,6 @@
 package com.bsh.backend_sist_horto.gestao_mudas.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -18,6 +19,7 @@ public class Estoque {
     @OneToOne
     @MapsId
     @JoinColumn(name = "id_muda",  nullable = false)
+    @JsonBackReference
     private Muda muda;
 
     @NotNull

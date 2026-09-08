@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Package, Info } from "lucide-react";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
 import { rotuloCategoria } from "../../types/CategoriaMuda";
@@ -10,6 +11,7 @@ interface CardMudaProps {
   estaNaSolicitacao: boolean;
   aoAlternarSolicitacao: (muda: DadosMudaResumo) => void;
   isAdmin: boolean;
+  podeSolicitar: boolean;
   aoAdicionarEstoque?: (muda: DadosMudaResumo, quantidade: number) => void;
   aoRemoverEstoque?: (muda: DadosMudaResumo, quantidade: number) => void;
   aoGerenciar?: (muda: DadosMudaResumo) => void;
@@ -20,6 +22,7 @@ function CardMuda({
   estaNaSolicitacao,
   aoAlternarSolicitacao,
   isAdmin,
+  podeSolicitar,
   aoAdicionarEstoque,
   aoRemoverEstoque,
   aoGerenciar,
@@ -28,6 +31,7 @@ function CardMuda({
   const [modalAberto, setModalAberto] = useState(false);
   const [quantidadeEstoque, setQuantidadeEstoque] = useState<number>(1);
   const nomesParaExibir = muda.nomesPopulares.slice(0, 3).join(", ");
+  const navigate = useNavigate();
 
   return (
     <div className="card">
@@ -72,7 +76,14 @@ function CardMuda({
                 ? "botao-solicitacao botao-solicitacao-ativo"
                 : "botao-solicitacao"
             }
-            onClick={() => aoAlternarSolicitacao(muda)}
+            onClick={() => {
+              if (!podeSolicitar) {
+                navigate("/login");
+                return;
+              }
+
+              aoAlternarSolicitacao(muda);
+            }}
           >
             {estaNaSolicitacao ? "Remover da Solicitação" : "Adicionar à Solicitação"}
           </button>

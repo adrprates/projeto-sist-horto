@@ -32,7 +32,7 @@ public class MudaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Muda salvar(@RequestBody Muda muda) {
+    public Muda criar(@RequestBody Muda muda) {
         return mudaService.salvar(muda);
     }
 
@@ -40,8 +40,6 @@ public class MudaController {
     public Muda atualizar(
             @PathVariable Long id,
             @RequestBody Muda muda) {
-
-        muda.setId(id);
         return mudaService.salvar(muda);
     }
 

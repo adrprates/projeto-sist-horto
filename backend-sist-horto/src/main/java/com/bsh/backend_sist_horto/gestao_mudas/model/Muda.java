@@ -1,6 +1,7 @@
 package com.bsh.backend_sist_horto.gestao_mudas.model;
 
 import com.bsh.backend_sist_horto.gestao_mudas.enums.CategoriaMuda;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -96,6 +97,14 @@ public class Muda {
 
     @Size(max = 255)
     private String linkImagemFrutos;
+
+    @OneToOne(
+            mappedBy = "muda",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonManagedReference
+    private Estoque estoque;
 
     @Override
     public boolean equals(Object o) {

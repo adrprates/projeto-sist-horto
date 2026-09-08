@@ -22,7 +22,7 @@ function Cabecalho() {
       </button>
 
       <nav className={menuAberto ? "nav nav-aberto" : "nav"}>
-        <a href="#">
+        <a href="/">
           <Leaf size={18} />
           Catálogo de Mudas
         </a>

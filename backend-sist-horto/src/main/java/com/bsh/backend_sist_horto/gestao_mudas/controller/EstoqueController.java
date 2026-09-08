@@ -36,7 +36,6 @@ public class EstoqueController {
     public void removerQuantidade(
             @PathVariable Long idMuda,
             @RequestParam Integer quantidade) {
-
         estoqueService.removerQuantidade(idMuda, quantidade);
     }
 }

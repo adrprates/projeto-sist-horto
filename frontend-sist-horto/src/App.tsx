@@ -1,45 +1,17 @@
-import { useState } from "react";
-import CatalogoMudas from "./pages/CatalogoMudas/CatalogoMudas";
-import FormularioMuda from "./pages/FormularioMuda/FormularioMuda";
-import "./App.css";
-
-type Tela = "catalogo" | "formulario";
+import { AuthProvider } from './context/AuthProvider';
+import { AppRoutes } from './routes/AppRoutes';
+import './App.css'
+import { useEffect } from 'react';
 
 function App() {
-  const [tela, setTela] = useState<Tela>("catalogo");
-  const [idMudaEmEdicao, setIdMudaEmEdicao] = useState<number | undefined>(undefined);
-
-  function abrirNovaMuda() {
-    setIdMudaEmEdicao(undefined);
-    setTela("formulario");
-  }
-
-  function abrirEdicaoMuda(id: number) {
-    setIdMudaEmEdicao(id);
-    setTela("formulario");
-  }
-
-  function voltarParaCatalogo() {
-    setTela("catalogo");
-  }
+  useEffect(() => {
+    document.title = "Sistema Reserva de Mudas";
+  }, []);
 
   return (
-    <div>
-      {tela === "catalogo" && (
-        <CatalogoMudas
-          aoAbrirNovaMuda={abrirNovaMuda}
-          aoAbrirEdicaoMuda={abrirEdicaoMuda}
-        />
-      )}
-
-      {tela === "formulario" && (
-        <FormularioMuda
-          idMudaEdicao={idMudaEmEdicao}
-          aoVoltar={voltarParaCatalogo}
-          aoSalvarComSucesso={voltarParaCatalogo}
-        />
-      )}
-    </div>
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }
 

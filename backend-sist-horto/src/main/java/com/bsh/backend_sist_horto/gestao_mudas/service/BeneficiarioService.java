@@ -30,7 +30,15 @@ public class BeneficiarioService {
         return beneficiarioRepository.findAll(BeneficiarioSpecification.fromFilter(beneficiarioFilter));
     }
 
-    public Beneficiario salvar(Beneficiario beneficiario){
+    public Beneficiario atualizar(Long id, Beneficiario dadosAtualizados){
+        Beneficiario beneficiario = getBeneficiarioPorId(id);
+
+        beneficiario.setCelular(dadosAtualizados.getCelular());
+        beneficiario.setTelefone(dadosAtualizados.getTelefone());
+        beneficiario.setEmail(dadosAtualizados.getEmail());
+        beneficiario.setNome(dadosAtualizados.getNome());
+        beneficiario.setEndereco(dadosAtualizados.getEndereco());
+
         return beneficiarioRepository.save(beneficiario);
     }
 
