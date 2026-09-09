@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { LogOut } from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
 import { Leaf, Menu, X, ClipboardList, User } from "lucide-react";
 import "./Cabecalho.css";
 
 function Cabecalho() {
   const [menuAberto, setMenuAberto] = useState(false);
+  const { logout, isAuthenticated } = useAuth();
 
   return (
     <header className="cabecalho">
@@ -34,6 +37,16 @@ function Cabecalho() {
           <User size={18} />
           Meu Perfil
         </a>
+        {isAuthenticated && (
+          <button
+            type="button"
+            onClick={logout}
+            className="botao-logout"
+          >
+            <LogOut size={18} />
+            Sair
+          </button>
+        )}
       </nav>
     </header>
   );

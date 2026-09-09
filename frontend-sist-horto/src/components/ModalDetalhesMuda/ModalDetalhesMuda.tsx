@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import type { DadosMudaDetalhes } from "../../types/DadosMudaDetalhes";
-import { buscarDetalhesMuda } from "../../services/mudaService";
+import { buscarDetalhesMuda } from "../../api/mudaService";
 import { rotuloCategoria } from "../../types/CategoriaMuda";
 import "./ModalDetalhesMuda.css";
 
