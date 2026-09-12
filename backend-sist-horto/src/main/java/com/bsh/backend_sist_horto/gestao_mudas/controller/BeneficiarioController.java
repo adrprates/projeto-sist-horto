@@ -4,6 +4,7 @@ import com.bsh.backend_sist_horto.gestao_mudas.dto.BeneficiarioFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.service.BeneficiarioService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,14 +28,6 @@ public class BeneficiarioController {
     @GetMapping("/{id}")
     public Beneficiario buscarPorId(@PathVariable Long id) {
         return beneficiarioService.getBeneficiarioPorId(id);
-    }
-
-    @PutMapping
-    public Beneficiario atualizar(
-            @PathVariable Long id,
-            @RequestBody Beneficiario beneficiario
-    ){
-        return beneficiarioService.atualizar(id, beneficiario);
     }
 
     @DeleteMapping("/{id}")

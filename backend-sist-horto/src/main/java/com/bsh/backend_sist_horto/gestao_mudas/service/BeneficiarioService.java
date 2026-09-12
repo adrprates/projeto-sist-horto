@@ -1,6 +1,8 @@
 package com.bsh.backend_sist_horto.gestao_mudas.service;
 
+import com.bsh.backend_sist_horto.gestao_mudas.dto.AtualizarPerfilRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.BeneficiarioFilter;
+import com.bsh.backend_sist_horto.gestao_mudas.dto.PerfilResponse;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.BeneficiarioRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.specification.BeneficiarioSpecification;
@@ -30,16 +32,33 @@ public class BeneficiarioService {
         return beneficiarioRepository.findAll(BeneficiarioSpecification.fromFilter(beneficiarioFilter));
     }
 
-    public Beneficiario atualizar(Long id, Beneficiario dadosAtualizados){
-        Beneficiario beneficiario = getBeneficiarioPorId(id);
+    public PerfilResponse atualizarPerfil(
+            String login,
+            AtualizarPerfilRequest request) {
 
-        beneficiario.setCelular(dadosAtualizados.getCelular());
-        beneficiario.setTelefone(dadosAtualizados.getTelefone());
-        beneficiario.setEmail(dadosAtualizados.getEmail());
-        beneficiario.setNome(dadosAtualizados.getNome());
-        beneficiario.setEndereco(dadosAtualizados.getEndereco());
+        Beneficiario beneficiario = beneficiarioRepository
+                .findByLogin(login)
+                .orElseThrow(() ->
+                        new RuntimeException("Beneficiário não encontrado"));
 
-        return beneficiarioRepository.save(beneficiario);
+        beneficiario.setCelular(request.getCelular());
+        beneficiario.setTelefone(request.getTelefone());
+        beneficiario.setEmail(request.getEmail());
+        beneficiario.setNome(request.getNome());
+        beneficiario.setEndereco(request.getEndereco());
+
+        beneficiarioRepository.save(beneficiario);
+
+        return new PerfilResponse(
+                beneficiario.getId(),
+                beneficiario.getCpf(),
+                beneficiario.getCelular(),
+                beneficiario.getTelefone(),
+                beneficiario.getEmail(),
+                beneficiario.getNome(),
+                beneficiario.getEndereco(),
+                beneficiario.getLogin()
+        );
     }
 
     public Beneficiario getBeneficiarioPorId(Long id){
@@ -51,6 +70,23 @@ public class BeneficiarioService {
             throw new RuntimeException("Beneficiário não encontrado para o id: " + id);
         }
         return beneficiario;
+    }
+
+    public PerfilResponse getBeneficiarioPerfil(String login){
+        Beneficiario beneficiario = beneficiarioRepository
+                .findByLogin(login)
+                .orElseThrow(() -> new RuntimeException("Beneficiário não encontrado"));
+
+        return new PerfilResponse(
+                beneficiario.getId(),
+                beneficiario.getCpf(),
+                beneficiario.getCelular(),
+                beneficiario.getTelefone(),
+                beneficiario.getEmail(),
+                beneficiario.getNome(),
+                beneficiario.getEndereco(),
+                beneficiario.getLogin()
+        );
     }
 
     public void deletar(Beneficiario beneficiario){

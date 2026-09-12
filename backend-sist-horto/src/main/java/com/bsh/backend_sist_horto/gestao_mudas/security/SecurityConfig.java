@@ -55,22 +55,22 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ======================
-                        // BENEFICIARIO OU ADMIN
+                        // BENEFICIARIO OU ADMINISTRADOR
                         // ======================
                         .requestMatchers(
                                 "/solicitacoes/**"
-                        ).hasAnyRole("BENEFICIARIO", "ADMIN")
+                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
 
                         .requestMatchers(
-                                "/beneficiario/me/**"
-                        ).hasAnyRole("BENEFICIARIO", "ADMIN")
+                                "/perfil/**"
+                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
 
                         .requestMatchers(
                                 "/auth/atualizar/**"
-                        ).hasAnyRole("BENEFICIARIO", "ADMIN")
+                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
 
                         // ======================
-                        // SOMENTE ADMIN
+                        // SOMENTE ADMINISTRADOR
                         // ======================
                         .requestMatchers(
                                 HttpMethod.POST,
@@ -98,7 +98,7 @@ public class SecurityConfig {
                         ).hasRole("ADMINISTRADOR")
 
                         .requestMatchers(
-                                "/beneficiario/**"
+                                "/beneficiarios/**"
                         ).hasRole("ADMINISTRADOR")
 
                         .anyRequest()

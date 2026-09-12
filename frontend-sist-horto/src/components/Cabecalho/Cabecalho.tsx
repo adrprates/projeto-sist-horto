@@ -33,7 +33,7 @@ function Cabecalho() {
           <ClipboardList size={18} />
           Minhas Solicitações
         </a>
-        <a href="#">
+        <a href="/perfil">
           <User size={18} />
           Meu Perfil
         </a>
