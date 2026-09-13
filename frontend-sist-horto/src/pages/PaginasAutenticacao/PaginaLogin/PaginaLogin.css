@@ -1,0 +1,78 @@
+.pagina-autenticacao {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fundo-suave);
+  padding: 24px;
+}
+
+.cartao-autenticacao {
+  width: 100%;
+  max-width: 380px;
+  background: var(--branco);
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar-logo {
+  background: var(--verde) !important;
+  width: 56px !important;
+  height: 56px !important;
+  margin-bottom: 8px;
+}
+
+.titulo-autenticacao {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--verde);
+  margin: 4px 0 0;
+}
+
+.subtitulo-autenticacao {
+  font-size: 14px;
+  color: var(--cinza);
+  margin: 4px 0 24px;
+}
+
+.alerta-autenticacao {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.formulario-autenticacao {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.botao-autenticacao {
+  margin-top: 16px !important;
+  margin-bottom: 8px !important;
+  padding: 10px !important;
+}
+
+.rodape-autenticacao {
+  text-align: center;
+  font-size: 13px;
+  color: var(--cinza);
+  margin-top: 8px;
+}
+
+.link-autenticacao {
+  font-weight: 600;
+  color: var(--verde) !important;
+  text-decoration: none;
+}
+
+.link-autenticacao:hover {
+  text-decoration: underline;
+}

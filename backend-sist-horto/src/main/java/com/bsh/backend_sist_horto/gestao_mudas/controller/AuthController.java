@@ -6,6 +6,7 @@ import com.bsh.backend_sist_horto.gestao_mudas.record.RegisterRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.record.TokenResponse;
 import com.bsh.backend_sist_horto.gestao_mudas.security.JwtUtil;
 import com.bsh.backend_sist_horto.gestao_mudas.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,10 +40,12 @@ public class AuthController {
         return new TokenResponse(token);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/registro")
     @ResponseStatus(HttpStatus.CREATED)
-    public String register(@RequestBody RegisterRequest registerRequest) {
-        authService.registrar(registerRequest);
+    public String register(
+            @Valid @RequestBody RegisterRequest request) {
+
+        authService.registrar(request);
         return "Beneficiário registrado com sucesso";
     }
 

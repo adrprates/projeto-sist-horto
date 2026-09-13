@@ -5,8 +5,10 @@ import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.record.AtualizarCredenciaisRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.record.RegisterRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.BeneficiarioRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService {
@@ -22,11 +24,19 @@ public class AuthService {
     public void registrar(RegisterRequest registroRequest) {
 
         if (beneficiarioRepository.existsByCpf(registroRequest.cpf())) {
-            throw new RuntimeException("CPF já cadastrado");
+            System.out.println("CPF DUPLICADO");
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "CPF já cadastrado"
+            );
         }
 
-        if(beneficiarioRepository.existsByLogin(registroRequest.login())) {
-            throw new RuntimeException("Login já cadastrado");
+        if (beneficiarioRepository.existsByLogin(registroRequest.login())) {
+            System.out.println("LOGIN DUPLICADO");
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Login já cadastrado"
+            );
         }
 
         Beneficiario beneficiario = new Beneficiario();

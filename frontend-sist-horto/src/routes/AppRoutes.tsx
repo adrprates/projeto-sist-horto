@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import CatalogoMudas from '../pages/CatalogoMudas/CatalogoMudas';
 import FormularioMuda from '../pages/FormularioMuda/FormularioMuda';
-import { PaginaLogin } from '../pages/PaginaLogin';
+import { PaginaLogin } from '../pages/PaginasAutenticacao/PaginaLogin/PaginaLogin';
 import PaginaPerfil from '../pages/PaginaPerfil/PaginaPerfil';
-import { PaginaForbidden } from '../pages/PaginaForbidden';
-import { PaginaNotFound } from '../pages/PaginaNotFound';
+import { PaginaForbidden } from '../pages/PaginasAutenticacao/PaginaForbidden';
+import { PaginaNotFound } from '../pages/PaginasAutenticacao/PaginaNotFound';
 import { ProtectedRoute } from './ProtectedRoute';
 import ListaBeneficiarios from '../pages/ListaBeneficiarios/ListaBeneficiarios';
+import { PaginaRegistro } from '../pages/PaginasAutenticacao/PaginaRegistro/PaginaRegistro';
 
 export const AppRoutes = () => {
   return (
@@ -16,6 +17,7 @@ export const AppRoutes = () => {
     {/* Públicas */}
     <Route path="/" element={<CatalogoMudas />} />
     <Route path="/login" element={<PaginaLogin />} />
+    <Route path = "/registro" element = {<PaginaRegistro />} />
     <Route path="/forbidden" element={<PaginaForbidden />} />
 
     {/* Beneficiário e Admin */}

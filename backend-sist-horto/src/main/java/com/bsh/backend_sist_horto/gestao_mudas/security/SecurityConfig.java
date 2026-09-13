@@ -46,7 +46,7 @@ public class SecurityConfig {
                         // ======================
                         .requestMatchers(
                                 "/auth/login",
-                                "/auth/register"
+                                "/auth/registro"
                         ).permitAll()
 
                         .requestMatchers(

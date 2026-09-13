@@ -1,0 +1,22 @@
+@import "../PaginaLogin/PaginaLogin.css";
+
+.cartao-autenticacao-largo {
+  max-width: 560px;
+}
+
+.grade-registro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.campo-largura-total {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .grade-registro {
+    grid-template-columns: 1fr;
+  }
+}
