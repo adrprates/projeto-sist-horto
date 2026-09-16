@@ -1,6 +1,6 @@
 package com.bsh.backend_sist_horto.gestao_mudas.controller;
 
-import com.bsh.backend_sist_horto.gestao_mudas.record.AtualizarCredenciaisRequest;
+import com.bsh.backend_sist_horto.gestao_mudas.record.AtualizarSenhaRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.record.LoginRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.record.RegisterRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.record.TokenResponse;
@@ -49,11 +49,16 @@ public class AuthController {
         return "Beneficiário registrado com sucesso";
     }
 
-    @PutMapping("/atualizar/{id}")
-    public String atualizar(
-            @PathVariable Long id,
-            @RequestBody AtualizarCredenciaisRequest atualizarCredenciaisRequest) {
-        authService.atualizarCredenciais(id, atualizarCredenciaisRequest);
-        return "Beneficiário atualizado com sucesso";
+    @PutMapping("/atualizar-senha")
+    public String atualizarSenha(
+            Authentication authentication,
+            @RequestBody AtualizarSenhaRequest request) {
+
+        authService.atualizarSenha(
+                authentication,
+                request
+        );
+
+        return "Senha alterada com sucesso";
     }
 }

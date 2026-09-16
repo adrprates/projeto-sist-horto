@@ -5,16 +5,17 @@ import type { AtualizarPerfil } from "../../types/AtualizarPerfil";
 import { obterPerfil, atualizarPerfil } from "../../api/perfilService";
 import Cabecalho from "../../components/Cabecalho/Cabecalho";
 import Rodape from "../../components/Rodape/Rodape";
+import ModalAlterarSenha from "../../components/ModalAlterarSenha/ModalAlterarSenha";
 import "./PaginaPerfil.css";
 
 function PaginaPerfil() {
   const [perfil, setPerfil] = useState<Perfil>({});
   const [perfilOriginal, setPerfilOriginal] = useState<Perfil>({});
-
   const [carregando, setCarregando] = useState(true);
   const [editando, setEditando] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
+  const [modalSenhaAberto, setModalSenhaAberto] = useState(false);
 
   useEffect(() => {
     obterPerfil()
@@ -73,8 +74,7 @@ function PaginaPerfil() {
   }
 
   function handleAlterarSenha() {
-    //ainda será implementado
-    console.log("Abrir fluxo de alteração de senha");
+    setModalSenhaAberto(true);
   }
 
   if (carregando) {
@@ -198,7 +198,9 @@ function PaginaPerfil() {
           </button>
         </div>
       </main>
-
+      {modalSenhaAberto && (
+        <ModalAlterarSenha aoFechar={() => setModalSenhaAberto(false)} />
+      )}
       <Rodape />
     </div>
   );

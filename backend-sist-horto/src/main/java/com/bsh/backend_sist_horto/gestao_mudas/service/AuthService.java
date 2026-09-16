@@ -2,10 +2,11 @@ package com.bsh.backend_sist_horto.gestao_mudas.service;
 
 import com.bsh.backend_sist_horto.gestao_mudas.enums.Role;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
-import com.bsh.backend_sist_horto.gestao_mudas.record.AtualizarCredenciaisRequest;
+import com.bsh.backend_sist_horto.gestao_mudas.record.AtualizarSenhaRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.record.RegisterRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.BeneficiarioRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,7 +25,6 @@ public class AuthService {
     public void registrar(RegisterRequest registroRequest) {
 
         if (beneficiarioRepository.existsByCpf(registroRequest.cpf())) {
-            System.out.println("CPF DUPLICADO");
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "CPF já cadastrado"
@@ -32,11 +32,22 @@ public class AuthService {
         }
 
         if (beneficiarioRepository.existsByLogin(registroRequest.login())) {
-            System.out.println("LOGIN DUPLICADO");
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Login já cadastrado"
             );
+        }
+
+        if(registroRequest.senha().length() < 6) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "A senha deve ter pelo menos 6 caracteres"
+            );
+        }
+
+        if(!registroRequest.senha().equals(registroRequest.confirmarSenha())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "As senhas não coincidem");
         }
 
         Beneficiario beneficiario = new Beneficiario();
@@ -53,12 +64,12 @@ public class AuthService {
         beneficiarioRepository.save(beneficiario);
     }
 
-    public void atualizarCredenciais(
-            Long idBeneficiario,
-            AtualizarCredenciaisRequest request) {
+    public void atualizarSenha(
+            Authentication authentication,
+            AtualizarSenhaRequest request) {
 
         Beneficiario beneficiario = beneficiarioRepository
-                .findById(idBeneficiario)
+                .findByLogin(authentication.getName())
                 .orElseThrow(() ->
                         new RuntimeException("Usuário não encontrado"));
 
@@ -69,20 +80,19 @@ public class AuthService {
             throw new RuntimeException("Senha atual inválida");
         }
 
-        if (!beneficiario.getLogin().equals(request.novoLogin())
-                && beneficiarioRepository.existsByLogin(request.novoLogin())) {
-
-            throw new RuntimeException("Novo login já está em uso");
+        if(request.novaSenha().length() < 6) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "A nova senha deve ter pelo menos 6 caracteres"
+            );
         }
 
-        beneficiario.setLogin(request.novoLogin());
-
-        if (request.novaSenha() != null
-                && !request.novaSenha().isBlank()) {
-
-            beneficiario.setSenha(
-                    passwordEncoder.encode(request.novaSenha()));
+        if(!request.novaSenha().equals(request.confirmarNovaSenha())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "As senhas não coincidem");
         }
+
+        beneficiario.setSenha(passwordEncoder.encode(request.novaSenha()));
 
         beneficiarioRepository.save(beneficiario);
     }

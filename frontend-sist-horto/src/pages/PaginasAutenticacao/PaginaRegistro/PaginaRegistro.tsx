@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { extrairMensagemErro } from "../../../utils/extrairMensagemErro";
 import { registrarUsuario } from "../../../api/authService";
 import type { RegisterRequest } from "../../../api/authService";
 import { Leaf } from "lucide-react";
@@ -35,16 +35,6 @@ export const PaginaRegistro = () => {
     event.preventDefault();
     setErro("");
 
-    if (campos.senha !== campos.confirmarSenha) {
-      setErro("As senhas não coincidem.");
-      return;
-    }
-
-    if (campos.senha.length < 6) {
-      setErro("A senha deve ter pelo menos 6 caracteres.");
-      return;
-    }
-
     const dadosParaEnviar: RegisterRequest = {
       cpf: campos.cpf,
       celular: campos.celular,
@@ -54,6 +44,7 @@ export const PaginaRegistro = () => {
       endereco: campos.endereco,
       login: campos.login,
       senha: campos.senha,
+      confirmarSenha: campos.confirmarSenha,
     };
 
     setEnviando(true);
@@ -67,17 +58,9 @@ export const PaginaRegistro = () => {
             "Cadastro realizado com sucesso! Faça login para continuar.",
         },
       });
-
     } catch (erro) {
-
-       if (axios.isAxiosError(erro)) {
-          setErro(
-            erro.response?.data?.message ??
-            "Não foi possível concluir o cadastro."
-          );
-      } else {
-          setErro("Erro inesperado.");
-      }
+      const msg = extrairMensagemErro(erro);
+      setErro(msg === "Ocorreu um erro. Tente novamente." ? "Não foi possível concluir o cadastro." : msg);
 
       console.error(erro);
     } finally {
