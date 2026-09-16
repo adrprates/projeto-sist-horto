@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { extrairMensagemErro } from "../../../utils/extrairMensagemErro";
 import { registrarUsuario } from "../../../api/authService";
 import type { RegisterRequest } from "../../../api/authService";
 import { Leaf } from "lucide-react";
@@ -59,9 +58,7 @@ export const PaginaRegistro = () => {
         },
       });
     } catch (erro) {
-      const msg = extrairMensagemErro(erro);
-      setErro(msg === "Ocorreu um erro. Tente novamente." ? "Não foi possível concluir o cadastro." : msg);
-
+      setErro("Não foi possível concluir o cadastro. Por favor, tente novamente.");
       console.error(erro);
     } finally {
       setEnviando(false);

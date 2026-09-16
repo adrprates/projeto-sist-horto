@@ -8,5 +8,5 @@ export interface DadosBeneficiario {
     telefone?: string;
     email?: string;
     nome?: string;
-    endereo?: string;
+    endereco?: string;
 }

@@ -2,7 +2,6 @@ import { useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { atualizarSenha } from "../../api/authService";
-import { extrairMensagemErro } from "../../utils/extrairMensagemErro";
 import "./ModalAlterarSenha.css";
 
 interface ModalAlterarSenhaProps {
@@ -43,7 +42,7 @@ function ModalAlterarSenha({ aoFechar }: ModalAlterarSenhaProps) {
       await atualizarSenha({ senhaAtual, novaSenha, confirmarNovaSenha });
       setSucesso(true);
     } catch (err) {
-      setErro(extrairMensagemErro(err));
+      setErro("Erro ao atualizar a senha. Por favor, tente novamente.");
     } finally {
       setEnviando(false);
     }

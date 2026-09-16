@@ -101,6 +101,10 @@ public class SecurityConfig {
                                 "/beneficiarios/**"
                         ).hasRole("ADMINISTRADOR")
 
+                        .requestMatchers(
+                                "/parametros/**"
+                        ).hasRole("ADMINISTRADOR")
+
                         .anyRequest()
                         .authenticated()
                 )

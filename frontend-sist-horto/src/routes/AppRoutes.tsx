@@ -8,6 +8,8 @@ import { PaginaNotFound } from '../pages/PaginasAutenticacao/PaginaNotFound';
 import { ProtectedRoute } from './ProtectedRoute';
 import ListaBeneficiarios from '../pages/ListaBeneficiarios/ListaBeneficiarios';
 import { PaginaRegistro } from '../pages/PaginasAutenticacao/PaginaRegistro/PaginaRegistro';
+import FormularioParametroAnual from '../pages/FormularioParametroAnual/FormularioParametroAnual';
+import ListaParametrosAnuais from '../pages/ListaParametrosAnuais/ListaParametrosAnuais';
 
 export const AppRoutes = () => {
   return (
@@ -43,6 +45,9 @@ export const AppRoutes = () => {
       <Route path="/mudas/nova" element={<FormularioMuda />} />
       <Route path="/mudas/editar/:id" element={<FormularioMuda />} />
       <Route path="/beneficiarios" element={<ListaBeneficiarios />} />
+      <Route path="/parametros" element={<ListaParametrosAnuais />} />
+      <Route path="/parametros/novo" element={<FormularioParametroAnual />} />
+      <Route path="/parametros/:ano/editar" element={<FormularioParametroAnual />} />
     </Route>
 
     <Route path="*" element={<PaginaNotFound />} />
