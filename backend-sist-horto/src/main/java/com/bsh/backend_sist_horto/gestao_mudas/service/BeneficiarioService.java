@@ -72,6 +72,17 @@ public class BeneficiarioService {
         return beneficiario;
     }
 
+    public Beneficiario getBeneficiarioPorLogin(String login){
+        Optional<Beneficiario> beneficiarioOptional = beneficiarioRepository.findByLogin(login);
+        Beneficiario beneficiario = null;
+        if(beneficiarioOptional.isPresent()){
+            beneficiario = beneficiarioOptional.get();
+        }  else {
+            throw new RuntimeException("Beneficiário não encontrado para o login: " + login);
+        }
+        return beneficiario;
+    }
+
     public PerfilResponse getBeneficiarioPerfil(String login){
         Beneficiario beneficiario = beneficiarioRepository
                 .findByLogin(login)

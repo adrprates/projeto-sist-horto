@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/mudas")
 @CrossOrigin("*")
-public class MudaController {
+public class    MudaController {
 
     private final MudaService mudaService;
 

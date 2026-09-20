@@ -62,6 +62,28 @@ public class SecurityConfig {
                         ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
 
                         .requestMatchers(
+                                HttpMethod.GET,
+                                "/parametros/**"
+                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
+
+                        .requestMatchers(
+                                "/perfil/**"
+                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
+
+                        .requestMatchers(
+                                "/auth/atualizar/**"
+                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
+
+                        .requestMatchers(
+                                "/solicitacoes/rascunho/**"
+                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
+
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/solicitacoes/*/enviar"
+                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
+
+                        .requestMatchers(
                                 "/perfil/**"
                         ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
 

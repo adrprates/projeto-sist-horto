@@ -10,6 +10,7 @@ import ListaBeneficiarios from '../pages/ListaBeneficiarios/ListaBeneficiarios';
 import { PaginaRegistro } from '../pages/PaginasAutenticacao/PaginaRegistro/PaginaRegistro';
 import FormularioParametroAnual from '../pages/FormularioParametroAnual/FormularioParametroAnual';
 import ListaParametrosAnuais from '../pages/ListaParametrosAnuais/ListaParametrosAnuais';
+import PaginaSolicitacao from '../pages/PaginaSolicitacao/PaginaSolicitacao';
 
 export const AppRoutes = () => {
   return (
@@ -30,7 +31,7 @@ export const AppRoutes = () => {
         />
       }
     >
-      {/* <Route path="/solicitacoes" element={<PaginaSolicitacoes />} /> */}
+      <Route path="/solicitacao" element={<PaginaSolicitacao />} />
       {<Route path="/perfil" element={<PaginaPerfil/>} />}
     </Route>
 

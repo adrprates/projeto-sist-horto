@@ -29,7 +29,7 @@ function Cabecalho() {
           <Leaf size={18} />
           Catálogo de Mudas
         </a>
-        <a href="#">
+        <a href="/solicitacao">
           <ClipboardList size={18} />
           Minhas Solicitações
         </a>

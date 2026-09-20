@@ -1,28 +1,36 @@
-import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
 import type { MudaFilter } from "../../types/MudaFilter";
+import type { ParametroAnualDisponivel } from "../../types/ParametroAnualDisponivel";
 import { listarMudas } from "../../api/mudaService";
 import { adicionarQuantidade, removerQuantidade } from "../../api/estoqueService";
+import { buscarRascunho, adicionarItemRascunho, buscarSaldoAtual } from "../../api/solicitacaoService";
 import Cabecalho from "../../components/Cabecalho/Cabecalho";
 import Rodape from "../../components/Rodape/Rodape";
 import FiltrosCatalogo from "../../components/FiltrosCatalogo/FiltrosCatalogo";
 import CardMuda from "../../components/CardMuda/CardMuda";
+import CardSaldoParametro from "../../components/CardSaldoParametro/CardSaldoParametro";
+import AvisoAutenticacaoNecessaria from "../../components/AvisoAutenticacaoNecessaria/AvisoAutenticacaoNecessaria";
+
 import "./CatalogoMudas.css";
 
 export default function CatalogoMudas() {
   const navigate = useNavigate();
+  const { isAuthenticated, hasRole } = useAuth();
+  
+  const isAdmin = hasRole(["ADMINISTRADOR"]);
+  const isBeneficiario = hasRole(["BENEFICIARIO"]);
+  const podeSolicitar = isAuthenticated && (isBeneficiario || isAdmin);
+
   const [mudas, setMudas] = useState<DadosMudaResumo[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [filtro, setFiltro] = useState<MudaFilter>({});
-  const [idsNaSolicitacao, setIdsNaSolicitacao] = useState<number[]>([]);
-  const { isAuthenticated, hasRole } = useAuth();
-  const isAdmin = hasRole(["ADMINISTRADOR"]);
-  const isBeneficiario = hasRole(["BENEFICIARIO"]);
-  const podeSolicitar =
-  isAuthenticated &&
-  (isBeneficiario || isAdmin);
+
+  const [saldo, setSaldo] = useState<ParametroAnualDisponivel | null>(null);
+  const [carregandoSaldo, setCarregandoSaldo] = useState(podeSolicitar);
+  const [quantidadesNaSolicitacao, setQuantidadesNaSolicitacao] = useState<Record<number, number>>({});
 
   useEffect(() => {
     setCarregando(true);
@@ -31,35 +39,54 @@ export default function CatalogoMudas() {
       .finally(() => setCarregando(false));
   }, [filtro]);
 
-  function alternarSolicitacao(muda: DadosMudaResumo) {
-    setIdsNaSolicitacao((idsAtuais) =>
-      idsAtuais.includes(muda.id)
-        ? idsAtuais.filter((id) => id !== muda.id)
-        : [...idsAtuais, muda.id]
-    );
+  useEffect(() => {
+    if (!podeSolicitar) return;
+
+    setCarregandoSaldo(true);
+    buscarSaldoAtual()
+      .then(setSaldo)
+      .catch(() => setSaldo(null))
+      .finally(() => setCarregandoSaldo(false));
+  }, [podeSolicitar]);
+
+  useEffect(() => {
+    carregarQuantidadesNaSolicitacao();
+  }, [podeSolicitar]);
+
+  async function handleAdicionarSolicitacao(muda: DadosMudaResumo, quantidade: number) {
+    await adicionarItemRascunho({ mudaId: muda.id, quantidade });
+    carregarQuantidadesNaSolicitacao();
   }
 
-async function handleAdicionarEstoque(
-  muda: DadosMudaResumo,
-  quantidade: number
-) {
-  await adicionarQuantidade(muda.id, quantidade);
+  async function handleAdicionarEstoque(muda: DadosMudaResumo, quantidade: number) {
+    await adicionarQuantidade(muda.id, quantidade);
+    const mudasAtualizadas = await listarMudas(filtro);
+    setMudas(mudasAtualizadas);
+  }
 
-  const mudasAtualizadas = await listarMudas(filtro);
-  setMudas(mudasAtualizadas);
-}
+  async function handleRemoverEstoque(muda: DadosMudaResumo, quantidade: number) {
+    await removerQuantidade(muda.id, quantidade);
+    const mudasAtualizadas = await listarMudas(filtro);
+    setMudas(mudasAtualizadas);
+  }
 
-async function handleRemoverEstoque(
-  muda: DadosMudaResumo,
-  quantidade: number
-) {
-  await removerQuantidade(muda.id, quantidade);
+  function carregarQuantidadesNaSolicitacao() {
+    if (!podeSolicitar) {
+      return;
+    }
 
-  const mudasAtualizadas = await listarMudas(filtro);
-  setMudas(mudasAtualizadas);
-}
+    buscarRascunho()
+      .then((solicitacao) => {
+        const mapa: Record<number, number> = {};
+        solicitacao.itens.forEach((item) => {
+          mapa[item.muda.id] = item.quantidade;
+        });
+        setQuantidadesNaSolicitacao(mapa);
+      })
+      .catch(() => setQuantidadesNaSolicitacao({}));
+  }
 
-return (
+  return (
     <div>
       <Cabecalho />
 
@@ -69,6 +96,14 @@ return (
 
       <main className="container-catalogo">
         <h2 className="titulo-catalogo">Catálogo de Mudas</h2>
+
+        {!podeSolicitar && (
+          <AvisoAutenticacaoNecessaria mensagem="Para fazer o pedido de mudas, é necessário fazer login no sistema." />
+        )}
+
+        {podeSolicitar && (
+          <CardSaldoParametro saldo={saldo} carregando={carregandoSaldo} />
+        )}
 
         <FiltrosCatalogo
           filtro={filtro}
@@ -88,15 +123,15 @@ return (
             <CardMuda
               key={muda.id}
               muda={muda}
-              estaNaSolicitacao={idsNaSolicitacao.includes(muda.id)}
-              aoAlternarSolicitacao={alternarSolicitacao}
               isAdmin={isAdmin}
               podeSolicitar={podeSolicitar}
+              quantidadeJaSolicitada={quantidadesNaSolicitacao[muda.id] ?? 0}
+              aoAdicionarSolicitacao={handleAdicionarSolicitacao}
               aoAdicionarEstoque={handleAdicionarEstoque}
               aoRemoverEstoque={handleRemoverEstoque}
               aoGerenciar={(mudaSelecionada) =>
                 navigate(`/mudas/editar/${mudaSelecionada.id}`)
-  }
+              }
             />
           ))}
         </div>

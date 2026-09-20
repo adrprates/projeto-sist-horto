@@ -1,5 +1,6 @@
 package com.bsh.backend_sist_horto.gestao_mudas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -18,6 +19,7 @@ public class ItemSolicitacao {
 
     @ManyToOne
     @JoinColumn(name = "id_solicitacao", nullable = false)
+    @JsonIgnore
     private Solicitacao solicitacao;
 
     @ManyToOne
