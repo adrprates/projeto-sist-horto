@@ -23,15 +23,18 @@ public class SolicitacaoService {
     private final MudaRepository mudaRepository;
 
     private final EstoqueService estoqueService;
+    private final EtapaService etapaService;
 
     public SolicitacaoService(SolicitacaoRepository solicitacaoRepository,
                               ParametroAnualRepository parametroAnualRepository,
                               EstoqueService estoqueService,
-                              MudaRepository mudaRepository) {
+                              MudaRepository mudaRepository,
+                              EtapaService etapaService) {
         this.solicitacaoRepository = solicitacaoRepository;
         this.parametroAnualRepository = parametroAnualRepository;
         this.estoqueService = estoqueService;
         this.mudaRepository = mudaRepository;
+        this.etapaService = etapaService;
     }
 
     public List<Solicitacao> listarTodas() {
@@ -121,7 +124,7 @@ public class SolicitacaoService {
 
         novaSolicitacao.setBeneficiario(beneficiario);
         novaSolicitacao.setParametroAnual(parametroAnual);
-        novaSolicitacao.setStatusSolicitacao(StatusSolicitacao.RASCUNHO);
+        novaSolicitacao.setStatusAtual(StatusSolicitacao.RASCUNHO);
         novaSolicitacao.setDataSolicitacao(LocalDate.now());
 
         return solicitacaoRepository.save(novaSolicitacao);
@@ -131,7 +134,7 @@ public class SolicitacaoService {
     public Solicitacao enviarSolicitacao(Long id) {
        Solicitacao solicitacao = getSolicitacaoPorId(id);
 
-       if(solicitacao.getStatusSolicitacao() != StatusSolicitacao.RASCUNHO){
+       if(solicitacao.getStatusAtual() != StatusSolicitacao.RASCUNHO){
            throw new RuntimeException("A solicitação já foi enviada.");
        }
 
@@ -180,19 +183,15 @@ public class SolicitacaoService {
                 solicitacao.getItens()
         );
 
-        solicitacao.setStatusSolicitacao(
+        solicitacao.setStatusAtual(
                 StatusSolicitacao.PENDENTE
         );
+
+        etapaService.salvar(solicitacao, StatusSolicitacao.PENDENTE,"Sua solicitação foi enviada para análise.");
 
         return solicitacaoRepository.save(
                 solicitacao
         );
-    }
-
-    @Transactional
-    public void atualizarStatus(Long idSolicitacao, StatusSolicitacao statusSolicitacao) {
-        Solicitacao solicitacao = getSolicitacaoPorId(idSolicitacao);
-        solicitacao.setStatusSolicitacao(statusSolicitacao);
     }
 
     public void validarLimites(ParametroAnual parametroAnual, List<ItemSolicitacao> itensSolicitacao) {

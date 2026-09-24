@@ -4,7 +4,9 @@ public enum StatusSolicitacao {
     RASCUNHO,
     PENDENTE,
     APROVADA,
+    AGUARDANDO_CONFIRMACAO,
     PRONTA_PARA_RETIRADA,
     ENTREGUE,
-    REJEITADA
+    REJEITADA,
+    EXPIRADA
 }

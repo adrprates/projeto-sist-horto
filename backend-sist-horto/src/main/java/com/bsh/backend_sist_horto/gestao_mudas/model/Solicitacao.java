@@ -31,7 +31,7 @@ public class Solicitacao {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private StatusSolicitacao statusSolicitacao;
+    private StatusSolicitacao statusAtual;
 
     @ManyToOne
     @JoinColumn(name = "ano_solicitacao", nullable = false)
@@ -43,6 +43,13 @@ public class Solicitacao {
 
     @OneToMany(mappedBy = "solicitacao", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemSolicitacao> itens = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "solicitacao",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<EtapaSolicitacao> historicos = new ArrayList<>();
 
     public void adicionarItem(ItemSolicitacao item) {
         itens.add(item);

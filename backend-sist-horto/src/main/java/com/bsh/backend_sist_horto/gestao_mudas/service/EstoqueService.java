@@ -15,17 +15,6 @@ public class EstoqueService {
         this.estoqueRepository = estoqueRepository;
     }
 
-    public Estoque getEstoquePorId(Long idMuda) {
-        Optional<Estoque> estoqueOptional = estoqueRepository.findById(idMuda);
-        Estoque estoque = null;
-        if (estoqueOptional.isPresent()) {
-            estoque = estoqueOptional.get();
-        } else {
-            throw new RuntimeException("Estoque não encontrado para Muda com o id: " + idMuda);
-        }
-        return estoque;
-    }
-
     public Estoque atualizarEstoque(Long idMuda, Integer quantidade) {
         Estoque estoque = estoqueRepository.findById(idMuda).orElseThrow(() ->
                 new RuntimeException(
@@ -73,6 +62,17 @@ public class EstoqueService {
         }
         estoque.setQuantidade(novaQuantidade);
         estoqueRepository.save(estoque);
+    }
+
+    public Estoque getEstoquePorId(Long idMuda) {
+        Optional<Estoque> estoqueOptional = estoqueRepository.findById(idMuda);
+        Estoque estoque = null;
+        if (estoqueOptional.isPresent()) {
+            estoque = estoqueOptional.get();
+        } else {
+            throw new RuntimeException("Estoque não encontrado para Muda com o id: " + idMuda);
+        }
+        return estoque;
     }
 
     public boolean verificarDisponibilidade(Long idMuda, Integer quantidade) {
