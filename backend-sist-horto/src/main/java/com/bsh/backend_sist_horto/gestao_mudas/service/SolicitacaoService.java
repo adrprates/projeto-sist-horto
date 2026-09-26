@@ -1,6 +1,7 @@
 package com.bsh.backend_sist_horto.gestao_mudas.service;
 
 import com.bsh.backend_sist_horto.gestao_mudas.dto.ParametroAnualDisponivel;
+import com.bsh.backend_sist_horto.gestao_mudas.dto.SolicitacaoBeneficiarioResumo;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.SolicitacaoFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.enums.CategoriaMuda;
 import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
@@ -13,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 
 @Service
@@ -101,7 +103,7 @@ public class SolicitacaoService {
     }
 
     public Solicitacao buscarOuCriarRascunho(Beneficiario beneficiario) {
-        Optional <Solicitacao> solicitacaoRascunho = solicitacaoRepository.findByBeneficiarioAndStatusSolicitacao(
+        Optional <Solicitacao> solicitacaoRascunho = solicitacaoRepository.findByBeneficiarioAndStatusAtual(
                 beneficiario, StatusSolicitacao.RASCUNHO
         );
 
@@ -329,6 +331,35 @@ public class SolicitacaoService {
         solicitacao.getItens().remove(itemEncontrado);
 
         return solicitacaoRepository.save(solicitacao);
+    }
+
+    public Optional<Solicitacao> buscarSolicitacaoDoAno(Beneficiario beneficiario) {
+
+        Integer anoAtual = Year.now().getValue();
+
+        return solicitacaoRepository
+                .findByBeneficiarioIdAndParametroAnualAno(
+                        beneficiario.getId(),
+                        anoAtual
+                );
+    }
+
+    public List<SolicitacaoBeneficiarioResumo> listarSolicitacoesBeneficiario(
+            Beneficiario beneficiario
+    ) {
+
+        List<Solicitacao> solicitacoes =
+                solicitacaoRepository.findByBeneficiarioIdOrderByParametroAnualAnoDesc(
+                        beneficiario.getId()
+                );
+
+        List<SolicitacaoBeneficiarioResumo> lista = new ArrayList<>();
+
+        for (Solicitacao solicitacao : solicitacoes) {
+            lista.add(new SolicitacaoBeneficiarioResumo(solicitacao));
+        }
+
+        return lista;
     }
 
     public ParametroAnualDisponivel calcularSaldo(

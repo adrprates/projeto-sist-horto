@@ -1,14 +1,17 @@
 package com.bsh.backend_sist_horto.gestao_mudas.controller;
 
-import com.bsh.backend_sist_horto.gestao_mudas.dto.AtualizarQuantidadeRascunhoRequest;
-import com.bsh.backend_sist_horto.gestao_mudas.dto.MontarSolicitacaoRequest;
-import com.bsh.backend_sist_horto.gestao_mudas.dto.ParametroAnualDisponivel;
+import com.bsh.backend_sist_horto.gestao_mudas.dto.*;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Solicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.service.BeneficiarioService;
+import com.bsh.backend_sist_horto.gestao_mudas.service.EtapaService;
 import com.bsh.backend_sist_horto.gestao_mudas.service.SolicitacaoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/solicitacoes")
@@ -17,11 +20,44 @@ public class SolicitacaoController {
 
     private final SolicitacaoService solicitacaoService;
     private final BeneficiarioService beneficiarioService;
+    private final EtapaService etapaoService;
 
     public SolicitacaoController(SolicitacaoService solicitacaoService,
-                                 BeneficiarioService beneficiarioService) {
+                                 BeneficiarioService beneficiarioService,
+                                 EtapaService etapaoService) {
         this.solicitacaoService = solicitacaoService;
         this.beneficiarioService = beneficiarioService;
+        this.etapaoService = etapaoService;
+    }
+
+    @GetMapping
+    public List<Solicitacao> listar(SolicitacaoFilter filtro) {
+
+        List<Solicitacao> resultado =
+                solicitacaoService.listarPorFiltro(filtro);
+
+        System.out.println("Quantidade: " + resultado.size());
+
+        for (Solicitacao solicitacao : resultado) {
+            System.out.println(
+                    solicitacao.getId() +
+                            " - " +
+                            solicitacao.getDataSolicitacao()
+            );
+        }
+
+        return resultado;
+    }
+
+    @GetMapping("/minhas-solicitacoes")
+    public List<SolicitacaoBeneficiarioResumo> listarMinhasSolicitacoes(
+            Authentication authentication
+    ) {
+        Beneficiario beneficiario = beneficiarioService
+                .getBeneficiarioPorLogin(authentication.getName());
+
+        return solicitacaoService
+                .listarSolicitacoesBeneficiario(beneficiario);
     }
 
     @PostMapping("/rascunho/adicionar")
@@ -104,5 +140,44 @@ public class SolicitacaoController {
         return solicitacaoService.buscarOuCriarRascunho(
                 beneficiario
         );
+    }
+
+    @GetMapping("/{id}")
+    public Solicitacao buscarPorId(
+            @PathVariable Long id
+    ) {
+        return solicitacaoService
+                .getSolicitacaoPorId(id);
+    }
+
+    @PostMapping("/{id}/etapas")
+    public Solicitacao atualizarEtapa(
+            @PathVariable Long id,
+            @RequestBody AtualizarEtapaRequest request
+    ) {
+
+        return etapaoService.atualizarEtapa(
+                id,
+                request.getStatus(),
+                request.getDescricao(),
+                request.getDataLimiteRetirada()
+        );
+    }
+
+    @GetMapping("/minha-solicitacao-atual")
+    public ResponseEntity<?> buscarSolicitacaoAtual(
+            Authentication authentication
+    ) {
+        Beneficiario beneficiario = beneficiarioService
+                .getBeneficiarioPorLogin(authentication.getName());
+
+        Optional<Solicitacao> solicitacao =
+                solicitacaoService.buscarSolicitacaoDoAno(beneficiario);
+
+        if (solicitacao.isPresent()) {
+            return ResponseEntity.ok(solicitacao.get());
+        }
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -44,7 +44,7 @@ public class DistribuicaoService {
         Solicitacao solicitacao = solicitacaoRepository.findById(solicitacaoId)
                 .orElseThrow(() -> new RuntimeException("Solicitação não encontrada para o id " + solicitacaoId));
 
-        if (solicitacao.getStatusSolicitacao()
+        if (solicitacao.getStatusAtual()
                 != StatusSolicitacao.PRONTA_PARA_RETIRADA) {
 
             throw new RuntimeException(
@@ -97,7 +97,7 @@ public class DistribuicaoService {
 
         Distribuicao distribuicaoSalva = distribuicaoRepository.save(distribuicao);
 
-        solicitacao.setStatusSolicitacao(StatusSolicitacao.ENTREGUE);
+        solicitacao.setStatusAtual(StatusSolicitacao.ENTREGUE);
 
         return distribuicaoSalva;
     }

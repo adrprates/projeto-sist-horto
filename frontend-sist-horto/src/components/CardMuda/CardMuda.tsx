@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PackageCheck, Package, Info, Lock } from "lucide-react";
+import { Package, Info, Lock, ClipboardCheck } from "lucide-react";
 import { isAxiosError } from "axios";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
 import { rotuloCategoria } from "../../types/CategoriaMuda";
@@ -39,6 +39,7 @@ interface CardMudaProps {
   muda: DadosMudaResumo;
   isAdmin: boolean;
   podeSolicitar: boolean;
+  solicitacaoBloqueada?: boolean;
   quantidadeJaSolicitada?: number;
   aoAdicionarSolicitacao?: (muda: DadosMudaResumo, quantidade: number) => Promise<void>;
   aoAdicionarEstoque?: (muda: DadosMudaResumo, quantidade: number) => void;
@@ -50,6 +51,7 @@ function CardMuda({
   muda,
   isAdmin,
   podeSolicitar,
+  solicitacaoBloqueada = false,
   quantidadeJaSolicitada = 0,
   aoAdicionarSolicitacao,
   aoAdicionarEstoque,
@@ -117,6 +119,13 @@ function CardMuda({
           Disponíveis: {muda.estoqueDisponivel}
         </p>
 
+        {podeSolicitar && !solicitacaoBloqueada && quantidadeJaSolicitada > 0 && (
+          <p className="card-ja-solicitado">
+            <ClipboardCheck size={14} />
+            Você já tem {quantidadeJaSolicitada} na solicitação
+          </p>
+        )}
+
         <div className="card-acoes">
           <button type="button" className="botao-detalhes" onClick={() => setModalAberto(true)}>
             <Info size={16} />
@@ -135,7 +144,19 @@ function CardMuda({
             </button>
           )}
 
-          {podeSolicitar && (
+          {podeSolicitar && solicitacaoBloqueada && (
+            <button
+              type="button"
+              className="botao-solicitacao botao-solicitacao-bloqueado"
+              onClick={() => navigate("/solicitacoes/historico")}
+              title="Você já possui uma solicitação enviada este ano"
+            >
+              <Lock size={14} />
+              Solicitação deste ano já enviada
+            </button>
+          )}
+
+          {podeSolicitar && !solicitacaoBloqueada && (
             <>
               {!semEstoque && (
                 <div className="card-quantidade-linha">
@@ -148,13 +169,6 @@ function CardMuda({
                     desabilitado={adicionando}
                   />
                 </div>
-              )}
-
-              {quantidadeJaSolicitada > 0 && (
-                <p className="card-ja-solicitado">
-                  <PackageCheck size={14} />
-                  Você já tem {quantidadeJaSolicitada} na solicitação
-                </p>
               )}
 
               {erroAdicionar && <p className="card-erro">{erroAdicionar}</p>}

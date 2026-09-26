@@ -4,22 +4,30 @@ import { useAuth } from "../../hooks/useAuth";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
 import type { MudaFilter } from "../../types/MudaFilter";
 import type { ParametroAnualDisponivel } from "../../types/ParametroAnualDisponivel";
+import type { SolicitacaoBeneficiarioResumo } from "../../types/SolicitacaoBeneficiarioResumo";
+import { StatusSolicitacao } from "../../types/StatusSolicitacao";
 import { listarMudas } from "../../api/mudaService";
 import { adicionarQuantidade, removerQuantidade } from "../../api/estoqueService";
-import { buscarRascunho, adicionarItemRascunho, buscarSaldoAtual } from "../../api/solicitacaoService";
+import {
+  buscarRascunho,
+  adicionarItemRascunho,
+  buscarSaldoAtual,
+  buscarSolicitacaoAtual,
+} from "../../api/solicitacaoService";
 import Cabecalho from "../../components/Cabecalho/Cabecalho";
 import Rodape from "../../components/Rodape/Rodape";
 import FiltrosCatalogo from "../../components/FiltrosCatalogo/FiltrosCatalogo";
 import CardMuda from "../../components/CardMuda/CardMuda";
 import CardSaldoParametro from "../../components/CardSaldoParametro/CardSaldoParametro";
 import AvisoAutenticacaoNecessaria from "../../components/AvisoAutenticacaoNecessaria/AvisoAutenticacaoNecessaria";
+import AvisoSolicitacaoExistente from "../../components/AvisoSolicitacaoExistente/AvisoSolicitacaoExistente";
 
 import "./CatalogoMudas.css";
 
 export default function CatalogoMudas() {
   const navigate = useNavigate();
   const { isAuthenticated, hasRole } = useAuth();
-  
+
   const isAdmin = hasRole(["ADMINISTRADOR"]);
   const isBeneficiario = hasRole(["BENEFICIARIO"]);
   const podeSolicitar = isAuthenticated && (isBeneficiario || isAdmin);
@@ -30,7 +38,12 @@ export default function CatalogoMudas() {
 
   const [saldo, setSaldo] = useState<ParametroAnualDisponivel | null>(null);
   const [carregandoSaldo, setCarregandoSaldo] = useState(podeSolicitar);
-  const [quantidadesNaSolicitacao, setQuantidadesNaSolicitacao] = useState<Record<number, number>>({});
+
+  const [solicitacaoExistente, setSolicitacaoExistente] =
+    useState<SolicitacaoBeneficiarioResumo | null>(null);
+  const [quantidadesNaSolicitacao, setQuantidadesNaSolicitacao] = useState<Record<number, number>>(
+    {}
+  );
 
   useEffect(() => {
     setCarregando(true);
@@ -42,20 +55,60 @@ export default function CatalogoMudas() {
   useEffect(() => {
     if (!podeSolicitar) return;
 
+    verificarSolicitacaoExistente();
+  }, [podeSolicitar]);
+
+  function verificarSolicitacaoExistente() {
+    buscarSolicitacaoAtual()
+      .then((solicitacao) => {
+        if (!solicitacao) {
+          setSolicitacaoExistente(null);
+          carregarSaldoEQuantidades();
+          return;
+        }
+
+        const jaEnviada = solicitacao.statusAtual !== StatusSolicitacao.RASCUNHO;
+
+        if (jaEnviada) {
+          setSolicitacaoExistente({
+            id: solicitacao.id,
+            ano: solicitacao.parametroAnual.ano,
+            statusAtual: solicitacao.statusAtual,
+            dataSolicitacao: solicitacao.dataSolicitacao,
+          });
+          setCarregandoSaldo(false);
+        } else {
+          setSolicitacaoExistente(null);
+          carregarSaldoEQuantidades();
+        }
+      })
+      .catch(() => {
+        setSolicitacaoExistente(null);
+        carregarSaldoEQuantidades();
+      });
+  }
+
+  function carregarSaldoEQuantidades() {
     setCarregandoSaldo(true);
     buscarSaldoAtual()
       .then(setSaldo)
       .catch(() => setSaldo(null))
       .finally(() => setCarregandoSaldo(false));
-  }, [podeSolicitar]);
 
-  useEffect(() => {
-    carregarQuantidadesNaSolicitacao();
-  }, [podeSolicitar]);
+    buscarRascunho()
+      .then((solicitacao) => {
+        const mapa: Record<number, number> = {};
+        solicitacao.itens.forEach((item) => {
+          mapa[item.muda.id] = item.quantidade;
+        });
+        setQuantidadesNaSolicitacao(mapa);
+      })
+      .catch(() => setQuantidadesNaSolicitacao({}));
+  }
 
   async function handleAdicionarSolicitacao(muda: DadosMudaResumo, quantidade: number) {
     await adicionarItemRascunho({ mudaId: muda.id, quantidade });
-    carregarQuantidadesNaSolicitacao();
+    carregarSaldoEQuantidades();
   }
 
   async function handleAdicionarEstoque(muda: DadosMudaResumo, quantidade: number) {
@@ -68,22 +121,6 @@ export default function CatalogoMudas() {
     await removerQuantidade(muda.id, quantidade);
     const mudasAtualizadas = await listarMudas(filtro);
     setMudas(mudasAtualizadas);
-  }
-
-  function carregarQuantidadesNaSolicitacao() {
-    if (!podeSolicitar) {
-      return;
-    }
-
-    buscarRascunho()
-      .then((solicitacao) => {
-        const mapa: Record<number, number> = {};
-        solicitacao.itens.forEach((item) => {
-          mapa[item.muda.id] = item.quantidade;
-        });
-        setQuantidadesNaSolicitacao(mapa);
-      })
-      .catch(() => setQuantidadesNaSolicitacao({}));
   }
 
   return (
@@ -101,7 +138,11 @@ export default function CatalogoMudas() {
           <AvisoAutenticacaoNecessaria mensagem="Para fazer o pedido de mudas, é necessário fazer login no sistema." />
         )}
 
-        {podeSolicitar && (
+        {podeSolicitar && solicitacaoExistente && (
+          <AvisoSolicitacaoExistente solicitacao={solicitacaoExistente} />
+        )}
+
+        {podeSolicitar && !solicitacaoExistente && (
           <CardSaldoParametro saldo={saldo} carregando={carregandoSaldo} />
         )}
 
@@ -125,6 +166,7 @@ export default function CatalogoMudas() {
               muda={muda}
               isAdmin={isAdmin}
               podeSolicitar={podeSolicitar}
+              solicitacaoBloqueada={solicitacaoExistente !== null}
               quantidadeJaSolicitada={quantidadesNaSolicitacao[muda.id] ?? 0}
               aoAdicionarSolicitacao={handleAdicionarSolicitacao}
               aoAdicionarEstoque={handleAdicionarEstoque}

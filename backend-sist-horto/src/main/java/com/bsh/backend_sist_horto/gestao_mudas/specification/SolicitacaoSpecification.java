@@ -38,7 +38,15 @@ public final class SolicitacaoSpecification {
 
     private static Specification<Solicitacao> statusSolicitacaoEquivalente(StatusSolicitacao statusSolicitacao) {
         return (root, query, builder) ->
-                builder.equal(root.get("statusSolicitacao"), statusSolicitacao);
+                builder.equal(root.get("statusAtual"), statusSolicitacao);
+    }
+
+    private static Specification<Solicitacao> excluirStatusSolicitacaoRascunhos() {
+        return (root, query, builder) ->
+                builder.notEqual(
+                        root.get("statusAtual"),
+                        StatusSolicitacao.RASCUNHO
+                );
     }
 
     private static Specification<Solicitacao> buscarPorAno(Integer ano) {
@@ -70,10 +78,11 @@ public final class SolicitacaoSpecification {
     public static Specification<Solicitacao> fromFilter(SolicitacaoFilter solicitacaoFilter) {
 
         if (solicitacaoFilter == null) {
-            return (root, query, builder) -> builder.conjunction();
+            return excluirStatusSolicitacaoRascunhos();
         }
 
-        Specification<Solicitacao> solicitacaoSpecification = (root, query, builder) -> builder.conjunction();
+        Specification<Solicitacao> solicitacaoSpecification =
+                excluirStatusSolicitacaoRascunhos();
 
         if (solicitacaoFilter.getDataInicial() != null && solicitacaoFilter.getDataFinal() != null) {
             solicitacaoSpecification = solicitacaoSpecification.and(

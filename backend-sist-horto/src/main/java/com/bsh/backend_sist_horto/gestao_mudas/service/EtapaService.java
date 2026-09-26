@@ -5,6 +5,7 @@ import com.bsh.backend_sist_horto.gestao_mudas.model.EtapaSolicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.model.ItemSolicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Solicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.EtapaSolicitacaoRepository;
+import com.bsh.backend_sist_horto.gestao_mudas.repository.SolicitacaoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,14 @@ public class EtapaService {
 
     private final EtapaSolicitacaoRepository etapaSolicitacaoRepository;
 
-    private final SolicitacaoService solicitacaoService;
+    private final SolicitacaoRepository solicitacaoRepository;
     private final EstoqueService estoqueService;
 
     public EtapaService(EtapaSolicitacaoRepository etapaSolicitacaoRepository,
-                        SolicitacaoService solicitacaoService,
+                        SolicitacaoRepository solicitacaoRepository,
                         EstoqueService estoqueService) {
         this.etapaSolicitacaoRepository = etapaSolicitacaoRepository;
-        this.solicitacaoService = solicitacaoService;
+        this.solicitacaoRepository = solicitacaoRepository;
         this.estoqueService = estoqueService;
     }
 
@@ -66,9 +67,10 @@ public class EtapaService {
             LocalDate dataLimiteRetirada
     ) {
 
-        Solicitacao solicitacao =
-                solicitacaoService.getSolicitacaoPorId(
-                        idSolicitacao
+        Solicitacao solicitacao = solicitacaoRepository
+                .findById(idSolicitacao)
+                .orElseThrow(() ->
+                        new RuntimeException("Solicitação não encontrada.")
                 );
 
         validarTransicao(

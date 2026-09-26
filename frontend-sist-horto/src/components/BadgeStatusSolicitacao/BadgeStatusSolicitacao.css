@@ -1,0 +1,35 @@
+.badge-status {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badge-status-cinza {
+  background: var(--fundo-suave);
+  color: var(--cinza);
+}
+
+.badge-status-amarelo {
+  background: #fff2d9;
+  color: #8a6413;
+}
+
+.badge-status-verde {
+  background: #eaf6ec;
+  color: var(--verde);
+}
+
+.badge-status-verde-escuro {
+  background: var(--verde);
+  color: var(--branco);
+}
+
+.badge-status-vermelho {
+  background: #fdecea;
+  color: var(--vermelho);
+}

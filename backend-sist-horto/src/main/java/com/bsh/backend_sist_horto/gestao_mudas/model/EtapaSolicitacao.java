@@ -1,6 +1,7 @@
 package com.bsh.backend_sist_horto.gestao_mudas.model;
 
 import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,8 +27,10 @@ public class EtapaSolicitacao {
     @Enumerated(EnumType.STRING)
     private StatusSolicitacao status;
 
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dataHora;
 
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDate dataLimiteRetirada;
 
     @Column(length = 1000)

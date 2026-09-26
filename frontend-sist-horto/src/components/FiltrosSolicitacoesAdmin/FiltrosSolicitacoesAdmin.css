@@ -1,0 +1,81 @@
+.filtros-solicitacoes {
+  background: var(--branco);
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filtros-linha {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.campo-busca {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 32px;
+  padding: 10px 16px;
+}
+
+.campo-busca-icone {
+  color: var(--cinza);
+}
+
+.campo-busca input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  color: var(--texto);
+  font-family: "Inter", sans-serif;
+}
+
+.campo-texto,
+.campo-select {
+  padding: 10px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--texto);
+  font-family: "Inter", sans-serif;
+  background: var(--branco);
+}
+
+.campo-ano {
+  width: 110px;
+}
+
+.campo-data {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--cinza);
+}
+
+.campo-data input {
+  padding: 9px 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--texto);
+}
+
+@media (max-width: 600px) {
+  .filtros-linha {
+    flex-direction: column;
+  }
+
+  .campo-ano {
+    width: 100%;
+  }
+}

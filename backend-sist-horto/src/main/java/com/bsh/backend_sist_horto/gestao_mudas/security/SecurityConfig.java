@@ -40,13 +40,12 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-
                         // ======================
                         // VISITANTE
                         // ======================
                         .requestMatchers(
                                 "/auth/login",
-                                "/auth/registro"
+                                "/auth/register"
                         ).permitAll()
 
                         .requestMatchers(
@@ -55,27 +54,21 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ======================
-                        // BENEFICIARIO OU ADMINISTRADOR
+                        // BENEFICIÁRIO OU ADMINISTRADOR
                         // ======================
-                        .requestMatchers(
-                                "/solicitacoes/**"
-                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
-
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/parametros/**"
                         ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
 
                         .requestMatchers(
-                                "/perfil/**"
-                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
-
-                        .requestMatchers(
-                                "/auth/atualizar/**"
-                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
-
-                        .requestMatchers(
-                                "/solicitacoes/rascunho/**"
+                                "/solicitacoes/minha-solicitacao-atual",
+                                "/solicitacoes/minhas-solicitacoes",
+                                "/solicitacoes/minhas-solicitacoes/**",
+                                "/solicitacoes/rascunho",
+                                "/solicitacoes/rascunho/**",
+                                "/perfil/**",
+                                "/auth/atualizar-senha"
                         ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
 
                         .requestMatchers(
@@ -84,15 +77,12 @@ public class SecurityConfig {
                         ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
 
                         .requestMatchers(
-                                "/perfil/**"
-                        ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
-
-                        .requestMatchers(
-                                "/auth/atualizar/**"
+                                HttpMethod.POST,
+                                "/solicitacoes/*/confirmar"
                         ).hasAnyRole("BENEFICIARIO", "ADMINISTRADOR")
 
                         // ======================
-                        // SOMENTE ADMINISTRADOR
+                        // ADMINISTRADOR
                         // ======================
                         .requestMatchers(
                                 HttpMethod.POST,
@@ -120,15 +110,22 @@ public class SecurityConfig {
                         ).hasRole("ADMINISTRADOR")
 
                         .requestMatchers(
-                                "/beneficiarios/**"
-                        ).hasRole("ADMINISTRADOR")
-
-                        .requestMatchers(
+                                "/beneficiarios/**",
                                 "/parametros/**"
                         ).hasRole("ADMINISTRADOR")
 
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/solicitacoes",
+                                "/solicitacoes/*"
+                        ).hasRole("ADMINISTRADOR")
+
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/solicitacoes/*/etapas"
+                        ).hasRole("ADMINISTRADOR")
+
+                        .anyRequest().authenticated()
                 )
 
                 .addFilterBefore(

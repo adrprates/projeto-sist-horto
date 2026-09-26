@@ -5,7 +5,9 @@ import { isAxiosError } from "axios";
 import type { Solicitacao } from "../../types/Solicitacao";
 import type { ParametroAnualDisponivel } from "../../types/ParametroAnualDisponivel";
 import type { ParametroAnual } from "../../types/ParametroAnual";
+import { StatusSolicitacao } from "../../types/StatusSolicitacao";
 import {
+  buscarSolicitacaoAtual,
   buscarRascunho,
   buscarSaldoAtual,
   enviarSolicitacao,
@@ -48,6 +50,9 @@ function extrairMensagemErro(erro: unknown): string {
 }
 
 function PaginaSolicitacao() {
+  const [verificando, setVerificando] = useState(true);
+  const [solicitacaoJaEnviada, setSolicitacaoJaEnviada] = useState(false);
+
   const [solicitacao, setSolicitacao] = useState<Solicitacao | null>(null);
   const [saldo, setSaldo] = useState<ParametroAnualDisponivel | null>(null);
   const [limitesAno, setLimitesAno] = useState<ParametroAnual | null>(null);
@@ -62,7 +67,7 @@ function PaginaSolicitacao() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    carregarDados();
+    verificarESeguirFluxo();
   }, []);
 
   useEffect(() => {
@@ -80,6 +85,24 @@ function PaginaSolicitacao() {
       );
     }
   }, [solicitacao]);
+
+  function verificarESeguirFluxo() {
+    setVerificando(true);
+
+    buscarSolicitacaoAtual()
+      .then((atual) => {
+        const jaEnviada = atual !== null && atual.statusAtual !== StatusSolicitacao.RASCUNHO;
+        setSolicitacaoJaEnviada(jaEnviada);
+
+        if (!jaEnviada) {
+          carregarDados();
+        }
+      })
+      .catch(() => {
+        carregarDados();
+      })
+      .finally(() => setVerificando(false));
+  }
 
   function carregarDados() {
     setCarregando(true);
@@ -173,6 +196,44 @@ function PaginaSolicitacao() {
 
   const quantidadeTotalItens =
     solicitacao?.itens.reduce((total, item) => total + item.quantidade, 0) ?? 0;
+
+  if (verificando) {
+    return (
+      <div>
+        <Cabecalho />
+        <p className="mensagem-central">Verificando sua solicitação...</p>
+        <Rodape />
+      </div>
+    );
+  }
+
+  if (solicitacaoJaEnviada) {
+    return (
+      <div>
+        <Cabecalho />
+        <main className="container-solicitacao">
+          <div className="solicitacao-bloqueada">
+            <ShoppingBag size={32} className="solicitacao-bloqueada-icone" />
+            <h2 className="solicitacao-bloqueada-titulo">
+              Você já enviou sua solicitação deste ano
+            </h2>
+            <p className="solicitacao-bloqueada-texto">
+              Não é possível montar um novo carrinho enquanto já existe uma solicitação em
+              andamento para este ano. Acompanhe o status dela no histórico.
+            </p>
+            <button
+              type="button"
+              className="botao-finalizar"
+              onClick={() => navigate("/solicitacoes/historico")}
+            >
+              Ver minha solicitação
+            </button>
+          </div>
+        </main>
+        <Rodape />
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -11,6 +11,9 @@ import { PaginaRegistro } from '../pages/PaginasAutenticacao/PaginaRegistro/Pagi
 import FormularioParametroAnual from '../pages/FormularioParametroAnual/FormularioParametroAnual';
 import ListaParametrosAnuais from '../pages/ListaParametrosAnuais/ListaParametrosAnuais';
 import PaginaSolicitacao from '../pages/PaginaSolicitacao/PaginaSolicitacao';
+import DetalhesSolicitacaoAdmin from '../pages/DetalhesSolicitacaoAdmin/DetalhesSolicitacaoAdmin';
+import ListaSolicitacoesAdmin from '../pages/ListaSolicitacoesAdmin/ListaSolicitacoesAdmin';
+import HistoricoSolicitacoes from '../pages/HistoricoSolicitacoes/HistoricoSolicitacoes';
 
 export const AppRoutes = () => {
   return (
@@ -33,6 +36,7 @@ export const AppRoutes = () => {
     >
       <Route path="/solicitacao" element={<PaginaSolicitacao />} />
       {<Route path="/perfil" element={<PaginaPerfil/>} />}
+      <Route path="/solicitacoes/historico" element={<HistoricoSolicitacoes />} />
     </Route>
 
     {/* Apenas Admin */}
@@ -49,6 +53,8 @@ export const AppRoutes = () => {
       <Route path="/parametros" element={<ListaParametrosAnuais />} />
       <Route path="/parametros/novo" element={<FormularioParametroAnual />} />
       <Route path="/parametros/:ano/editar" element={<FormularioParametroAnual />} />
+      <Route path="/admin/solicitacoes" element={<ListaSolicitacoesAdmin />} />
+      <Route path="/admin/solicitacoes/:id" element={<DetalhesSolicitacaoAdmin />} />
     </Route>
 
     <Route path="*" element={<PaginaNotFound />} />

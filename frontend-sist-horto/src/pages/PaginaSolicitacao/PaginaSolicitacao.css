@@ -256,4 +256,33 @@
   .solicitacao-acoes button {
     width: 100%;
   }
+
+  .solicitacao-bloqueada {
+  text-align: center;
+  background: var(--branco);
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.solicitacao-bloqueada-icone {
+  color: var(--verde);
+}
+
+.solicitacao-bloqueada-titulo {
+  font-size: 18px;
+  color: var(--texto);
+  margin: 0;
+}
+
+.solicitacao-bloqueada-texto {
+  font-size: 14px;
+  color: var(--cinza);
+  max-width: 400px;
+  margin: 0 0 8px;
+}
 }

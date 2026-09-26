@@ -1,6 +1,7 @@
 package com.bsh.backend_sist_horto.gestao_mudas.model;
 
 import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Solicitacao {
 
     @NotNull
     @Column(nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataSolicitacao;
 
     @Enumerated(EnumType.STRING)
