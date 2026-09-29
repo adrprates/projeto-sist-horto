@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { History, ShoppingBag, Trash2 } from "lucide-react";
+import { CheckCircle2, ShoppingBag, Trash2, XCircle } from "lucide-react";
 import { isAxiosError } from "axios";
 import type { Solicitacao } from "../../types/Solicitacao";
+import type { SolicitacaoAdmin } from "../../types/SolicitacaoAdmin";
+import type { SolicitacaoBeneficiarioResumo } from "../../types/SolicitacaoBeneficiarioResumo";
 import type { ParametroAnualDisponivel } from "../../types/ParametroAnualDisponivel";
 import type { ParametroAnual } from "../../types/ParametroAnual";
 import { StatusSolicitacao } from "../../types/StatusSolicitacao";
@@ -13,6 +15,8 @@ import {
   enviarSolicitacao,
   atualizarQuantidadeItemRascunho,
   removerItemRascunho,
+  listarMinhasSolicitacoes,
+  responderConfirmacao,
 } from "../../api/solicitacaoService";
 import { buscarParametroAnual } from "../../api/parametroAnualService";
 import { CategoriaMuda, rotuloCategoria } from "../../types/CategoriaMuda";
@@ -20,6 +24,8 @@ import Cabecalho from "../../components/Cabecalho/Cabecalho";
 import Rodape from "../../components/Rodape/Rodape";
 import CardSaldoParametro from "../../components/CardSaldoParametro/CardSaldoParametro";
 import SeletorQuantidade from "../../components/SeletorQuantidade/SeletorQuantidade";
+import DetalhesSolicitacaoCartao from "../../components/DetalhesSolicitacaoCartao/DetalhesSolicitacaoCartao";
+import ListaSolicitacoesAnteriores from "../../components/ListaSolicitacoesAnteriores/ListaSolicitacoesAnteriores";
 import "./PaginaSolicitacao.css";
 
 const MENSAGEM_PADRAO = "Ocorreu um erro. Tente novamente.";
@@ -51,11 +57,14 @@ function extrairMensagemErro(erro: unknown): string {
 
 function PaginaSolicitacao() {
   const [verificando, setVerificando] = useState(true);
-  const [solicitacaoJaEnviada, setSolicitacaoJaEnviada] = useState(false);
+  const [solicitacaoEnviada, setSolicitacaoEnviada] = useState<SolicitacaoAdmin | null>(null);
 
   const [solicitacao, setSolicitacao] = useState<Solicitacao | null>(null);
   const [saldo, setSaldo] = useState<ParametroAnualDisponivel | null>(null);
   const [limitesAno, setLimitesAno] = useState<ParametroAnual | null>(null);
+
+  const [historico, setHistorico] = useState<SolicitacaoBeneficiarioResumo[]>([]);
+  const [carregandoHistorico, setCarregandoHistorico] = useState(true);
 
   const [carregando, setCarregando] = useState(true);
   const [carregandoSaldo, setCarregandoSaldo] = useState(true);
@@ -64,27 +73,15 @@ function PaginaSolicitacao() {
   const [erro, setErro] = useState("");
   const [enviadaComSucesso, setEnviadaComSucesso] = useState(false);
 
+  const [respondendo, setRespondendo] = useState(false);
+  const [erroResposta, setErroResposta] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
     verificarESeguirFluxo();
+    carregarHistorico();
   }, []);
-
-  useEffect(() => {
-    if (!solicitacao) {
-      return;
-    }
-
-    const ids = solicitacao.itens.map((item) => item.id);
-    const idsUnicos = new Set(ids);
-
-    if (idsUnicos.size !== ids.length) {
-      console.warn(
-        "Atenção: a lista de itens da solicitação veio com ids duplicados ou repetidos.",
-        ids
-      );
-    }
-  }, [solicitacao]);
 
   function verificarESeguirFluxo() {
     setVerificando(true);
@@ -92,16 +89,25 @@ function PaginaSolicitacao() {
     buscarSolicitacaoAtual()
       .then((atual) => {
         const jaEnviada = atual !== null && atual.statusAtual !== StatusSolicitacao.RASCUNHO;
-        setSolicitacaoJaEnviada(jaEnviada);
+        setSolicitacaoEnviada(jaEnviada ? atual : null);
 
         if (!jaEnviada) {
           carregarDados();
         }
       })
       .catch(() => {
+        setSolicitacaoEnviada(null);
         carregarDados();
       })
       .finally(() => setVerificando(false));
+  }
+
+  function carregarHistorico() {
+    setCarregandoHistorico(true);
+    listarMinhasSolicitacoes()
+      .then(setHistorico)
+      .catch(() => setHistorico([]))
+      .finally(() => setCarregandoHistorico(false));
   }
 
   function carregarDados() {
@@ -184,9 +190,10 @@ function PaginaSolicitacao() {
     setEnviando(true);
 
     try {
-      const solicitacaoAtualizada = await enviarSolicitacao(solicitacao.id);
-      setSolicitacao(solicitacaoAtualizada);
+      await enviarSolicitacao(solicitacao.id);
       setEnviadaComSucesso(true);
+      verificarESeguirFluxo();
+      carregarHistorico();
     } catch (erro) {
       setErro(extrairMensagemErro(erro));
     } finally {
@@ -194,84 +201,52 @@ function PaginaSolicitacao() {
     }
   }
 
+  async function handleResponderConfirmacao(aceitar: boolean) {
+    if (!solicitacaoEnviada) {
+      return;
+    }
+
+    setErroResposta("");
+    setRespondendo(true);
+
+    try {
+      const atualizada = await responderConfirmacao(solicitacaoEnviada.id, aceitar);
+      setSolicitacaoEnviada(atualizada);
+      carregarHistorico();
+    } catch (erro) {
+      setErroResposta(extrairMensagemErro(erro));
+    } finally {
+      setRespondendo(false);
+    }
+  }
+
   const quantidadeTotalItens =
     solicitacao?.itens.reduce((total, item) => total + item.quantidade, 0) ?? 0;
 
-  if (verificando) {
+  const precisaConfirmar =
+    solicitacaoEnviada?.statusAtual === StatusSolicitacao.AGUARDANDO_CONFIRMACAO;
+
+  const solicitacoesAnteriores = historico.filter(
+    (item) =>
+      item.statusAtual !== StatusSolicitacao.RASCUNHO && item.id !== solicitacaoEnviada?.id
+  );
+
+  function renderizarRascunho() {
     return (
-      <div>
-        <Cabecalho />
-        <p className="mensagem-central">Verificando sua solicitação...</p>
-        <Rodape />
-      </div>
-    );
-  }
-
-  if (solicitacaoJaEnviada) {
-    return (
-      <div>
-        <Cabecalho />
-        <main className="container-solicitacao">
-          <div className="solicitacao-bloqueada">
-            <ShoppingBag size={32} className="solicitacao-bloqueada-icone" />
-            <h2 className="solicitacao-bloqueada-titulo">
-              Você já enviou sua solicitação deste ano
-            </h2>
-            <p className="solicitacao-bloqueada-texto">
-              Não é possível montar um novo carrinho enquanto já existe uma solicitação em
-              andamento para este ano. Acompanhe o status dela no histórico.
-            </p>
-            <button
-              type="button"
-              className="botao-finalizar"
-              onClick={() => navigate("/solicitacoes/historico")}
-            >
-              Ver minha solicitação
-            </button>
-          </div>
-        </main>
-        <Rodape />
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <Cabecalho />
-
-      <main className="container-solicitacao">
-        <div className="solicitacao-cabecalho">
-          <h2 className="titulo-solicitacao">
-            <ShoppingBag size={22} />
-            Minha Solicitação
-          </h2>
-
-          <button
-            type="button"
-            className="botao-historico"
-            onClick={() => navigate("/solicitacoes/historico")}
-          >
-            <History size={16} />
-            Histórico de solicitações
-          </button>
-        </div>
-
+      <>
         <CardSaldoParametro saldo={saldo} carregando={carregandoSaldo} />
 
         {erro && <p className="solicitacao-erro">{erro}</p>}
 
-        {enviadaComSucesso && (
-          <p className="solicitacao-sucesso">
-            Solicitação enviada com sucesso! Ela agora está com status "Pendente" para análise.
-          </p>
-        )}
-
         {carregando && <p className="mensagem-central">Carregando sua solicitação...</p>}
 
         {!carregando && solicitacao && solicitacao.itens.length === 0 && (
-          <p className="mensagem-central">
-            Sua solicitação ainda está vazia. Volte ao catálogo para escolher mudas.
-          </p>
+          <div className="solicitacao-vazia">
+            <p>Sua solicitação ainda está vazia. Volte ao catálogo para escolher mudas.</p>
+            <button type="button" className="botao-continuar" onClick={() => navigate("/")}>
+              Ir para o catálogo
+            </button>
+          </div>
         )}
 
         {!carregando && solicitacao && solicitacao.itens.length > 0 && (
@@ -303,35 +278,24 @@ function PaginaSolicitacao() {
                     )}
                   </div>
 
-                  {!enviadaComSucesso && (
-                    <SeletorQuantidade
-                      valor={item.quantidade}
-                      aoAlterar={(novaQuantidade) =>
-                        handleAlterarQuantidade(item.id, novaQuantidade)
-                      }
-                      minimo={1}
-                      desabilitado={processandoEsteItem}
-                    />
-                  )}
+                  <SeletorQuantidade
+                    valor={item.quantidade}
+                    aoAlterar={(novaQuantidade) =>
+                      handleAlterarQuantidade(item.id, novaQuantidade)
+                    }
+                    minimo={1}
+                    desabilitado={processandoEsteItem}
+                  />
 
-                  {enviadaComSucesso && (
-                    <div className="item-solicitacao-quantidade">
-                      <span>Quantidade</span>
-                      <strong>{item.quantidade}</strong>
-                    </div>
-                  )}
-
-                  {!enviadaComSucesso && (
-                    <button
-                      type="button"
-                      className="botao-remover-item"
-                      onClick={() => handleRemoverItem(item.id, nomeMuda)}
-                      disabled={processandoEsteItem}
-                      aria-label={`Remover ${nomeMuda}`}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className="botao-remover-item"
+                    onClick={() => handleRemoverItem(item.id, nomeMuda)}
+                    disabled={processandoEsteItem}
+                    aria-label={`Remover ${nomeMuda}`}
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               );
             })}
@@ -343,13 +307,9 @@ function PaginaSolicitacao() {
           </div>
         )}
 
-        {!carregando && solicitacao && solicitacao.itens.length > 0 && !enviadaComSucesso && (
+        {!carregando && solicitacao && solicitacao.itens.length > 0 && (
           <div className="solicitacao-acoes">
-            <button
-              type="button"
-              className="botao-continuar"
-              onClick={() => navigate("/")}
-            >
+            <button type="button" className="botao-continuar" onClick={() => navigate("/")}>
               Continuar adicionando mudas
             </button>
             <button
@@ -362,6 +322,87 @@ function PaginaSolicitacao() {
             </button>
           </div>
         )}
+      </>
+    );
+  }
+
+  function renderizarSolicitacaoEnviada(enviada: SolicitacaoAdmin) {
+    return (
+      <>
+        <DetalhesSolicitacaoCartao solicitacao={enviada} />
+
+        {precisaConfirmar && (
+          <div className="painel-confirmacao">
+            <p className="painel-confirmacao-titulo">
+              O administrador propôs uma alteração na sua solicitação. Veja a descrição da etapa
+              mais recente acima e decida se aceita ou não.
+            </p>
+
+            {erroResposta && <p className="painel-confirmacao-erro">{erroResposta}</p>}
+
+            <div className="painel-confirmacao-acoes">
+              <button
+                type="button"
+                className="botao-recusar-confirmacao"
+                onClick={() => handleResponderConfirmacao(false)}
+                disabled={respondendo}
+              >
+                <XCircle size={16} />
+                Recusar
+              </button>
+              <button
+                type="button"
+                className="botao-aceitar-confirmacao"
+                onClick={() => handleResponderConfirmacao(true)}
+                disabled={respondendo}
+              >
+                <CheckCircle2 size={16} />
+                {respondendo ? "Enviando..." : "Aceitar alteração"}
+              </button>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div>
+      <Cabecalho />
+
+      <main className="container-solicitacao">
+        <div className="solicitacao-cabecalho">
+          <h2 className="titulo-solicitacao">
+            <ShoppingBag size={22} />
+            Minhas Solicitações
+          </h2>
+        </div>
+
+        {enviadaComSucesso && (
+          <p className="solicitacao-sucesso">
+            Solicitação enviada com sucesso! Ela agora está com status "Pendente" para análise.
+          </p>
+        )}
+
+        <section className="solicitacao-secao">
+          <h3 className="solicitacao-subtitulo">
+            {solicitacaoEnviada ? "Solicitação deste ano" : "Solicitação em construção"}
+          </h3>
+
+          {verificando && <p className="mensagem-central">Verificando sua solicitação...</p>}
+
+          {!verificando && solicitacaoEnviada && renderizarSolicitacaoEnviada(solicitacaoEnviada)}
+
+          {!verificando && !solicitacaoEnviada && renderizarRascunho()}
+        </section>
+
+        <section className="solicitacao-secao">
+          <h3 className="solicitacao-subtitulo">Solicitações anteriores</h3>
+          <ListaSolicitacoesAnteriores
+            solicitacoes={solicitacoesAnteriores}
+            carregando={carregandoHistorico}
+          />
+        </section>
       </main>
 
       <Rodape />

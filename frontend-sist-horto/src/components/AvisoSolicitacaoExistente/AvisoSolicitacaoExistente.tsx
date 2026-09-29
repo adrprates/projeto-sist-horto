@@ -30,7 +30,7 @@ function AvisoSolicitacaoExistente({ solicitacao }: AvisoSolicitacaoExistentePro
       <button
         type="button"
         className="aviso-solicitacao-existente-botao"
-        onClick={() => navigate("/solicitacoes/historico")}
+        onClick={() => navigate("/solicitacao")}
       >
         Ver detalhes
       </button>

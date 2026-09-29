@@ -1,0 +1,69 @@
+.painel-admin {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 32px;
+  background: var(--fundo-suave);
+  border-bottom: 1px solid #e6e6e6;
+  flex-wrap: wrap;
+}
+
+.painel-admin-rotulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--verde);
+}
+
+.painel-admin-links {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.painel-admin-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cinza);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 32px;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.painel-admin-link:hover {
+  background: var(--cinza);
+  color: var(--branco);
+}
+
+.painel-admin-link-ativo {
+  background: var(--verde);
+  color: var(--branco);
+}
+
+.painel-admin-link-ativo:hover {
+  background: var(--verde-escuro);
+}
+
+@media (max-width: 768px) {
+  .painel-admin {
+    padding: 10px 16px;
+    gap: 8px;
+  }
+
+  .painel-admin-links {
+    width: 100%;
+  }
+
+  .painel-admin-link {
+    flex: 1 1 45%;
+    justify-content: center;
+  }
+}

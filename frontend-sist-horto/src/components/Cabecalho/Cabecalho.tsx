@@ -2,13 +2,17 @@ import { useState } from "react";
 import { LogOut } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { Leaf, Menu, X, ClipboardList, User } from "lucide-react";
+import PainelAdmin from "../PainelAdmin/PainelAdmin";
 import "./Cabecalho.css";
 
 function Cabecalho() {
   const [menuAberto, setMenuAberto] = useState(false);
-  const { logout, isAuthenticated } = useAuth();
+  const { logout, isAuthenticated, hasRole } = useAuth();
+
+  const isAdmin = isAuthenticated && hasRole(["ADMINISTRADOR"]);
 
   return (
+    <>
     <header className="cabecalho">
       <div className="logo">
         <Leaf className="logo-icone" size={26} />
@@ -49,6 +53,9 @@ function Cabecalho() {
         )}
       </nav>
     </header>
+
+    {isAdmin && <PainelAdmin />}
+    </>
   );
 }
 

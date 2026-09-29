@@ -148,7 +148,7 @@ function CardMuda({
             <button
               type="button"
               className="botao-solicitacao botao-solicitacao-bloqueado"
-              onClick={() => navigate("/solicitacoes/historico")}
+              onClick={() => navigate("/solicitacao")}
               title="Você já possui uma solicitação enviada este ano"
             >
               <Lock size={14} />

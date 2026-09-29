@@ -13,7 +13,6 @@ import ListaParametrosAnuais from '../pages/ListaParametrosAnuais/ListaParametro
 import PaginaSolicitacao from '../pages/PaginaSolicitacao/PaginaSolicitacao';
 import DetalhesSolicitacaoAdmin from '../pages/DetalhesSolicitacaoAdmin/DetalhesSolicitacaoAdmin';
 import ListaSolicitacoesAdmin from '../pages/ListaSolicitacoesAdmin/ListaSolicitacoesAdmin';
-import HistoricoSolicitacoes from '../pages/HistoricoSolicitacoes/HistoricoSolicitacoes';
 
 export const AppRoutes = () => {
   return (
@@ -36,7 +35,6 @@ export const AppRoutes = () => {
     >
       <Route path="/solicitacao" element={<PaginaSolicitacao />} />
       {<Route path="/perfil" element={<PaginaPerfil/>} />}
-      <Route path="/solicitacoes/historico" element={<HistoricoSolicitacoes />} />
     </Route>
 
     {/* Apenas Admin */}
