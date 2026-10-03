@@ -45,7 +45,7 @@ public class SecurityConfig {
                         // ======================
                         .requestMatchers(
                                 "/auth/login",
-                                "/auth/register"
+                                "/auth/registro"
                         ).permitAll()
 
                         .requestMatchers(
@@ -111,7 +111,8 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/beneficiarios/**",
-                                "/parametros/**"
+                                "/parametros/**",
+                                "/solicitacoes/beneficiarios/**"
                         ).hasRole("ADMINISTRADOR")
 
                         .requestMatchers(

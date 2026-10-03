@@ -11,7 +11,9 @@ import com.bsh.backend_sist_horto.gestao_mudas.repository.ParametroAnualReposito
 import com.bsh.backend_sist_horto.gestao_mudas.repository.SolicitacaoRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.specification.SolicitacaoSpecification;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -134,6 +136,34 @@ public class SolicitacaoService {
 
     @Transactional
     public Solicitacao enviarSolicitacao(Long id) {
+        return enviarSolicitacao(id, "Sua solicitação foi enviada para análise.");
+    }
+
+    @Transactional
+    public Solicitacao enviarRascunhoDoBeneficiario(Beneficiario beneficiario, String nomeResponsavel) {
+        Solicitacao rascunho = buscarOuCriarRascunho(beneficiario);
+
+        return enviarSolicitacao(
+                rascunho.getId(),
+                "Solicitação registrada pela Secretaria por " + nomeResponsavel + " e enviada para análise."
+        );
+    }
+
+    public Solicitacao getSolicitacaoDoBeneficiario(Long id, Beneficiario beneficiario) {
+        Solicitacao solicitacao = getSolicitacaoPorId(id);
+
+        if (!solicitacao.getBeneficiario().getId().equals(beneficiario.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Esta solicitação não pertence a você."
+            );
+        }
+
+        return solicitacao;
+    }
+
+    @Transactional
+    public Solicitacao enviarSolicitacao(Long id, String descricaoEtapa) {
        Solicitacao solicitacao = getSolicitacaoPorId(id);
 
        if(solicitacao.getStatusAtual() != StatusSolicitacao.RASCUNHO){
@@ -189,7 +219,7 @@ public class SolicitacaoService {
                 StatusSolicitacao.PENDENTE
         );
 
-        etapaService.salvar(solicitacao, StatusSolicitacao.PENDENTE,"Sua solicitação foi enviada para análise.");
+        etapaService.salvar(solicitacao, StatusSolicitacao.PENDENTE, descricaoEtapa);
 
         return solicitacaoRepository.save(
                 solicitacao

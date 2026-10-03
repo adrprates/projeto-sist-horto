@@ -3,9 +3,11 @@ package com.bsh.backend_sist_horto.gestao_mudas.controller;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.*;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Solicitacao;
+import com.bsh.backend_sist_horto.gestao_mudas.record.ResponderConfirmacaoRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.service.BeneficiarioService;
 import com.bsh.backend_sist_horto.gestao_mudas.service.EtapaService;
 import com.bsh.backend_sist_horto.gestao_mudas.service.SolicitacaoService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -161,6 +163,117 @@ public class SolicitacaoController {
                 request.getStatus(),
                 request.getDescricao(),
                 request.getDataLimiteRetirada()
+        );
+    }
+
+    @GetMapping("/minhas-solicitacoes/{id}")
+    public Solicitacao buscarMinhaSolicitacao(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        Beneficiario beneficiario = beneficiarioService
+                .getBeneficiarioPorLogin(authentication.getName());
+
+        return solicitacaoService.getSolicitacaoDoBeneficiario(id, beneficiario);
+    }
+
+    @PostMapping("/{id}/confirmar")
+    public Solicitacao responderConfirmacao(
+            @PathVariable Long id,
+            @Valid @RequestBody ResponderConfirmacaoRequest request,
+            Authentication authentication
+    ) {
+        Beneficiario beneficiario = beneficiarioService
+                .getBeneficiarioPorLogin(authentication.getName());
+
+        return etapaoService.responderConfirmacao(id, request.aceitar(), beneficiario);
+    }
+
+    @GetMapping("/beneficiarios/{beneficiarioId}/atual")
+    public ResponseEntity<?> buscarSolicitacaoAtualDoBeneficiario(
+            @PathVariable Long beneficiarioId
+    ) {
+        Beneficiario beneficiario = beneficiarioService.getBeneficiarioPorId(beneficiarioId);
+
+        Optional<Solicitacao> solicitacao =
+                solicitacaoService.buscarSolicitacaoDoAno(beneficiario);
+
+        if (solicitacao.isPresent()) {
+            return ResponseEntity.ok(solicitacao.get());
+        }
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/beneficiarios/{beneficiarioId}/rascunho")
+    public Solicitacao buscarRascunhoDoBeneficiario(
+            @PathVariable Long beneficiarioId
+    ) {
+        Beneficiario beneficiario = beneficiarioService.getBeneficiarioPorId(beneficiarioId);
+
+        return solicitacaoService.buscarOuCriarRascunho(beneficiario);
+    }
+
+    @GetMapping("/beneficiarios/{beneficiarioId}/rascunho/saldo")
+    public ParametroAnualDisponivel buscarSaldoDoBeneficiario(
+            @PathVariable Long beneficiarioId
+    ) {
+        Beneficiario beneficiario = beneficiarioService.getBeneficiarioPorId(beneficiarioId);
+
+        return solicitacaoService.calcularSaldo(beneficiario);
+    }
+
+    @PostMapping("/beneficiarios/{beneficiarioId}/rascunho/adicionar")
+    public Solicitacao adicionarItemParaBeneficiario(
+            @PathVariable Long beneficiarioId,
+            @RequestBody MontarSolicitacaoRequest request
+    ) {
+        Beneficiario beneficiario = beneficiarioService.getBeneficiarioPorId(beneficiarioId);
+
+        return solicitacaoService.montarSolicitacao(
+                request.getMudaId(),
+                request.getQuantidade(),
+                beneficiario
+        );
+    }
+
+    @PutMapping("/beneficiarios/{beneficiarioId}/rascunho/itens/{itemId}")
+    public Solicitacao atualizarItemDoBeneficiario(
+            @PathVariable Long beneficiarioId,
+            @PathVariable Long itemId,
+            @RequestBody AtualizarQuantidadeRascunhoRequest request
+    ) {
+        Beneficiario beneficiario = beneficiarioService.getBeneficiarioPorId(beneficiarioId);
+
+        return solicitacaoService.atualizarQuantidadeItem(
+                itemId,
+                request.getQuantidade(),
+                beneficiario
+        );
+    }
+
+    @DeleteMapping("/beneficiarios/{beneficiarioId}/rascunho/itens/{itemId}")
+    public Solicitacao removerItemDoBeneficiario(
+            @PathVariable Long beneficiarioId,
+            @PathVariable Long itemId
+    ) {
+        Beneficiario beneficiario = beneficiarioService.getBeneficiarioPorId(beneficiarioId);
+
+        return solicitacaoService.removerItem(itemId, beneficiario);
+    }
+
+    @PostMapping("/beneficiarios/{beneficiarioId}/enviar")
+    public Solicitacao enviarSolicitacaoDoBeneficiario(
+            @PathVariable Long beneficiarioId,
+            Authentication authentication
+    ) {
+        Beneficiario beneficiario = beneficiarioService.getBeneficiarioPorId(beneficiarioId);
+        Beneficiario responsavel = beneficiarioService
+                .getBeneficiarioPorLogin(authentication.getName());
+
+        return solicitacaoService.enviarRascunhoDoBeneficiario(
+                beneficiario,
+                responsavel.getNome()
         );
     }
 

@@ -2,9 +2,12 @@ package com.bsh.backend_sist_horto.gestao_mudas.controller;
 
 import com.bsh.backend_sist_horto.gestao_mudas.dto.BeneficiarioFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
+import com.bsh.backend_sist_horto.gestao_mudas.record.CadastroAssistidoRequest;
+import com.bsh.backend_sist_horto.gestao_mudas.record.CredenciaisResponse;
+import com.bsh.backend_sist_horto.gestao_mudas.service.AuthService;
 import com.bsh.backend_sist_horto.gestao_mudas.service.BeneficiarioService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,9 +18,11 @@ import java.util.List;
 public class BeneficiarioController {
 
     private final BeneficiarioService beneficiarioService;
+    private final AuthService authService;
 
-    public BeneficiarioController(BeneficiarioService beneficiarioService) {
+    public BeneficiarioController(BeneficiarioService beneficiarioService, AuthService authService) {
         this.beneficiarioService = beneficiarioService;
+        this.authService = authService;
     }
 
     @GetMapping
@@ -28,6 +33,17 @@ public class BeneficiarioController {
     @GetMapping("/{id}")
     public Beneficiario buscarPorId(@PathVariable Long id) {
         return beneficiarioService.getBeneficiarioPorId(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CredenciaisResponse cadastrar(@Valid @RequestBody CadastroAssistidoRequest request) {
+        return authService.cadastrarPeloAdministrador(request);
+    }
+
+    @PostMapping("/{id}/redefinir-senha")
+    public CredenciaisResponse redefinirSenha(@PathVariable Long id) {
+        return authService.redefinirSenhaProvisoria(id);
     }
 
     @DeleteMapping("/{id}")

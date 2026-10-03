@@ -1,6 +1,7 @@
 package com.bsh.backend_sist_horto.gestao_mudas.model;
 
 import com.bsh.backend_sist_horto.gestao_mudas.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -57,10 +58,14 @@ public class Beneficiario {
     @Column(nullable = false, unique = true)
     private String login;
 
+    @JsonIgnore
     @NotBlank
     @Size(max = 255)
     @Column(nullable = false)
     private String senha;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean senhaProvisoria = false;
 
     @Override
     public boolean equals(Object o) {

@@ -16,4 +16,5 @@ public class PerfilResponse {
     private String nome;
     private String endereco;
     private String login;
+    private boolean senhaProvisoria;
 }

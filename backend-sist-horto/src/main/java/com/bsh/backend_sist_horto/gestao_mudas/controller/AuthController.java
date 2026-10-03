@@ -37,7 +37,10 @@ public class AuthController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         assert userDetails != null;
         String token = jwtUtil.generateToken(userDetails);
-        return new TokenResponse(token);
+        return new TokenResponse(
+                token,
+                authService.possuiSenhaProvisoria(userDetails.getUsername())
+        );
     }
 
     @PostMapping("/registro")

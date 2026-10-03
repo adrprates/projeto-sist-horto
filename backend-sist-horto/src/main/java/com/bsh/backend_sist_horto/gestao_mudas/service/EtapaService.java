@@ -1,13 +1,16 @@
 package com.bsh.backend_sist_horto.gestao_mudas.service;
 
 import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
+import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.model.EtapaSolicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.model.ItemSolicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Solicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.EtapaSolicitacaoRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.SolicitacaoRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -123,6 +126,47 @@ public class EtapaService {
         }
 
         return solicitacao;
+    }
+
+    @Transactional
+    public Solicitacao responderConfirmacao(
+            Long idSolicitacao,
+            boolean aceitar,
+            Beneficiario beneficiario
+    ) {
+
+        Solicitacao solicitacao = solicitacaoRepository
+                .findById(idSolicitacao)
+                .orElseThrow(() ->
+                        new RuntimeException("Solicitação não encontrada.")
+                );
+
+        if (!solicitacao.getBeneficiario().getId().equals(beneficiario.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Esta solicitação não pertence a você."
+            );
+        }
+
+        if (solicitacao.getStatusAtual() != StatusSolicitacao.AGUARDANDO_CONFIRMACAO) {
+            throw new RuntimeException(
+                    "Esta solicitação não está aguardando a sua confirmação."
+            );
+        }
+
+        if (aceitar) {
+            aprovarSolicitacao(
+                    solicitacao,
+                    "O beneficiário aceitou a alteração proposta. A solicitação segue aprovada."
+            );
+        } else {
+            rejeitarSolicitacao(
+                    solicitacao,
+                    "O beneficiário recusou a alteração proposta. A solicitação foi encerrada."
+            );
+        }
+
+        return solicitacaoRepository.save(solicitacao);
     }
 
     public EtapaSolicitacao getEtapaSolicitacaoById(Long id) {

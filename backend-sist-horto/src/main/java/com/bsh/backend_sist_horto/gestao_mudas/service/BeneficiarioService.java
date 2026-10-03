@@ -57,7 +57,8 @@ public class BeneficiarioService {
                 beneficiario.getEmail(),
                 beneficiario.getNome(),
                 beneficiario.getEndereco(),
-                beneficiario.getLogin()
+                beneficiario.getLogin(),
+                beneficiario.isSenhaProvisoria()
         );
     }
 
@@ -96,7 +97,8 @@ public class BeneficiarioService {
                 beneficiario.getEmail(),
                 beneficiario.getNome(),
                 beneficiario.getEndereco(),
-                beneficiario.getLogin()
+                beneficiario.getLogin(),
+                beneficiario.isSenhaProvisoria()
         );
     }
 
