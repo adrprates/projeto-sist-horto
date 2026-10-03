@@ -1,4 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from '../components/Layout/Layout';
+import PaginaInicio from '../pages/PaginaInicio/PaginaInicio';
+import PaginaSecretaria from '../pages/PaginaSecretaria/PaginaSecretaria';
+import PaginaHortoFlorestal from '../pages/PaginaHortoFlorestal/PaginaHortoFlorestal';
+import PaginaComoSolicitar from '../pages/PaginaComoSolicitar/PaginaComoSolicitar';
 import CatalogoMudas from '../pages/CatalogoMudas/CatalogoMudas';
 import FormularioMuda from '../pages/FormularioMuda/FormularioMuda';
 import { PaginaLogin } from '../pages/PaginasAutenticacao/PaginaLogin/PaginaLogin';
@@ -17,47 +22,53 @@ import ListaSolicitacoesAdmin from '../pages/ListaSolicitacoesAdmin/ListaSolicit
 export const AppRoutes = () => {
   return (
     <BrowserRouter>
-  <Routes>
+      <Routes>
+        <Route element={<Layout />}>
 
-    {/* Públicas */}
-    <Route path="/" element={<CatalogoMudas />} />
-    <Route path="/login" element={<PaginaLogin />} />
-    <Route path = "/registro" element = {<PaginaRegistro />} />
-    <Route path="/forbidden" element={<PaginaForbidden />} />
+          {/* Públicas */}
+          <Route path="/" element={<PaginaInicio />} />
+          <Route path="/secretaria" element={<PaginaSecretaria />} />
+          <Route path="/horto-florestal" element={<PaginaHortoFlorestal />} />
+          <Route path="/como-solicitar" element={<PaginaComoSolicitar />} />
+          <Route path="/catalogo" element={<CatalogoMudas />} />
+          <Route path="/login" element={<PaginaLogin />} />
+          <Route path="/registro" element={<PaginaRegistro />} />
+          <Route path="/forbidden" element={<PaginaForbidden />} />
 
-    {/* Beneficiário e Admin */}
-    <Route
-      element={
-        <ProtectedRoute
-          allowedRoles={['BENEFICIARIO', 'ADMINISTRADOR']}
-        />
-      }
-    >
-      <Route path="/solicitacao" element={<PaginaSolicitacao />} />
-      {<Route path="/perfil" element={<PaginaPerfil/>} />}
-    </Route>
+          {/* Beneficiário e Admin */}
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={['BENEFICIARIO', 'ADMINISTRADOR']}
+              />
+            }
+          >
+            <Route path="/solicitacao" element={<PaginaSolicitacao />} />
+            <Route path="/perfil" element={<PaginaPerfil />} />
+          </Route>
 
-    {/* Apenas Admin */}
-    <Route
-      element={
-        <ProtectedRoute
-          allowedRoles={['ADMINISTRADOR']}
-        />
-      }
-    >
-      <Route path="/mudas/nova" element={<FormularioMuda />} />
-      <Route path="/mudas/editar/:id" element={<FormularioMuda />} />
-      <Route path="/beneficiarios" element={<ListaBeneficiarios />} />
-      <Route path="/parametros" element={<ListaParametrosAnuais />} />
-      <Route path="/parametros/novo" element={<FormularioParametroAnual />} />
-      <Route path="/parametros/:ano/editar" element={<FormularioParametroAnual />} />
-      <Route path="/admin/solicitacoes" element={<ListaSolicitacoesAdmin />} />
-      <Route path="/admin/solicitacoes/:id" element={<DetalhesSolicitacaoAdmin />} />
-    </Route>
+          {/* Apenas Admin */}
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={['ADMINISTRADOR']}
+              />
+            }
+          >
+            <Route path="/mudas/nova" element={<FormularioMuda />} />
+            <Route path="/mudas/editar/:id" element={<FormularioMuda />} />
+            <Route path="/beneficiarios" element={<ListaBeneficiarios />} />
+            <Route path="/parametros" element={<ListaParametrosAnuais />} />
+            <Route path="/parametros/novo" element={<FormularioParametroAnual />} />
+            <Route path="/parametros/:ano/editar" element={<FormularioParametroAnual />} />
+            <Route path="/admin/solicitacoes" element={<ListaSolicitacoesAdmin />} />
+            <Route path="/admin/solicitacoes/:id" element={<DetalhesSolicitacaoAdmin />} />
+          </Route>
 
-    <Route path="*" element={<PaginaNotFound />} />
+          <Route path="*" element={<PaginaNotFound />} />
 
-  </Routes>
-</BrowserRouter>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 };

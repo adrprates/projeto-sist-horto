@@ -1,0 +1,43 @@
+.horto-etapas {
+  list-style: none;
+  padding: 0;
+  margin: 32px 0 0;
+  display: grid;
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .horto-etapas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .horto-etapas {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.horto-etapas li {
+  display: flex;
+  gap: 12px;
+}
+
+.horto-etapas p {
+  margin: 4px 0 0;
+  line-height: 1.6;
+  color: var(--texto-suave);
+}
+
+.horto-etapa-numero {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--floresta-700);
+  color: var(--branco);
+  font-size: 14px;
+  font-weight: 600;
+}

@@ -1,0 +1,83 @@
+.cabecalho-pagina {
+  background: var(--floresta-950);
+}
+
+.cabecalho-pagina-conteudo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-top: 56px;
+  padding-bottom: 56px;
+}
+
+.cabecalho-pagina-textos {
+  max-width: 768px;
+}
+
+.cabecalho-pagina-titulo {
+  font-size: 36px;
+  line-height: 1.15;
+  color: var(--branco);
+  margin: 0;
+}
+
+.cabecalho-pagina-texto {
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--floresta-100);
+  max-width: 672px;
+  margin: 20px 0 0;
+}
+
+.cabecalho-pagina-acoes {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cabecalho-pagina-compacto .cabecalho-pagina-conteudo {
+  padding-top: 32px;
+  padding-bottom: 28px;
+}
+
+.cabecalho-pagina-compacto .cabecalho-pagina-titulo {
+  font-size: 30px;
+}
+
+.cabecalho-pagina-compacto .cabecalho-pagina-texto {
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.cabecalho-pagina-compacto .onda-divisoria {
+  height: 20px;
+}
+
+@media (min-width: 640px) {
+  .cabecalho-pagina-titulo {
+    font-size: 48px;
+  }
+
+  .cabecalho-pagina-compacto .cabecalho-pagina-titulo {
+    font-size: 34px;
+  }
+}
+
+.cabecalho-pagina-voltar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: var(--floresta-200);
+  cursor: pointer;
+}
+
+.cabecalho-pagina-voltar:hover {
+  color: var(--branco);
+}

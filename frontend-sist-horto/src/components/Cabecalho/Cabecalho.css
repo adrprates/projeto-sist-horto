@@ -1,100 +1,154 @@
 .cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--floresta-950);
+}
+
+.cabecalho-barra {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 32px;
-  background: var(--branco);
-  border-bottom: 1px solid #e6e6e6;
-  position: relative;
+  gap: 16px;
+  height: 64px;
 }
 
-.logo {
+.cabecalho-marca {
   display: flex;
   align-items: center;
-  gap: 8px;
-  cursor: pointer;
+  gap: 10px;
+  text-decoration: none;
+  min-width: 0;
 }
 
-.logo-icone {
-  color: var(--verde);
+.cabecalho-marca-icone {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--broto-400);
+  color: var(--floresta-950);
   transition: transform 0.3s ease;
 }
 
-.logo:hover .logo-icone {
-  transform: rotate(-12deg) scale(1.1);
+.cabecalho-marca:hover .cabecalho-marca-icone {
+  transform: rotate(-12deg);
 }
 
-.logo-texto {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 22px;
-  margin: 0;
-  color: var(--verde);
-  transition: text-shadow 0.3s ease;
+.cabecalho-marca-texto {
+  font-family: var(--fonte-titulo);
+  font-size: 18px;
+  color: var(--branco);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.logo:hover .logo-texto {
-  text-shadow: 0 0 14px rgba(46, 125, 50, 0.35);
-}
-
-.botao-menu {
+.cabecalho-links,
+.cabecalho-conta {
   display: none;
-  background: none;
-  border: none;
-  color: var(--verde);
-  cursor: pointer;
-  padding: 5px;
+  align-items: center;
+  gap: 4px;
 }
 
-.nav {
-  display: flex;
-  gap: 8px;
-}
-
-.nav a {
-  display: flex;
+.nav-link {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--cinza);
-  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 8px 12px;
   font-size: 14px;
   font-weight: 500;
-  padding: 8px 14px;
-  border-radius: 32px;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  color: var(--floresta-100);
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.nav a:hover {
-  background: var(--cinza);
+.nav-link:hover {
+  background: var(--floresta-800);
   color: var(--branco);
 }
 
-@media (max-width: 768px) {
-  .botao-menu {
-    display: block;
-  }
+.nav-link-ativo {
+  background: var(--floresta-700);
+  color: var(--branco);
+}
 
-  .nav {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--branco);
-    border-bottom: 1px solid #e6e6e6;
-    padding: 16px 32px;
-    gap: 4px;
-    z-index: 10;
-  }
+.cabecalho-cta {
+  padding: 8px 16px;
+  margin-right: 4px;
+}
 
-  .nav-aberto {
+.cabecalho-botao-menu {
+  display: inline-flex;
+  padding: 8px;
+  border: none;
+  background: none;
+  color: var(--branco);
+  cursor: pointer;
+}
+
+.cabecalho-menu-movel {
+  border-top: 1px solid var(--floresta-800);
+}
+
+.cabecalho-menu-movel-conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 12px;
+  padding-bottom: 16px;
+}
+
+.cabecalho-menu-movel-conta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--floresta-800);
+}
+
+.cabecalho-menu-movel-conta .cabecalho-cta {
+  margin: 0 0 4px;
+  padding: 12px 16px;
+}
+
+@media (min-width: 1180px) {
+  .cabecalho-links,
+  .cabecalho-conta {
     display: flex;
   }
 
-  .nav a {
-    justify-content: center;
+  .cabecalho-botao-menu,
+  .cabecalho-menu-movel {
+    display: none;
+  }
+
+  .cabecalho-conta .cabecalho-rotulo-icone {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .cabecalho-conta .nav-link {
+    padding: 8px 10px;
+  }
+}
+
+.cabecalho-admin .container-pagina {
+  max-width: 1400px;
+}
+
+@media (min-width: 1180px) and (max-width: 1439px) {
+  .cabecalho-admin .cabecalho-marca-texto {
+    display: none;
   }
 }

@@ -1,0 +1,98 @@
+.etiqueta-muda {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--kraft-300);
+  border-radius: 32px 32px 16px 16px;
+  background: var(--kraft-100);
+  padding: 36px 20px 20px;
+  box-shadow: 0 2px 0 0 var(--kraft-300);
+}
+
+.etiqueta-muda-furo {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translateX(-50%);
+  border: 1px solid var(--kraft-400);
+  border-radius: 50%;
+  background: var(--fundo);
+}
+
+.etiqueta-muda-imagem {
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--kraft-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin-bottom: 16px;
+}
+
+.etiqueta-muda-imagem img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.etiqueta-muda-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.etiqueta-muda-nome {
+  font-size: 20px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.etiqueta-muda-cientifico {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--kraft-700);
+  margin: 2px 0 0;
+}
+
+.etiqueta-selo {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--kraft-300);
+  color: var(--kraft-700);
+}
+
+.etiqueta-selo-disponivel {
+  background: var(--floresta-700);
+  color: var(--branco);
+}
+
+.etiqueta-muda-rodape {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 16px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px dashed var(--kraft-400);
+  font-size: 14px;
+  color: var(--texto-suave);
+}
+
+.etiqueta-muda-rodape li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.etiqueta-muda-rodape svg {
+  color: var(--floresta-600);
+}

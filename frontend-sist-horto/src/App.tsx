@@ -1,17 +1,16 @@
+import { ThemeProvider } from '@mui/material/styles';
 import { AuthProvider } from './context/AuthProvider';
 import { AppRoutes } from './routes/AppRoutes';
+import { temaMui } from './config/temaMui';
 import './App.css'
-import { useEffect } from 'react';
 
 function App() {
-  useEffect(() => {
-    document.title = "Sistema Reserva de Mudas";
-  }, []);
-
   return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <ThemeProvider theme={temaMui}>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

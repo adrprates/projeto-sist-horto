@@ -1,0 +1,133 @@
+.como-solicitar-passos {
+  padding-top: 24px;
+}
+
+.linha-passos {
+  position: relative;
+  list-style: none;
+  max-width: 672px;
+  margin: 0;
+  padding: 0;
+}
+
+.linha-passos::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 15px;
+  width: 6px;
+  border-radius: 999px;
+  background: var(--floresta-600);
+}
+
+.passo {
+  position: relative;
+  padding: 0 0 40px 80px;
+}
+
+.passo:last-child {
+  padding-bottom: 0;
+}
+
+.passo-numero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--floresta-950);
+  color: var(--broto-300);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 0 0 4px var(--fundo);
+}
+
+.passo-folha {
+  position: absolute;
+  top: 8px;
+  left: 36px;
+}
+
+.passo-folha-espelhada {
+  transform: scaleX(-1);
+}
+
+.passo-titulo {
+  font-size: 20px;
+  margin: 0;
+}
+
+.passo-descricao {
+  line-height: 1.7;
+  color: var(--texto-suave);
+  margin: 4px 0 0;
+}
+
+.como-solicitar-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  margin-top: 48px;
+}
+
+.como-solicitar-ajuda {
+  max-width: 576px;
+  font-size: 14px;
+  color: var(--cinza);
+  margin: 16px 0 0;
+}
+
+.como-solicitar-faq {
+  max-width: 768px;
+}
+
+.faq-lista {
+  margin-top: 24px;
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  background: var(--branco);
+}
+
+.faq-item {
+  padding: 20px;
+}
+
+.faq-item + .faq-item {
+  border-top: 1px solid var(--borda);
+}
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 500;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-icone {
+  margin-left: 16px;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--floresta-600);
+  transition: transform 0.2s ease;
+}
+
+.faq-item[open] .faq-icone {
+  transform: rotate(45deg);
+}
+
+.faq-item p {
+  line-height: 1.7;
+  color: var(--texto-suave);
+  margin: 12px 0 0;
+}
