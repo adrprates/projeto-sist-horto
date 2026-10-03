@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import type { ParametroAnual } from "../../types/ParametroAnual";
 import { listarParametrosAnuais, deletar } from "../../api/parametroAnualService";
-import Cabecalho from "../../components/Cabecalho/Cabecalho";
-import Rodape from "../../components/Rodape/Rodape";
 import "./ListaParametrosAnuais.css";
+import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 
 function ListaParametrosAnuais() {
   const [parametros, setParametros] = useState<ParametroAnual[]>([]);
@@ -44,20 +43,23 @@ function ListaParametrosAnuais() {
 
   return (
     <div>
-      <Cabecalho />
-
-      <main className="container-parametros">
-        <div className="parametros-cabecalho">
-          <h2 className="titulo-parametros">Parâmetros Anuais</h2>
+      <CabecalhoPagina
+        compacto
+        titulo="Parâmetros anuais"
+        texto="Limites de mudas por ano, por categoria e por espécie."
+        acoes={
           <button
             type="button"
-            className="botao-novo-parametro"
+            className="botao-destaque"
             onClick={() => navigate("/parametros/novo")}
           >
             <Plus size={18} />
-            Novo Parâmetro
+            Novo parâmetro
           </button>
-        </div>
+        }
+      />
+
+      <section className="container-pagina container-parametros">
 
         {erro && <p className="parametros-erro">{erro}</p>}
 
@@ -116,9 +118,8 @@ function ListaParametrosAnuais() {
             </table>
           </div>
         )}
-      </main>
+      </section>
 
-      <Rodape />
     </div>
   );
 }

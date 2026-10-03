@@ -15,12 +15,12 @@
 }
 
 .badge-status-amarelo {
-  background: #fff2d9;
-  color: #8a6413;
+  background: var(--amarelo-suave);
+  color: var(--kraft-700);
 }
 
 .badge-status-verde {
-  background: #eaf6ec;
+  background: var(--sucesso-suave);
   color: var(--verde);
 }
 
@@ -30,6 +30,6 @@
 }
 
 .badge-status-vermelho {
-  background: #fdecea;
+  background: var(--vermelho-suave);
   color: var(--vermelho);
 }

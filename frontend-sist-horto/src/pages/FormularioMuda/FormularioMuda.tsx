@@ -1,12 +1,13 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Trash2, ArrowLeft, X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import type { Muda } from "../../types/Muda";
 import { CategoriaMuda, rotuloCategoria } from "../../types/CategoriaMuda";
 import { salvar, deletarMuda, buscarMuda } from "../../api/mudaService";
 import { buscarPorEstoque } from "../../api/estoqueService";
 import { atualizarQuantidade } from "../../api/estoqueService";
 import "./FormularioMuda.css";
+import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 
 const MUDA_VAZIA: Muda = {
   nomesPopulares: [],
@@ -17,7 +18,7 @@ export default function FormularioMuda() {
   const navigate = useNavigate();
 
   function voltarParaCatalogo() {
-    navigate("/");
+    navigate("/catalogo");
   }
   
   const idMudaEdicao = id ? Number(id) : undefined;
@@ -138,297 +139,297 @@ export default function FormularioMuda() {
   }
 
   return (
-    <div className="formulario-pagina">
-      <div className="formulario-cabecalho">
-        <button type="button" className="botao-voltar" onClick={() => navigate("/")}>
-          <ArrowLeft size={18} />
-          Voltar ao catálogo
-        </button>
-        <h1 className="formulario-titulo">
-          {ehEdicao ? "Editar Muda" : "Nova Muda"}
-        </h1>
-      </div>
+    <div>
+      <CabecalhoPagina
+        compacto
+        voltar={{ rotulo: "Voltar para gestão de mudas", aoClicar: () => navigate("/catalogo") }}
+        titulo={ehEdicao ? "Editar muda" : "Nova muda"}
+        texto="Os dados da espécie aparecem no catálogo para todos os visitantes."
+      />
 
-      {erro && <p className="formulario-erro">{erro}</p>}
+      <div className="container-pagina formulario-pagina">
 
-      <form className="formulario" onSubmit={handleSalvar}>
-        <section className="formulario-secao">
-          <h3>Identificação</h3>
+        {erro && <p className="formulario-erro">{erro}</p>}
 
-          <div className="campo">
-            <label>Nomes populares *</label>
-            <div className="chips-input">
-              <input
-                type="text"
-                value={novoNomePopular}
-                placeholder="Digite um nome e clique em adicionar"
-                onChange={(evento) => setNovoNomePopular(evento.target.value)}
-                onKeyDown={(evento) => {
-                  if (evento.key === "Enter") {
-                    evento.preventDefault();
-                    adicionarNomePopular();
-                  }
-                }}
-              />
-              <button type="button" onClick={adicionarNomePopular}>
-                Adicionar
-              </button>
-            </div>
-            <div className="chips-lista">
-              {campos.nomesPopulares.map((nome) => (
-                <span key={nome} className="chip">
-                  {nome}
-                  <button type="button" onClick={() => removerNomePopular(nome)}>
-                    <X size={12} />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="campo">
-            <label>Categoria *</label>
-            <select
-              value={campos.categoria ?? ""}
-              onChange={(evento) =>
-                atualizarCampo(
-                  "categoria",
-                  evento.target.value ? (evento.target.value as CategoriaMuda) : undefined
-                )
-              }
-            >
-              <option value="">Selecione uma categoria</option>
-              {Object.values(CategoriaMuda).map((categoria) => (
-                <option key={categoria} value={categoria}>
-                  {rotuloCategoria[categoria]}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="campo-grade">
-            <div className="campo">
-              <label>Reino</label>
-              <input
-                type="text"
-                maxLength={50}
-                value={campos.reino ?? ""}
-                onChange={(evento) => atualizarCampo("reino", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Filo</label>
-              <input
-                type="text"
-                maxLength={50}
-                value={campos.filo ?? ""}
-                onChange={(evento) => atualizarCampo("filo", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Classe</label>
-              <input
-                type="text"
-                maxLength={50}
-                value={campos.classe ?? ""}
-                onChange={(evento) => atualizarCampo("classe", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Ordem</label>
-              <input
-                type="text"
-                maxLength={50}
-                value={campos.ordem ?? ""}
-                onChange={(evento) => atualizarCampo("ordem", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Família</label>
-              <input
-                type="text"
-                maxLength={50}
-                value={campos.familia ?? ""}
-                onChange={(evento) => atualizarCampo("familia", evento.target.value)}
-              />
-            </div>
-          </div>
-        </section>
-
-        <section className="formulario-secao">
-          <h3>Características</h3>
-
-          <div className="campo-checkboxes">
-            <label>
-              <input
-                type="checkbox"
-                checked={campos.possuiFlores ?? false}
-                onChange={(evento) => atualizarCampo("possuiFlores", evento.target.checked)}
-              />
-              Possui flores
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={campos.possuiFrutos ?? false}
-                onChange={(evento) => atualizarCampo("possuiFrutos", evento.target.checked)}
-              />
-              Possui frutos
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={campos.perdeMuitasFolhas ?? false}
-                onChange={(evento) =>
-                  atualizarCampo("perdeMuitasFolhas", evento.target.checked)
-                }
-              />
-              Perde muitas folhas
-            </label>
-          </div>
-
-          <div className="campo-grade">
-            <div className="campo">
-              <label>Formato</label>
-              <input
-                type="text"
-                maxLength={100}
-                value={campos.formato ?? ""}
-                onChange={(evento) => atualizarCampo("formato", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Tamanho</label>
-              <input
-                type="text"
-                maxLength={100}
-                value={campos.tamanho ?? ""}
-                onChange={(evento) => atualizarCampo("tamanho", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Raízes</label>
-              <input
-                type="text"
-                maxLength={100}
-                value={campos.raizes ?? ""}
-                onChange={(evento) => atualizarCampo("raizes", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Cor da flor</label>
-              <input
-                type="text"
-                maxLength={50}
-                value={campos.corFlor ?? ""}
-                onChange={(evento) => atualizarCampo("corFlor", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Tipos de flores</label>
-              <input
-                type="text"
-                maxLength={150}
-                value={campos.tiposFlores ?? ""}
-                onChange={(evento) => atualizarCampo("tiposFlores", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Época das flores</label>
-              <input
-                type="text"
-                maxLength={100}
-                value={campos.epocaFlores ?? ""}
-                onChange={(evento) => atualizarCampo("epocaFlores", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Tipos de frutos</label>
-              <input
-                type="text"
-                maxLength={150}
-                value={campos.tiposFrutos ?? ""}
-                onChange={(evento) => atualizarCampo("tiposFrutos", evento.target.value)}
-              />
-            </div>
-            <div className="campo">
-              <label>Época dos frutos</label>
-              <input
-                type="text"
-                maxLength={100}
-                value={campos.epocaFrutos ?? ""}
-                onChange={(evento) => atualizarCampo("epocaFrutos", evento.target.value)}
-              />
-            </div>
-          </div>
-        </section>
-
-        <section className="formulario-secao">
-          <h3>Imagens</h3>
-
-          <div className="campo">
-            <label>Link da imagem da árvore</label>
-            <input
-              type="text"
-              maxLength={255}
-              value={campos.linkImagemArvore ?? ""}
-              onChange={(evento) => atualizarCampo("linkImagemArvore", evento.target.value)}
-            />
-          </div>
-          <div className="campo">
-            <label>Link da imagem das flores</label>
-            <input
-              type="text"
-              maxLength={255}
-              value={campos.linkImagemFlores ?? ""}
-              onChange={(evento) => atualizarCampo("linkImagemFlores", evento.target.value)}
-            />
-          </div>
-          <div className="campo">
-            <label>Link da imagem dos frutos</label>
-            <input
-              type="text"
-              maxLength={255}
-              value={campos.linkImagemFrutos ?? ""}
-              onChange={(evento) => atualizarCampo("linkImagemFrutos", evento.target.value)}
-            />
-          </div>
-        </section>
-
-        {ehEdicao && (
+        <form className="formulario" onSubmit={handleSalvar}>
           <section className="formulario-secao">
-            <h3>Estoque</h3>
-            <p className="formulario-dica">
-              Estoque atual: <strong>{estoqueAtual}</strong>
-            </p>
+            <h3>Identificação</h3>
+
             <div className="campo">
-              <label>Novo valor do estoque</label>
+              <label>Nomes populares *</label>
+              <div className="chips-input">
+                <input
+                  type="text"
+                  value={novoNomePopular}
+                  placeholder="Digite um nome e clique em adicionar"
+                  onChange={(evento) => setNovoNomePopular(evento.target.value)}
+                  onKeyDown={(evento) => {
+                    if (evento.key === "Enter") {
+                      evento.preventDefault();
+                      adicionarNomePopular();
+                    }
+                  }}
+                />
+                <button type="button" onClick={adicionarNomePopular}>
+                  Adicionar
+                </button>
+              </div>
+              <div className="chips-lista">
+                {campos.nomesPopulares.map((nome) => (
+                  <span key={nome} className="chip">
+                    {nome}
+                    <button type="button" onClick={() => removerNomePopular(nome)}>
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="campo">
+              <label>Categoria *</label>
+              <select
+                value={campos.categoria ?? ""}
+                onChange={(evento) =>
+                  atualizarCampo(
+                    "categoria",
+                    evento.target.value ? (evento.target.value as CategoriaMuda) : undefined
+                  )
+                }
+              >
+                <option value="">Selecione uma categoria</option>
+                {Object.values(CategoriaMuda).map((categoria) => (
+                  <option key={categoria} value={categoria}>
+                    {rotuloCategoria[categoria]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="campo-grade">
+              <div className="campo">
+                <label>Reino</label>
+                <input
+                  type="text"
+                  maxLength={50}
+                  value={campos.reino ?? ""}
+                  onChange={(evento) => atualizarCampo("reino", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Filo</label>
+                <input
+                  type="text"
+                  maxLength={50}
+                  value={campos.filo ?? ""}
+                  onChange={(evento) => atualizarCampo("filo", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Classe</label>
+                <input
+                  type="text"
+                  maxLength={50}
+                  value={campos.classe ?? ""}
+                  onChange={(evento) => atualizarCampo("classe", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Ordem</label>
+                <input
+                  type="text"
+                  maxLength={50}
+                  value={campos.ordem ?? ""}
+                  onChange={(evento) => atualizarCampo("ordem", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Família</label>
+                <input
+                  type="text"
+                  maxLength={50}
+                  value={campos.familia ?? ""}
+                  onChange={(evento) => atualizarCampo("familia", evento.target.value)}
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="formulario-secao">
+            <h3>Características</h3>
+
+            <div className="campo-checkboxes">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={campos.possuiFlores ?? false}
+                  onChange={(evento) => atualizarCampo("possuiFlores", evento.target.checked)}
+                />
+                Possui flores
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={campos.possuiFrutos ?? false}
+                  onChange={(evento) => atualizarCampo("possuiFrutos", evento.target.checked)}
+                />
+                Possui frutos
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={campos.perdeMuitasFolhas ?? false}
+                  onChange={(evento) =>
+                    atualizarCampo("perdeMuitasFolhas", evento.target.checked)
+                  }
+                />
+                Perde muitas folhas
+              </label>
+            </div>
+
+            <div className="campo-grade">
+              <div className="campo">
+                <label>Formato</label>
+                <input
+                  type="text"
+                  maxLength={100}
+                  value={campos.formato ?? ""}
+                  onChange={(evento) => atualizarCampo("formato", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Tamanho</label>
+                <input
+                  type="text"
+                  maxLength={100}
+                  value={campos.tamanho ?? ""}
+                  onChange={(evento) => atualizarCampo("tamanho", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Raízes</label>
+                <input
+                  type="text"
+                  maxLength={100}
+                  value={campos.raizes ?? ""}
+                  onChange={(evento) => atualizarCampo("raizes", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Cor da flor</label>
+                <input
+                  type="text"
+                  maxLength={50}
+                  value={campos.corFlor ?? ""}
+                  onChange={(evento) => atualizarCampo("corFlor", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Tipos de flores</label>
+                <input
+                  type="text"
+                  maxLength={150}
+                  value={campos.tiposFlores ?? ""}
+                  onChange={(evento) => atualizarCampo("tiposFlores", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Época das flores</label>
+                <input
+                  type="text"
+                  maxLength={100}
+                  value={campos.epocaFlores ?? ""}
+                  onChange={(evento) => atualizarCampo("epocaFlores", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Tipos de frutos</label>
+                <input
+                  type="text"
+                  maxLength={150}
+                  value={campos.tiposFrutos ?? ""}
+                  onChange={(evento) => atualizarCampo("tiposFrutos", evento.target.value)}
+                />
+              </div>
+              <div className="campo">
+                <label>Época dos frutos</label>
+                <input
+                  type="text"
+                  maxLength={100}
+                  value={campos.epocaFrutos ?? ""}
+                  onChange={(evento) => atualizarCampo("epocaFrutos", evento.target.value)}
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="formulario-secao">
+            <h3>Imagens</h3>
+
+            <div className="campo">
+              <label>Link da imagem da árvore</label>
               <input
-                type="number"
-                min={0}
-                value={novoValorEstoque}
-                onChange={(evento) => setNovoValorEstoque(Number(evento.target.value))}
+                type="text"
+                maxLength={255}
+                value={campos.linkImagemArvore ?? ""}
+                onChange={(evento) => atualizarCampo("linkImagemArvore", evento.target.value)}
+              />
+            </div>
+            <div className="campo">
+              <label>Link da imagem das flores</label>
+              <input
+                type="text"
+                maxLength={255}
+                value={campos.linkImagemFlores ?? ""}
+                onChange={(evento) => atualizarCampo("linkImagemFlores", evento.target.value)}
+              />
+            </div>
+            <div className="campo">
+              <label>Link da imagem dos frutos</label>
+              <input
+                type="text"
+                maxLength={255}
+                value={campos.linkImagemFrutos ?? ""}
+                onChange={(evento) => atualizarCampo("linkImagemFrutos", evento.target.value)}
               />
             </div>
           </section>
+
+          {ehEdicao && (
+            <section className="formulario-secao">
+              <h3>Estoque</h3>
+              <p className="formulario-dica">
+                Estoque atual: <strong>{estoqueAtual}</strong>
+              </p>
+              <div className="campo">
+                <label>Novo valor do estoque</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={novoValorEstoque}
+                  onChange={(evento) => setNovoValorEstoque(Number(evento.target.value))}
+                />
+              </div>
+            </section>
+          )}
+
+          <div className="formulario-acoes">
+            <button type="submit" className="botao-salvar" disabled={salvando}>
+              {salvando ? "Salvando..." : "Salvar"}
+            </button>
+          </div>
+        </form>
+
+        {ehEdicao && (
+          <div className="formulario-zona-perigo">
+            <p>Excluir esta muda remove ela permanentemente do catálogo.</p>
+            <button type="button" className="botao-excluir" onClick={handleDeletar}>
+              <Trash2 size={16} />
+              Excluir muda
+            </button>
+          </div>
         )}
-
-        <div className="formulario-acoes">
-          <button type="submit" className="botao-salvar" disabled={salvando}>
-            {salvando ? "Salvando..." : "Salvar"}
-          </button>
-        </div>
-      </form>
-
-      {ehEdicao && (
-        <div className="formulario-zona-perigo">
-          <p>Excluir esta muda remove ela permanentemente do catálogo.</p>
-          <button type="button" className="botao-excluir" onClick={handleDeletar}>
-            <Trash2 size={16} />
-            Excluir muda
-          </button>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

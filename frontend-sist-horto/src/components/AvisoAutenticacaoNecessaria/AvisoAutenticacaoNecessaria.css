@@ -2,9 +2,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #fff7e6;
-  border: 1px solid #f0dba3;
-  border-radius: 10px;
+  background: var(--amarelo-suave);
+  border: 1px solid var(--amarelo-borda);
+  border-radius: 14px;
   padding: 14px 18px;
   margin-bottom: 24px;
   flex-wrap: wrap;
@@ -18,25 +18,25 @@
 .aviso-autenticacao-texto {
   flex: 1;
   font-size: 14px;
-  color: #6b5310;
+  color: var(--kraft-700);
   margin: 0;
 }
 
 .aviso-autenticacao-botao {
-  background: var(--amarelo);
+  background: var(--verde);
   border: none;
-  color: #3a2c10;
+  color: var(--branco);
   font-weight: 700;
   font-size: 13px;
   padding: 8px 18px;
-  border-radius: 32px;
+  border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
   transition: filter 0.2s ease;
 }
 
 .aviso-autenticacao-botao:hover {
-  filter: brightness(0.95);
+  background: var(--verde-escuro);
 }
 
 @media (max-width: 500px) {

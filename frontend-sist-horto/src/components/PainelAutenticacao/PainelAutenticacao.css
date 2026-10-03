@@ -1,0 +1,33 @@
+.painel-autenticacao {
+  border-radius: 24px;
+  background: var(--floresta-800);
+  padding: 32px;
+  color: var(--floresta-100);
+}
+
+.painel-autenticacao-titulo {
+  font-size: 24px;
+  color: var(--branco);
+  margin: 0;
+}
+
+.painel-autenticacao-lista {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  line-height: 1.5;
+}
+
+.painel-autenticacao-lista li {
+  display: flex;
+  gap: 10px;
+}
+
+.painel-autenticacao-lista svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--broto-400);
+}

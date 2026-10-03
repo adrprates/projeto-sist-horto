@@ -1,48 +1,12 @@
 .container-parametros {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 24px 64px;
-}
-
-.parametros-cabecalho {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 24px;
-}
-
-.titulo-parametros {
-  font-size: 24px;
-  color: var(--texto);
-  margin: 0;
-}
-
-.botao-novo-parametro {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--verde);
-  border: 2px solid var(--verde);
-  color: var(--branco);
-  font-weight: 600;
-  font-size: 14px;
-  padding: 10px 20px;
-  border-radius: 32px;
-  cursor: pointer;
-  transition: background-color 0.25s ease, color 0.25s ease;
-}
-
-.botao-novo-parametro:hover {
-  background: var(--branco);
-  color: var(--verde);
+  padding-top: 16px;
+  padding-bottom: 64px;
 }
 
 .parametros-erro {
-  background: #fdecea;
+  background: var(--vermelho-suave);
   color: var(--vermelho);
-  border: 1px solid #f5c6c1;
+  border: 1px solid var(--vermelho-borda);
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: 16px;
@@ -57,8 +21,8 @@
 
 .tabela-parametros-wrapper {
   background: var(--branco);
-  border: 1px solid #e6e6e6;
-  border-radius: 10px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
   overflow-x: auto;
 }
 
@@ -88,7 +52,7 @@
 }
 
 .tabela-parametros tbody tr {
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--borda);
 }
 
 .tabela-parametros tbody tr:hover {
@@ -121,8 +85,8 @@
 }
 
 .botao-tabela-editar {
-  background: var(--amarelo);
-  color: #3a2c10;
+  background: var(--kraft-300);
+  color: var(--kraft-700);
 }
 
 .botao-tabela-excluir {

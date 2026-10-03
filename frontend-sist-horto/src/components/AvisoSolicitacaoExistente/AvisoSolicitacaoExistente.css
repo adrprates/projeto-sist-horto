@@ -2,9 +2,9 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  background: #eaf6ec;
-  border: 1px solid #bfe3c5;
-  border-radius: 10px;
+  background: var(--sucesso-suave);
+  border: 1px solid var(--sucesso-borda);
+  border-radius: 14px;
   padding: 16px 20px;
   margin-bottom: 24px;
   flex-wrap: wrap;
@@ -42,14 +42,14 @@
   font-weight: 700;
   font-size: 13px;
   padding: 9px 20px;
-  border-radius: 32px;
+  border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
   transition: filter 0.2s ease;
 }
 
 .aviso-solicitacao-existente-botao:hover {
-  filter: brightness(0.95);
+  background: var(--verde-escuro);
 }
 
 @media (max-width: 500px) {

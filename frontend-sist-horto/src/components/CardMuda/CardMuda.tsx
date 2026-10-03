@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Package, Info, Lock, ClipboardCheck } from "lucide-react";
+import { Package, Info, Lock, ClipboardCheck, Leaf } from "lucide-react";
 import { isAxiosError } from "axios";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
 import { rotuloCategoria } from "../../types/CategoriaMuda";
 import ModalDetalhesMuda from "../ModalDetalhesMuda/ModalDetalhesMuda";
 import SeletorQuantidade from "../SeletorQuantidade/SeletorQuantidade";
+import "../CardMudaVitrine/CardMudaVitrine.css";
 import "./CardMuda.css";
 
 const MENSAGEM_PADRAO = "Não foi possível adicionar essa muda à solicitação.";
@@ -94,7 +95,9 @@ function CardMuda({
   }
 
   return (
-    <div className="card">
+    <article className="card etiqueta-muda">
+      <span className="etiqueta-muda-furo" aria-hidden="true" />
+
       <div className="card-imagem">
         {imagemComErro ? (
           <div className="card-imagem-vazia" role="img" aria-label={nomesParaExibir}>
@@ -111,13 +114,26 @@ function CardMuda({
       </div>
 
       <div className="card-conteudo">
-        <h3 className="card-titulo">{nomesParaExibir}</h3>
-        <p className="card-familia">Família: {muda.familia}</p>
+        <div className="card-cabecalho">
+          <div>
+            <h3 className="card-titulo">{nomesParaExibir}</h3>
+            <p className="card-cientifico">{muda.nomeCientifico}</p>
+          </div>
+          <span className={semEstoque ? "etiqueta-selo" : "etiqueta-selo etiqueta-selo-disponivel"}>
+            {semEstoque ? "Em falta" : "Disponível"}
+          </span>
+        </div>
 
-        <p className="card-estoque">
-          <Package size={16} />
-          Disponíveis: {muda.estoqueDisponivel}
-        </p>
+        <ul className="etiqueta-muda-rodape">
+          <li>
+            <Leaf size={16} />
+            Família {muda.familia}
+          </li>
+          <li>
+            <Package size={16} />
+            {muda.estoqueDisponivel} em estoque
+          </li>
+        </ul>
 
         {podeSolicitar && !solicitacaoBloqueada && quantidadeJaSolicitada > 0 && (
           <p className="card-ja-solicitado">
@@ -225,7 +241,7 @@ function CardMuda({
       {modalAberto && (
         <ModalDetalhesMuda idMuda={String(muda.id)} aoFechar={() => setModalAberto(false)} />
       )}
-    </div>
+    </article>
   );
 }
 

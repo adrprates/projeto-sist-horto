@@ -3,11 +3,10 @@ import { useNavigate } from "react-router-dom";
 import type { SolicitacaoAdmin } from "../../types/SolicitacaoAdmin";
 import type { SolicitacaoFilter } from "../../types/SolicitacaoFilter";
 import { listarSolicitacoes } from "../../api/solicitacaoAdminService";
-import Cabecalho from "../../components/Cabecalho/Cabecalho";
-import Rodape from "../../components/Rodape/Rodape";
 import FiltrosSolicitacoesAdmin from "../../components/FiltrosSolicitacoesAdmin/FiltrosSolicitacoesAdmin";
 import BadgeStatusSolicitacao from "../../components/BadgeStatusSolicitacao/BadgeStatusSolicitacao";
 import "./ListaSolicitacoesAdmin.css";
+import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 
 function ListaSolicitacoesAdmin() {
   const [solicitacoes, setSolicitacoes] = useState<SolicitacaoAdmin[]>([]);
@@ -28,10 +27,13 @@ function ListaSolicitacoesAdmin() {
 
   return (
     <div>
-      <Cabecalho />
+      <CabecalhoPagina
+        compacto
+        titulo="Gerenciar solicitações"
+        texto="Analise, aprove e acompanhe os pedidos de mudas dos beneficiários."
+      />
 
-      <main className="container-solicitacoes-admin">
-        <h2 className="titulo-solicitacoes-admin">Gerenciar Solicitações</h2>
+      <section className="container-pagina container-solicitacoes-admin">
 
         <FiltrosSolicitacoesAdmin filtro={filtro} aoMudarFiltro={setFiltro} />
 
@@ -44,8 +46,8 @@ function ListaSolicitacoesAdmin() {
         )}
 
         {!carregando && solicitacoes.length > 0 && (
-          <div className="tabela-solicitacoes-wrapper">
-            <table className="tabela-solicitacoes">
+          <div className="tabela-wrapper">
+            <table className="tabela">
               <thead>
                 <tr>
                   <th>Beneficiário</th>
@@ -53,7 +55,7 @@ function ListaSolicitacoesAdmin() {
                   <th>Ano</th>
                   <th>Data</th>
                   <th>Status</th>
-                  <th>Ações</th>
+                  <th className="tabela-coluna-acoes">Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -69,7 +71,7 @@ function ListaSolicitacoesAdmin() {
                     <td>
                       <button
                         type="button"
-                        className="botao-gerenciar-solicitacao"
+                        className="botao-tabela"
                         onClick={() => navigate(`/admin/solicitacoes/${solicitacao.id}`)}
                       >
                         Gerenciar
@@ -81,9 +83,8 @@ function ListaSolicitacoesAdmin() {
             </table>
           </div>
         )}
-      </main>
+      </section>
 
-      <Rodape />
     </div>
   );
 }

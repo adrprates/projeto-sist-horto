@@ -6,8 +6,8 @@
 
 .item-anterior {
   background: var(--branco);
-  border: 1px solid #e6e6e6;
-  border-radius: 10px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
   padding: 16px 18px;
 }
 
@@ -34,7 +34,7 @@
 .botao-ver-detalhes-anterior {
   margin-left: auto;
   background: none;
-  border: 2px solid var(--cinza);
+  border: 1px solid var(--borda);
   color: var(--cinza);
   font-weight: 600;
   font-size: 12px;
@@ -45,8 +45,9 @@
 }
 
 .botao-ver-detalhes-anterior:hover {
-  background: var(--cinza);
-  color: var(--branco);
+  background: var(--fundo-suave);
+  border-color: var(--floresta-500);
+  color: var(--verde);
 }
 
 .item-anterior-erro {

@@ -1,83 +1,14 @@
 .container-solicitacoes-admin {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 24px 64px;
-}
-
-.titulo-solicitacoes-admin {
-  font-size: 24px;
-  color: var(--texto);
-  margin: 0 0 24px;
+  padding-top: 16px;
+  padding-bottom: 64px;
 }
 
 .solicitacoes-admin-erro {
-  background: #fdecea;
+  background: var(--vermelho-suave);
   color: var(--vermelho);
-  border: 1px solid #f5c6c1;
+  border: 1px solid var(--vermelho-borda);
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: 16px;
   font-size: 14px;
-}
-
-.mensagem-central {
-  text-align: center;
-  color: var(--cinza);
-  padding: 40px 0;
-}
-
-.tabela-solicitacoes-wrapper {
-  background: var(--branco);
-  border: 1px solid #e6e6e6;
-  border-radius: 10px;
-  overflow-x: auto;
-}
-
-.tabela-solicitacoes {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.tabela-solicitacoes th,
-.tabela-solicitacoes td {
-  padding: 14px 16px;
-  text-align: left;
-  white-space: nowrap;
-}
-
-.tabela-solicitacoes thead {
-  background: var(--fundo-suave);
-}
-
-.tabela-solicitacoes th {
-  font-weight: 600;
-  color: var(--texto);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.tabela-solicitacoes tbody tr {
-  border-top: 1px solid #eee;
-}
-
-.tabela-solicitacoes tbody tr:hover {
-  background: var(--fundo-suave);
-}
-
-.botao-gerenciar-solicitacao {
-  background: var(--amarelo);
-  border: none;
-  color: #3a2c10;
-  font-weight: 600;
-  font-size: 12px;
-  padding: 7px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: filter 0.2s ease;
-}
-
-.botao-gerenciar-solicitacao:hover {
-  filter: brightness(0.92);
 }

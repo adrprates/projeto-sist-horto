@@ -1,7 +1,7 @@
 .filtros-beneficiarios {
   background: var(--branco);
-  border: 1px solid #e6e6e6;
-  border-radius: 10px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
   padding: 20px;
   margin-bottom: 32px;
 }
@@ -14,11 +14,11 @@
 
 .select-campo-busca {
   padding: 10px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--borda);
   border-radius: 8px;
   font-size: 14px;
   color: var(--texto);
-  font-family: "Inter", sans-serif;
+  font-family: inherit;
   background: var(--branco);
 }
 
@@ -28,8 +28,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #d9d9d9;
-  border-radius: 32px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
   padding: 10px 16px;
 }
 
@@ -43,16 +43,16 @@
   flex: 1;
   font-size: 14px;
   color: var(--texto);
-  font-family: "Inter", sans-serif;
+  font-family: inherit;
 }
 
 .select-role {
   padding: 10px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--borda);
   border-radius: 8px;
   font-size: 14px;
   color: var(--texto);
-  font-family: "Inter", sans-serif;
+  font-family: inherit;
   background: var(--branco);
 }
 

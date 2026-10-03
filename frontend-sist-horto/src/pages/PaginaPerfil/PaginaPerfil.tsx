@@ -3,10 +3,9 @@ import { Pencil, KeyRound } from "lucide-react";
 import type { Perfil } from "../../types/Perfil";
 import type { AtualizarPerfil } from "../../types/AtualizarPerfil";
 import { obterPerfil, atualizarPerfil } from "../../api/perfilService";
-import Cabecalho from "../../components/Cabecalho/Cabecalho";
-import Rodape from "../../components/Rodape/Rodape";
 import ModalAlterarSenha from "../../components/ModalAlterarSenha/ModalAlterarSenha";
 import "./PaginaPerfil.css";
+import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 
 function PaginaPerfil() {
   const [perfil, setPerfil] = useState<Perfil>({});
@@ -80,28 +79,28 @@ function PaginaPerfil() {
   if (carregando) {
     return (
       <div>
-        <Cabecalho />
         <p className="perfil-carregando">Carregando perfil...</p>
-        <Rodape />
       </div>
     );
   }
 
   return (
     <div>
-      <Cabecalho />
-
-      <main className="container-perfil">
-        <div className="perfil-cabecalho">
-          <h2 className="titulo-perfil">Meu Perfil</h2>
-
-          {!editando && (
-            <button type="button" className="botao-editar-perfil" onClick={handleIniciarEdicao}>
+      <CabecalhoPagina
+        compacto
+        titulo="Meu perfil"
+        texto="Seus dados de cadastro e de acesso ao sistema."
+        acoes={
+          !editando && (
+            <button type="button" className="botao-destaque" onClick={handleIniciarEdicao}>
               <Pencil size={16} />
-              Atualizar Perfil
+              Atualizar perfil
             </button>
-          )}
-        </div>
+          )
+        }
+      />
+
+      <section className="container-pagina container-perfil">
 
         {erro && <p className="perfil-erro">{erro}</p>}
 
@@ -197,11 +196,10 @@ function PaginaPerfil() {
             Alterar Senha
           </button>
         </div>
-      </main>
+      </section>
       {modalSenhaAberto && (
         <ModalAlterarSenha aoFechar={() => setModalSenhaAberto(false)} />
       )}
-      <Rodape />
     </div>
   );
 }

@@ -1,51 +1,49 @@
 .pagina-autenticacao {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
+  display: grid;
+  gap: 24px;
+  align-items: start;
   justify-content: center;
-  background: var(--fundo-suave);
-  padding: 24px;
+  grid-template-columns: minmax(0, 640px);
+  padding-top: 16px;
+  padding-bottom: 64px;
+}
+
+.pagina-autenticacao-estreita {
+  grid-template-columns: minmax(0, 480px);
+}
+
+@media (min-width: 1024px) {
+  .pagina-autenticacao {
+    grid-template-columns: minmax(0, 640px) 360px;
+  }
+
+  .pagina-autenticacao-estreita {
+    grid-template-columns: minmax(0, 480px) 360px;
+  }
 }
 
 .cartao-autenticacao {
   width: 100%;
-  max-width: 380px;
   background: var(--branco);
-  border: 1px solid #e6e6e6;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 40px 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  border: 1px solid var(--borda);
+  border-radius: 24px;
+  padding: 32px;
 }
 
-.avatar-logo {
-  background: var(--verde) !important;
-  width: 56px !important;
-  height: 56px !important;
-  margin-bottom: 8px;
+.cartao-autenticacao-titulo {
+  font-size: 24px;
+  margin: 0;
 }
 
-.titulo-autenticacao {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  font-size: 22px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--verde);
-  margin: 4px 0 0;
-}
-
-.subtitulo-autenticacao {
+.cartao-autenticacao-texto {
   font-size: 14px;
   color: var(--cinza);
-  margin: 4px 0 24px;
+  margin: 6px 0 16px;
 }
 
 .alerta-autenticacao {
   width: 100%;
-  margin-bottom: 16px;
+  margin: 8px 0;
 }
 
 .formulario-autenticacao {
@@ -57,22 +55,17 @@
 .botao-autenticacao {
   margin-top: 16px !important;
   margin-bottom: 8px !important;
-  padding: 10px !important;
+  padding: 11px !important;
 }
 
 .rodape-autenticacao {
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--cinza);
-  margin-top: 8px;
+  margin: 12px 0 0;
 }
 
 .link-autenticacao {
   font-weight: 600;
-  color: var(--verde) !important;
-  text-decoration: none;
-}
-
-.link-autenticacao:hover {
-  text-decoration: underline;
+  color: var(--floresta-700) !important;
 }

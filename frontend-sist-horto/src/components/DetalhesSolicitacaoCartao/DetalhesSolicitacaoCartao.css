@@ -1,7 +1,7 @@
 .cartao-detalhes-solicitacao {
   background: var(--branco);
-  border: 1px solid #e6e6e6;
-  border-radius: 10px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
   padding: 20px;
 }
 
@@ -38,7 +38,7 @@
   align-items: center;
   gap: 12px;
   padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--borda);
   font-size: 13px;
 }
 
@@ -68,7 +68,7 @@
 
 .cartao-detalhes-timeline {
   padding-top: 14px;
-  border-top: 1px dashed #e0e0e0;
+  border-top: 1px dashed var(--borda);
 }
 
 .cartao-detalhes-timeline-titulo {
@@ -81,7 +81,7 @@
 }
 
 .etapa-timeline {
-  border-left: 2px solid #a6dcd0;
+  border-left: 2px solid var(--floresta-200);
   padding-left: 14px;
   margin-bottom: 12px;
 }

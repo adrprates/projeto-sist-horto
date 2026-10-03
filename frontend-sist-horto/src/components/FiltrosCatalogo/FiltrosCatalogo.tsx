@@ -40,26 +40,33 @@ function FiltrosCatalogo({
       </div>
 
       <div className="filtros-linha-secundaria">
-        <select
-          className="select-categoria"
-          value={filtro.categoria ?? ""}
-          onChange={(evento) =>
-            aoMudarFiltro({
-              ...filtro,
-              categoria: evento.target.value
-                ? (evento.target.value as CategoriaMuda)
-                : undefined,
-            })
-          }
-        >
-          <option value="">Todas as categorias</option>
+        <div className="filtro-categorias" role="group" aria-label="Filtrar por categoria">
+          <button
+            type="button"
+            className={!filtro.categoria ? "filtro-pilula filtro-pilula-ativa" : "filtro-pilula"}
+            aria-pressed={!filtro.categoria}
+            onClick={() => aoMudarFiltro({ ...filtro, categoria: undefined })}
+          >
+            Todas
+          </button>
           {Object.values(CategoriaMuda).map((categoria) => (
-            <option key={categoria} value={categoria}>
+            <button
+              key={categoria}
+              type="button"
+              className={
+                filtro.categoria === categoria ? "filtro-pilula filtro-pilula-ativa" : "filtro-pilula"
+              }
+              aria-pressed={filtro.categoria === categoria}
+              onClick={() => aoMudarFiltro({ ...filtro, categoria })}
+            >
               {rotuloCategoria[categoria]}
-            </option>
+            </button>
           ))}
-        </select>
+        </div>
+      </div>
 
+      <div className="filtros-linha-caracteristicas">
+        <span className="filtros-rotulo">Características</span>
         <label className="filtro-checkbox">
           <input
             type="checkbox"

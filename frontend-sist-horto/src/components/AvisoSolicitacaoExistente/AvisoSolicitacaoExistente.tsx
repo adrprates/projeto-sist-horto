@@ -4,6 +4,11 @@ import type { SolicitacaoBeneficiarioResumo } from "../../types/SolicitacaoBenef
 import BadgeStatusSolicitacao from "../BadgeStatusSolicitacao/BadgeStatusSolicitacao";
 import "./AvisoSolicitacaoExistente.css";
 
+function formatarData(data: string): string {
+  const [ano, mes, dia] = data.split("-");
+  return dia && mes && ano ? `${dia}/${mes}/${ano}` : data;
+}
+
 interface AvisoSolicitacaoExistenteProps {
   solicitacao: SolicitacaoBeneficiarioResumo;
 }
@@ -21,7 +26,7 @@ function AvisoSolicitacaoExistente({ solicitacao }: AvisoSolicitacaoExistentePro
         </p>
         <div className="aviso-solicitacao-existente-resumo">
           <span>
-            Enviada em {new Date(solicitacao.dataSolicitacao).toLocaleDateString("pt-BR")}
+            Enviada em {formatarData(solicitacao.dataSolicitacao)}
           </span>
           <BadgeStatusSolicitacao status={solicitacao.statusAtual} />
         </div>

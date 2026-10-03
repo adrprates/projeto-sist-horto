@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, ShoppingBag, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, Trash2, XCircle } from "lucide-react";
 import { isAxiosError } from "axios";
 import type { Solicitacao } from "../../types/Solicitacao";
 import type { SolicitacaoAdmin } from "../../types/SolicitacaoAdmin";
@@ -20,8 +20,7 @@ import {
 } from "../../api/solicitacaoService";
 import { buscarParametroAnual } from "../../api/parametroAnualService";
 import { CategoriaMuda, rotuloCategoria } from "../../types/CategoriaMuda";
-import Cabecalho from "../../components/Cabecalho/Cabecalho";
-import Rodape from "../../components/Rodape/Rodape";
+import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 import CardSaldoParametro from "../../components/CardSaldoParametro/CardSaldoParametro";
 import SeletorQuantidade from "../../components/SeletorQuantidade/SeletorQuantidade";
 import DetalhesSolicitacaoCartao from "../../components/DetalhesSolicitacaoCartao/DetalhesSolicitacaoCartao";
@@ -243,7 +242,7 @@ function PaginaSolicitacao() {
         {!carregando && solicitacao && solicitacao.itens.length === 0 && (
           <div className="solicitacao-vazia">
             <p>Sua solicitação ainda está vazia. Volte ao catálogo para escolher mudas.</p>
-            <button type="button" className="botao-continuar" onClick={() => navigate("/")}>
+            <button type="button" className="botao-continuar" onClick={() => navigate("/catalogo")}>
               Ir para o catálogo
             </button>
           </div>
@@ -309,7 +308,7 @@ function PaginaSolicitacao() {
 
         {!carregando && solicitacao && solicitacao.itens.length > 0 && (
           <div className="solicitacao-acoes">
-            <button type="button" className="botao-continuar" onClick={() => navigate("/")}>
+            <button type="button" className="botao-continuar" onClick={() => navigate("/catalogo")}>
               Continuar adicionando mudas
             </button>
             <button
@@ -368,15 +367,14 @@ function PaginaSolicitacao() {
 
   return (
     <div>
-      <Cabecalho />
 
-      <main className="container-solicitacao">
-        <div className="solicitacao-cabecalho">
-          <h2 className="titulo-solicitacao">
-            <ShoppingBag size={22} />
-            Minhas Solicitações
-          </h2>
-        </div>
+      <CabecalhoPagina
+        compacto
+        titulo="Minhas solicitações"
+        texto="Monte a solicitação deste ano, acompanhe o andamento e consulte os pedidos anteriores."
+      />
+
+      <section className="container-pagina container-solicitacao">
 
         {enviadaComSucesso && (
           <p className="solicitacao-sucesso">
@@ -403,9 +401,8 @@ function PaginaSolicitacao() {
             carregando={carregandoHistorico}
           />
         </section>
-      </main>
+      </section>
 
-      <Rodape />
     </div>
   );
 }

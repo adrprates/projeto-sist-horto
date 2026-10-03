@@ -1,6 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import type { SolicitacaoAdmin } from "../../types/SolicitacaoAdmin";
 import {
   StatusSolicitacao,
@@ -11,10 +10,9 @@ import {
 } from "../../types/StatusSolicitacao";
 import { rotuloCategoria } from "../../types/CategoriaMuda";
 import { buscarSolicitacaoPorId, atualizarEtapa } from "../../api/solicitacaoAdminService";
-import Cabecalho from "../../components/Cabecalho/Cabecalho";
-import Rodape from "../../components/Rodape/Rodape";
 import BadgeStatusSolicitacao from "../../components/BadgeStatusSolicitacao/BadgeStatusSolicitacao";
 import "./DetalhesSolicitacaoAdmin.css";
+import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 
 function DetalhesSolicitacaoAdmin() {
   const { id } = useParams<{ id: string }>();
@@ -109,9 +107,7 @@ function DetalhesSolicitacaoAdmin() {
   if (carregando) {
     return (
       <div>
-        <Cabecalho />
         <p className="detalhes-carregando">Carregando solicitação...</p>
-        <Rodape />
       </div>
     );
   }
@@ -119,9 +115,7 @@ function DetalhesSolicitacaoAdmin() {
   if (erro || !solicitacao) {
     return (
       <div>
-        <Cabecalho />
         <p className="detalhes-erro">{erro || "Solicitação não encontrada."}</p>
-        <Rodape />
       </div>
     );
   }
@@ -131,27 +125,15 @@ function DetalhesSolicitacaoAdmin() {
 
   return (
     <div>
-      <Cabecalho />
+      <CabecalhoPagina
+        compacto
+        voltar={{ rotulo: "Voltar para a lista", aoClicar: () => navigate("/admin/solicitacoes") }}
+        titulo={`Solicitação #${solicitacao.id}`}
+        texto={`${solicitacao.beneficiario.nome} — CPF ${solicitacao.beneficiario.cpf}`}
+        acoes={<BadgeStatusSolicitacao status={solicitacao.statusAtual} />}
+      />
 
-      <main className="container-detalhes-solicitacao">
-        <button
-          type="button"
-          className="botao-voltar"
-          onClick={() => navigate("/admin/solicitacoes")}
-        >
-          <ArrowLeft size={18} />
-          Voltar para a lista
-        </button>
-
-        <div className="detalhes-cabecalho">
-          <div>
-            <h2 className="detalhes-titulo">Solicitação #{solicitacao.id}</h2>
-            <p className="detalhes-subtitulo">
-              {solicitacao.beneficiario.nome} — CPF {solicitacao.beneficiario.cpf}
-            </p>
-          </div>
-          <BadgeStatusSolicitacao status={solicitacao.statusAtual} />
-        </div>
+      <section className="container-pagina container-detalhes-solicitacao">
 
         <section className="detalhes-secao">
           <h3>Informações</h3>
@@ -290,9 +272,8 @@ function DetalhesSolicitacaoAdmin() {
             Esta solicitação está finalizada e não possui mais transições disponíveis.
           </p>
         )}
-      </main>
+      </section>
 
-      <Rodape />
     </div>
   );
 }

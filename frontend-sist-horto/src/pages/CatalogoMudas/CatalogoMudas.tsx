@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
 import type { MudaFilter } from "../../types/MudaFilter";
@@ -14,8 +14,7 @@ import {
   buscarSaldoAtual,
   buscarSolicitacaoAtual,
 } from "../../api/solicitacaoService";
-import Cabecalho from "../../components/Cabecalho/Cabecalho";
-import Rodape from "../../components/Rodape/Rodape";
+import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 import FiltrosCatalogo from "../../components/FiltrosCatalogo/FiltrosCatalogo";
 import CardMuda from "../../components/CardMuda/CardMuda";
 import CardSaldoParametro from "../../components/CardSaldoParametro/CardSaldoParametro";
@@ -125,15 +124,17 @@ export default function CatalogoMudas() {
 
   return (
     <div>
-      <Cabecalho />
+      <CabecalhoPagina
+        compacto={isAdmin}
+        titulo={isAdmin ? "Gestão de mudas" : "Catálogo de mudas"}
+        texto={
+          isAdmin
+            ? "Cadastre novas espécies, edite as existentes e controle o estoque do viveiro."
+            : "Espécies produzidas no Horto Florestal de Patrocínio. A disponibilidade muda conforme o estoque do viveiro."
+        }
+      />
 
-      <div className="boas-vindas-compacta">
-        <p>Bem-vindo ao Sistema Horto!</p>
-      </div>
-
-      <main className="container-catalogo">
-        <h2 className="titulo-catalogo">Catálogo de Mudas</h2>
-
+      <section className="container-pagina container-catalogo">
         {!podeSolicitar && (
           <AvisoAutenticacaoNecessaria mensagem="Para fazer o pedido de mudas, é necessário fazer login no sistema." />
         )}
@@ -177,9 +178,32 @@ export default function CatalogoMudas() {
             />
           ))}
         </div>
-      </main>
 
-      <Rodape />
+        <div className="catalogo-chamada">
+          <div>
+            <h2 className="catalogo-chamada-titulo">Já escolheu?</h2>
+            <p className="catalogo-chamada-texto">
+              {podeSolicitar
+                ? "Revise os itens e finalize sua solicitação em poucos minutos."
+                : "Entre no sistema ou crie sua conta para montar a sua solicitação."}
+            </p>
+          </div>
+          {podeSolicitar ? (
+            <Link to="/solicitacao" className="botao-destaque">
+              Ver minha solicitação
+            </Link>
+          ) : (
+            <div className="catalogo-chamada-acoes">
+              <Link to="/registro" className="botao-contorno-claro">
+                Criar conta
+              </Link>
+              <Link to="/login" className="botao-destaque">
+                Entrar
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

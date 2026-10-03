@@ -12,7 +12,7 @@
 .modal-senha {
   position: relative;
   background: var(--branco);
-  border-radius: 12px;
+  border-radius: 16px;
   max-width: 420px;
   width: 100%;
   padding: 28px 24px 24px;
@@ -55,10 +55,10 @@
 
 .campo input {
   padding: 10px 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--borda);
   border-radius: 8px;
   font-size: 14px;
-  font-family: "Inter", sans-serif;
+  font-family: inherit;
   color: var(--texto);
 }
 
@@ -68,9 +68,9 @@
 }
 
 .modal-senha-erro {
-  background: #fdecea;
+  background: var(--vermelho-suave);
   color: var(--vermelho);
-  border: 1px solid #f5c6c1;
+  border: 1px solid var(--vermelho-borda);
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 13px;
@@ -86,36 +86,38 @@
 
 .botao-cancelar-senha {
   background: none;
-  border: 2px solid var(--cinza);
+  border: 1px solid var(--borda);
   color: var(--cinza);
   font-weight: 600;
   font-size: 13px;
   padding: 9px 18px;
-  border-radius: 32px;
+  border-radius: 999px;
   cursor: pointer;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .botao-cancelar-senha:hover:not(:disabled) {
-  background: var(--cinza);
-  color: var(--branco);
+  background: var(--fundo-suave);
+  border-color: var(--floresta-500);
+  color: var(--verde);
 }
 
 .botao-salvar-senha {
   background: var(--verde);
-  border: 2px solid var(--verde);
+  border: 1px solid var(--verde);
   color: var(--branco);
   font-weight: 700;
   font-size: 13px;
   padding: 9px 20px;
-  border-radius: 32px;
+  border-radius: 999px;
   cursor: pointer;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .botao-salvar-senha:hover:not(:disabled) {
-  background: var(--branco);
-  color: var(--verde);
+  background: var(--verde-escuro);
+  border-color: var(--verde-escuro);
+  color: var(--branco);
 }
 
 .botao-cancelar-senha:disabled,
@@ -137,11 +139,11 @@
 
 .botao-fechar-sucesso {
   background: var(--verde);
-  border: 2px solid var(--verde);
+  border: 1px solid var(--verde);
   color: var(--branco);
   font-weight: 700;
   font-size: 13px;
   padding: 9px 24px;
-  border-radius: 32px;
+  border-radius: 999px;
   cursor: pointer;
 }

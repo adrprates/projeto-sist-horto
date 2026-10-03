@@ -1,9 +1,5 @@
 @import "../PaginaLogin/PaginaLogin.css";
 
-.cartao-autenticacao-largo {
-  max-width: 560px;
-}
-
 .grade-registro {
   display: grid;
   grid-template-columns: 1fr 1fr;
