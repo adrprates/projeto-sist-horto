@@ -25,6 +25,7 @@ export interface AtualizarSenhaRequest {
 
 export interface TokenResponse {
   token: string;
+  senhaProvisoria: boolean;
 }
 
 export const loginUser = async (credentials: LoginRequest): Promise<TokenResponse> => {

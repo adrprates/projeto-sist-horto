@@ -41,26 +41,6 @@
   background: transparent;
 }
 
-.botao-nova-muda {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--floresta-700);
-  border: none;
-  color: var(--branco);
-  font-weight: 600;
-  font-size: 14px;
-  padding: 11px 22px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  white-space: nowrap;
-}
-
-.botao-nova-muda:hover {
-  background: var(--floresta-800);
-}
-
 .filtro-categorias {
   display: flex;
   flex-wrap: wrap;
@@ -123,9 +103,5 @@
 @media (max-width: 600px) {
   .filtros-linha-principal {
     flex-direction: column;
-  }
-
-  .botao-nova-muda {
-    justify-content: center;
   }
 }

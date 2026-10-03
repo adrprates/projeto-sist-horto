@@ -34,22 +34,24 @@ function SeletorQuantidade({
     <div className="seletor-quantidade">
       <button
         type="button"
+        className="seletor-quantidade-diminuir"
         onClick={diminuir}
         disabled={desabilitado || valor <= minimo}
         aria-label="Diminuir quantidade"
       >
-        <Minus size={14} />
+        <Minus size={16} strokeWidth={2.5} />
       </button>
 
       <span className="seletor-quantidade-valor">{valor}</span>
 
       <button
         type="button"
+        className="seletor-quantidade-aumentar"
         onClick={aumentar}
         disabled={desabilitado || (maximo !== undefined && valor >= maximo)}
         aria-label="Aumentar quantidade"
       >
-        <Plus size={14} />
+        <Plus size={16} strokeWidth={2.5} />
       </button>
     </div>
   );

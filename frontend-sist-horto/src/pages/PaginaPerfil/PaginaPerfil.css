@@ -184,3 +184,28 @@
     align-items: flex-start;
   }
 }
+
+.perfil-aviso-senha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--amarelo-suave);
+  border: 1px solid var(--amarelo-borda);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  color: var(--kraft-700);
+}
+
+.perfil-aviso-senha svg {
+  flex-shrink: 0;
+}
+
+.perfil-aviso-senha p {
+  flex: 1;
+  min-width: 220px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}

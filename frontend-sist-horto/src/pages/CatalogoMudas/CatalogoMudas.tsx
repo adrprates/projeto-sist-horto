@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
 import type { MudaFilter } from "../../types/MudaFilter";
@@ -132,6 +133,14 @@ export default function CatalogoMudas() {
             ? "Cadastre novas espécies, edite as existentes e controle o estoque do viveiro."
             : "Espécies produzidas no Horto Florestal de Patrocínio. A disponibilidade muda conforme o estoque do viveiro."
         }
+        acoes={
+          isAdmin && (
+            <button type="button" className="botao-destaque" onClick={() => navigate("/mudas/nova")}>
+              <Plus size={18} />
+              Nova muda
+            </button>
+          )
+        }
       />
 
       <section className="container-pagina container-catalogo">
@@ -150,8 +159,6 @@ export default function CatalogoMudas() {
         <FiltrosCatalogo
           filtro={filtro}
           aoMudarFiltro={setFiltro}
-          podeCadastrarMuda={isAdmin}
-          aoClicarNovaMuda={() => navigate("/mudas/nova")}
         />
 
         {carregando && <p className="mensagem-central">Carregando mudas...</p>}

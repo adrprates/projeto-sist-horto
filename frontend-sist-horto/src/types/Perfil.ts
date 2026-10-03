@@ -7,4 +7,5 @@ export interface Perfil {
     nome?: string;
     endereco?: string;
     login?: string;
+    senhaProvisoria?: boolean;
 }

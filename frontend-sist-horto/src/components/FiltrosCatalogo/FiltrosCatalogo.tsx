@@ -1,4 +1,4 @@
-import { Search, Plus } from "lucide-react";
+import { Search } from "lucide-react";
 import { CategoriaMuda, rotuloCategoria } from "../../types/CategoriaMuda";
 import type { MudaFilter } from "../../types/MudaFilter";
 import "./FiltrosCatalogo.css";
@@ -6,16 +6,9 @@ import "./FiltrosCatalogo.css";
 interface FiltrosCatalogoProps {
   filtro: MudaFilter;
   aoMudarFiltro: (novoFiltro: MudaFilter) => void;
-  podeCadastrarMuda: boolean;
-  aoClicarNovaMuda: () => void;
 }
 
-function FiltrosCatalogo({
-  filtro,
-  aoMudarFiltro,
-  podeCadastrarMuda,
-  aoClicarNovaMuda,
-}: FiltrosCatalogoProps) {
+function FiltrosCatalogo({ filtro, aoMudarFiltro }: FiltrosCatalogoProps) {
   return (
     <div className="filtros-catalogo">
       <div className="filtros-linha-principal">
@@ -30,13 +23,6 @@ function FiltrosCatalogo({
             }
           />
         </div>
-
-        {podeCadastrarMuda && (
-          <button type="button" className="botao-nova-muda" onClick={aoClicarNovaMuda}>
-            <Plus size={18} />
-            Nova Muda
-          </button>
-        )}
       </div>
 
       <div className="filtros-linha-secundaria">

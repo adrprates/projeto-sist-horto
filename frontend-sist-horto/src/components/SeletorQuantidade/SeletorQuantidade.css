@@ -1,39 +1,56 @@
 .seletor-quantidade {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 4px;
+  background: var(--branco);
   border: 1px solid var(--borda);
-  border-radius: 20px;
-  overflow: hidden;
+  border-radius: 999px;
+  padding: 3px;
   width: fit-content;
 }
 
 .seletor-quantidade button {
-  background: var(--fundo-suave);
   border: none;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--verde);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.seletor-quantidade button:hover:not(:disabled) {
-  background: var(--verde);
+.seletor-quantidade-diminuir {
+  background: var(--vermelho-suave);
+  color: var(--vermelho);
+}
+
+.seletor-quantidade-diminuir:hover:not(:disabled) {
+  background: var(--vermelho);
+  color: var(--branco);
+}
+
+.seletor-quantidade-aumentar {
+  background: var(--floresta-100);
+  color: var(--floresta-700);
+}
+
+.seletor-quantidade-aumentar:hover:not(:disabled) {
+  background: var(--floresta-700);
   color: var(--branco);
 }
 
 .seletor-quantidade button:disabled {
-  color: var(--borda);
+  background: var(--fundo-suave);
+  color: var(--floresta-200);
   cursor: not-allowed;
 }
 
 .seletor-quantidade-valor {
-  min-width: 28px;
+  min-width: 32px;
   text-align: center;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--texto);
 }

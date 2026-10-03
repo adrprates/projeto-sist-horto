@@ -17,6 +17,8 @@ import FormularioParametroAnual from '../pages/FormularioParametroAnual/Formular
 import ListaParametrosAnuais from '../pages/ListaParametrosAnuais/ListaParametrosAnuais';
 import PaginaSolicitacao from '../pages/PaginaSolicitacao/PaginaSolicitacao';
 import DetalhesSolicitacaoAdmin from '../pages/DetalhesSolicitacaoAdmin/DetalhesSolicitacaoAdmin';
+import FormularioBeneficiario from '../pages/FormularioBeneficiario/FormularioBeneficiario';
+import AtendimentoSolicitacao from '../pages/AtendimentoSolicitacao/AtendimentoSolicitacao';
 import ListaSolicitacoesAdmin from '../pages/ListaSolicitacoesAdmin/ListaSolicitacoesAdmin';
 
 export const AppRoutes = () => {
@@ -58,6 +60,8 @@ export const AppRoutes = () => {
             <Route path="/mudas/nova" element={<FormularioMuda />} />
             <Route path="/mudas/editar/:id" element={<FormularioMuda />} />
             <Route path="/beneficiarios" element={<ListaBeneficiarios />} />
+            <Route path="/beneficiarios/novo" element={<FormularioBeneficiario />} />
+            <Route path="/beneficiarios/:id/solicitacao" element={<AtendimentoSolicitacao />} />
             <Route path="/parametros" element={<ListaParametrosAnuais />} />
             <Route path="/parametros/novo" element={<FormularioParametroAnual />} />
             <Route path="/parametros/:ano/editar" element={<FormularioParametroAnual />} />

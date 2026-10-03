@@ -1,0 +1,26 @@
+@import "../FormularioParametroAnual/FormularioParametroAnual.css";
+
+.formulario-beneficiario-dica {
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--floresta-900);
+  background: var(--floresta-100);
+  border: 1px solid var(--floresta-200);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 0 0 20px;
+}
+
+.formulario-beneficiario-dica svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--floresta-700);
+}
+
+@media (max-width: 600px) {
+  .formulario-pagina .campo-grade {
+    grid-template-columns: 1fr;
+  }
+}

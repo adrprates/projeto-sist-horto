@@ -1,0 +1,242 @@
+.atendimento {
+  padding-top: 16px;
+  padding-bottom: 64px;
+}
+
+.atendimento-grade {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .atendimento-grade {
+    grid-template-columns: minmax(0, 1fr) 400px;
+  }
+
+  .atendimento-resumo {
+    position: sticky;
+    top: 88px;
+  }
+}
+
+.atendimento-subtitulo {
+  font-size: 22px;
+  margin: 0 0 16px;
+}
+
+.atendimento-busca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  padding: 11px 18px;
+  margin-bottom: 16px;
+  color: var(--cinza);
+}
+
+.atendimento-busca:focus-within {
+  border-color: var(--floresta-500);
+}
+
+.atendimento-busca input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--texto);
+}
+
+.atendimento-lista-mudas,
+.atendimento-itens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.atendimento-muda {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.atendimento-muda-imagem {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--kraft-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.atendimento-muda-imagem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.atendimento-muda-info,
+.atendimento-item-info {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.atendimento-muda-nome {
+  font-weight: 600;
+  color: var(--titulo);
+  margin: 0;
+}
+
+.atendimento-muda-estoque {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--cinza);
+}
+
+.atendimento-muda-acoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.botao-tabela.atendimento-botao-adicionar {
+  background: var(--broto-400);
+  color: var(--floresta-950);
+  padding: 9px 18px;
+}
+
+.atendimento-resumo {
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.atendimento-resumo .card-saldo-parametro {
+  margin-bottom: 16px;
+}
+
+.atendimento-vazio {
+  font-size: 14px;
+  color: var(--cinza);
+  text-align: center;
+  padding: 20px 0;
+  margin: 0;
+}
+
+.atendimento-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--borda);
+}
+
+.atendimento-remover {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--vermelho-borda);
+  background: var(--vermelho-suave);
+  color: var(--vermelho);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.atendimento-remover:hover:not(:disabled) {
+  background: var(--vermelho);
+  color: var(--branco);
+}
+
+.atendimento-remover:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.atendimento-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin: 16px 0;
+}
+
+.atendimento-total strong {
+  font-size: 20px;
+  color: var(--verde);
+}
+
+.atendimento-enviar {
+  width: 100%;
+}
+
+.atendimento-enviar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.atendimento-erro {
+  background: var(--vermelho-suave);
+  color: var(--vermelho);
+  border: 1px solid var(--vermelho-borda);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.atendimento-enviada {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.atendimento-sucesso,
+.atendimento-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.atendimento-sucesso {
+  background: var(--sucesso-suave);
+  border: 1px solid var(--sucesso-borda);
+  color: var(--floresta-800);
+}
+
+.atendimento-info {
+  background: var(--amarelo-suave);
+  border: 1px solid var(--amarelo-borda);
+  color: var(--kraft-700);
+}
+
+.atendimento-enviada-acoes {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}

@@ -1,5 +1,6 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { Pencil, KeyRound } from "lucide-react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useLocation } from "react-router-dom";
+import { Pencil, KeyRound, ShieldAlert } from "lucide-react";
 import type { Perfil } from "../../types/Perfil";
 import type { AtualizarPerfil } from "../../types/AtualizarPerfil";
 import { obterPerfil, atualizarPerfil } from "../../api/perfilService";
@@ -14,9 +15,13 @@ function PaginaPerfil() {
   const [editando, setEditando] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
-  const [modalSenhaAberto, setModalSenhaAberto] = useState(false);
+  const location = useLocation();
+  const vindoDeSenhaProvisoria = Boolean(
+    (location.state as { senhaProvisoria?: boolean } | null)?.senhaProvisoria
+  );
+  const [modalSenhaAberto, setModalSenhaAberto] = useState(vindoDeSenhaProvisoria);
 
-  useEffect(() => {
+  const carregarPerfil = useCallback(() => {
     obterPerfil()
       .then((dados) => {
         setPerfil(dados);
@@ -25,6 +30,15 @@ function PaginaPerfil() {
       .catch(() => setErro("Não foi possível carregar os dados do perfil."))
       .finally(() => setCarregando(false));
   }, []);
+
+  useEffect(() => {
+    carregarPerfil();
+  }, [carregarPerfil]);
+
+  function handleFecharModalSenha() {
+    setModalSenhaAberto(false);
+    carregarPerfil();
+  }
 
   function atualizarCampo<K extends keyof Perfil>(campo: K, valor: Perfil[K]) {
     setPerfil((atual) => ({ ...atual, [campo]: valor }));
@@ -101,6 +115,18 @@ function PaginaPerfil() {
       />
 
       <section className="container-pagina container-perfil">
+        {perfil.senhaProvisoria && (
+          <div className="perfil-aviso-senha">
+            <ShieldAlert size={20} />
+            <p>
+              Você está usando uma senha provisória criada pela Secretaria. Crie uma senha só sua
+              para proteger o seu acesso.
+            </p>
+            <button type="button" className="botao-primario" onClick={handleAlterarSenha}>
+              Criar minha senha
+            </button>
+          </div>
+        )}
 
         {erro && <p className="perfil-erro">{erro}</p>}
 
@@ -198,7 +224,7 @@ function PaginaPerfil() {
         </div>
       </section>
       {modalSenhaAberto && (
-        <ModalAlterarSenha aoFechar={() => setModalSenhaAberto(false)} />
+        <ModalAlterarSenha aoFechar={handleFecharModalSenha} />
       )}
     </div>
   );

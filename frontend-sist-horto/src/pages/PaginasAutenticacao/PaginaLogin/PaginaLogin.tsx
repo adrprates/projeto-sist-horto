@@ -25,6 +25,12 @@ export const PaginaLogin = () => {
     try {
       const response = await loginUser({ login, senha });
       auth.login(response.token);
+
+      if (response.senhaProvisoria) {
+        navigate("/perfil", { state: { senhaProvisoria: true } });
+        return;
+      }
+
       navigate("/catalogo");
     } catch (err) {
       setError("Falha no login. Verifique suas credenciais.");

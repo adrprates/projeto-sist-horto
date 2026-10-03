@@ -58,7 +58,7 @@ export async function listarMinhasSolicitacoes(): Promise<SolicitacaoBeneficiari
 }
 
 export async function buscarMinhaSolicitacaoDetalhada(id: number): Promise<SolicitacaoAdmin> {
-  const response = await apiClient.get(`/solicitacoes/${id}`);
+  const response = await apiClient.get(`/solicitacoes/minhas-solicitacoes/${id}`);
   return response.data;
 }
 

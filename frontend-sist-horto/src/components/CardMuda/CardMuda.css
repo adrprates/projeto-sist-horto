@@ -36,12 +36,13 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background: var(--floresta-950);
-  color: var(--broto-300);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--floresta-900);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.3px;
-  padding: 4px 10px;
+  padding: 5px 12px;
+  box-shadow: 0 2px 6px rgba(15, 42, 29, 0.18);
 }
 
 .card-conteudo {
@@ -89,19 +90,20 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: transparent;
-  border: 1px solid var(--kraft-400);
-  color: var(--kraft-700);
+  background: var(--floresta-100);
+  border: 1px solid var(--floresta-200);
+  color: var(--floresta-800);
   font-weight: 600;
   font-size: 13px;
-  padding: 9px;
+  padding: 10px;
   border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .botao-detalhes:hover {
-  background: var(--kraft-200);
+  background: var(--floresta-200);
+  border-color: var(--floresta-500);
 }
 
 .botao-solicitacao {
@@ -109,10 +111,10 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: var(--floresta-700);
-  border: 1px solid var(--floresta-700);
-  color: var(--branco);
-  font-weight: 600;
+  background: var(--broto-400);
+  border: 1px solid var(--broto-500);
+  color: var(--floresta-950);
+  font-weight: 700;
   font-size: 13px;
   padding: 10px;
   border-radius: 999px;
@@ -121,23 +123,24 @@
 }
 
 .botao-solicitacao:hover:not(:disabled) {
-  background: var(--floresta-800);
+  background: var(--broto-300);
 }
 
 .botao-solicitacao:disabled {
-  opacity: 0.6;
+  background: var(--kraft-200);
+  border-color: var(--kraft-300);
+  color: var(--kraft-700);
   cursor: not-allowed;
 }
 
-.botao-solicitacao-bloqueado,
-.botao-solicitacao-bloqueado:hover:not(:disabled) {
-  background: transparent;
-  border: 1px dashed var(--kraft-400);
-  color: var(--kraft-700);
+.botao-solicitacao.botao-solicitacao-bloqueado {
+  background: var(--floresta-900);
+  border-color: var(--floresta-900);
+  color: var(--broto-300);
 }
 
-.botao-solicitacao-bloqueado:hover:not(:disabled) {
-  background: var(--kraft-200);
+.botao-solicitacao.botao-solicitacao-bloqueado:hover:not(:disabled) {
+  background: var(--floresta-800);
 }
 
 .card-quantidade-linha {
@@ -221,6 +224,6 @@
 }
 
 .card-acoes-admin-botoes .botao-admin-gerenciar {
-  background: var(--floresta-950);
-  color: var(--broto-300);
+  background: var(--kraft-700);
+  color: var(--branco);
 }
