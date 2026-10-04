@@ -1,9 +1,11 @@
 package com.bsh.backend_sist_horto.gestao_mudas.controller;
 
+import com.bsh.backend_sist_horto.gestao_mudas.dto.AlterarDisponibilidadeRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.DadosMudaResumo;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.MudaFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Muda;
 import com.bsh.backend_sist_horto.gestao_mudas.service.MudaService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +43,17 @@ public class    MudaController {
             @PathVariable Long id,
             @RequestBody Muda muda) {
         return mudaService.salvar(muda);
+    }
+
+    @PatchMapping("/{id}/disponibilidade")
+    public Muda alterarDisponibilidade(
+            @PathVariable Long id,
+            @Valid @RequestBody AlterarDisponibilidadeRequest request) {
+        return mudaService.alterarDisponibilidade(
+                id,
+                request.getDisponivel(),
+                request.getMotivo()
+        );
     }
 
     @DeleteMapping("/{id}")

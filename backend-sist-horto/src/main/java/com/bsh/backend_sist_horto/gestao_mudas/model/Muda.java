@@ -98,6 +98,12 @@ public class Muda {
     @Size(max = 255)
     private String linkImagemFrutos;
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean disponivel = true;
+
+    @Size(max = 255)
+    private String motivoIndisponibilidade;
+
     @OneToOne(
             mappedBy = "muda",
             cascade = CascadeType.ALL,

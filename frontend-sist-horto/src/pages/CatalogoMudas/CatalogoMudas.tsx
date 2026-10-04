@@ -7,7 +7,8 @@ import type { MudaFilter } from "../../types/MudaFilter";
 import type { ParametroAnualDisponivel } from "../../types/ParametroAnualDisponivel";
 import type { SolicitacaoBeneficiarioResumo } from "../../types/SolicitacaoBeneficiarioResumo";
 import { StatusSolicitacao } from "../../types/StatusSolicitacao";
-import { listarMudas } from "../../api/mudaService";
+import { alterarDisponibilidadeMuda, listarMudas } from "../../api/mudaService";
+import { useValorAtrasado } from "../../hooks/useValorAtrasado";
 import { adicionarQuantidade, removerQuantidade } from "../../api/estoqueService";
 import {
   buscarRascunho,
@@ -35,6 +36,8 @@ export default function CatalogoMudas() {
   const [mudas, setMudas] = useState<DadosMudaResumo[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [filtro, setFiltro] = useState<MudaFilter>({});
+  const filtroAtrasado = useValorAtrasado(filtro);
+  const [versaoLista, setVersaoLista] = useState(0);
 
   const [saldo, setSaldo] = useState<ParametroAnualDisponivel | null>(null);
   const [carregandoSaldo, setCarregandoSaldo] = useState(podeSolicitar);
@@ -47,10 +50,13 @@ export default function CatalogoMudas() {
 
   useEffect(() => {
     setCarregando(true);
-    listarMudas(filtro)
-      .then(setMudas)
+    listarMudas(filtroAtrasado)
+      .then((resultado) => {
+        setMudas(resultado);
+        setVersaoLista((versao) => versao + 1);
+      })
       .finally(() => setCarregando(false));
-  }, [filtro]);
+  }, [filtroAtrasado]);
 
   useEffect(() => {
     if (!podeSolicitar) return;
@@ -123,6 +129,16 @@ export default function CatalogoMudas() {
     setMudas(mudasAtualizadas);
   }
 
+  async function handleAlterarDisponibilidade(
+    muda: DadosMudaResumo,
+    disponivel: boolean,
+    motivo?: string
+  ) {
+    await alterarDisponibilidadeMuda(muda.id, disponivel, motivo);
+    const mudasAtualizadas = await listarMudas(filtro);
+    setMudas(mudasAtualizadas);
+  }
+
   return (
     <div>
       <CabecalhoPagina
@@ -161,13 +177,16 @@ export default function CatalogoMudas() {
           aoMudarFiltro={setFiltro}
         />
 
-        {carregando && <p className="mensagem-central">Carregando mudas...</p>}
+        {carregando && versaoLista === 0 && <p className="mensagem-central">Carregando mudas...</p>}
 
         {!carregando && mudas.length === 0 && (
-          <p className="mensagem-central">Nenhuma muda encontrada com esses filtros.</p>
+          <p className="mensagem-central surgir">Nenhuma muda encontrada com esses filtros.</p>
         )}
 
-        <div className="grid-mudas">
+        <div
+          key={versaoLista}
+          className={`grid-mudas lista-animada conteudo-atualizavel${carregando ? " atualizando" : ""}`}
+        >
           {mudas.map((muda) => (
             <CardMuda
               key={muda.id}
@@ -182,6 +201,7 @@ export default function CatalogoMudas() {
               aoGerenciar={(mudaSelecionada) =>
                 navigate(`/mudas/editar/${mudaSelecionada.id}`)
               }
+              aoAlterarDisponibilidade={handleAlterarDisponibilidade}
             />
           ))}
         </div>

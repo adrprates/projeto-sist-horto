@@ -11,7 +11,9 @@ interface CardMudaVitrineProps {
 function CardMudaVitrine({ muda }: CardMudaVitrineProps) {
   const [imagemComErro, setImagemComErro] = useState(false);
   const nome = muda.nomesPopulares.slice(0, 2).join(", ");
-  const disponivel = muda.estoqueDisponivel > 0;
+  const disponivel = muda.disponivel && muda.estoqueDisponivel > 0;
+  const unidades =
+    muda.estoqueDisponivel === 1 ? "1 unidade disponível" : `${muda.estoqueDisponivel} unidades disponíveis`;
 
   return (
     <article className="etiqueta-muda">
@@ -26,12 +28,9 @@ function CardMudaVitrine({ muda }: CardMudaVitrineProps) {
       </div>
 
       <div className="etiqueta-muda-topo">
-        <div>
-          <h3 className="etiqueta-muda-nome">{nome}</h3>
-          <p className="etiqueta-muda-cientifico">{muda.nomeCientifico}</p>
-        </div>
+        <h3 className="etiqueta-muda-nome">{nome}</h3>
         <span className={disponivel ? "etiqueta-selo etiqueta-selo-disponivel" : "etiqueta-selo"}>
-          {disponivel ? "Disponível" : "Em falta"}
+          {disponivel ? "Disponível" : muda.disponivel ? "Esgotada" : "Indisponível"}
         </span>
       </div>
 
@@ -42,7 +41,7 @@ function CardMudaVitrine({ muda }: CardMudaVitrineProps) {
         </li>
         <li>
           <Package size={16} />
-          {muda.estoqueDisponivel} em estoque
+          {muda.disponivel ? unidades : "Fora de distribuição"}
         </li>
       </ul>
     </article>

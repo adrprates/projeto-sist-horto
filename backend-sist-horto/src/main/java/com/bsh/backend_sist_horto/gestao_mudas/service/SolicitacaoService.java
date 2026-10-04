@@ -28,17 +28,20 @@ public class SolicitacaoService {
 
     private final EstoqueService estoqueService;
     private final EtapaService etapaService;
+    private final ValidadorLimitesService validadorLimites;
 
     public SolicitacaoService(SolicitacaoRepository solicitacaoRepository,
                               ParametroAnualRepository parametroAnualRepository,
                               EstoqueService estoqueService,
                               MudaRepository mudaRepository,
-                              EtapaService etapaService) {
+                              EtapaService etapaService,
+                              ValidadorLimitesService validadorLimites) {
         this.solicitacaoRepository = solicitacaoRepository;
         this.parametroAnualRepository = parametroAnualRepository;
         this.estoqueService = estoqueService;
         this.mudaRepository = mudaRepository;
         this.etapaService = etapaService;
+        this.validadorLimites = validadorLimites;
     }
 
     public List<Solicitacao> listarTodas() {
@@ -54,6 +57,12 @@ public class SolicitacaoService {
 
         Muda muda = mudaRepository.findById(mudaId).orElseThrow(() ->
                 new RuntimeException("Muda não encontrada"));
+
+        if (!muda.isDisponivel()) {
+            throw new RuntimeException(
+                    "A muda " + muda.getNomesPopulares().get(0) + " está indisponível no momento."
+            );
+        }
 
         ItemSolicitacao itemExistente = null;
 
@@ -95,7 +104,9 @@ public class SolicitacaoService {
 
         if (!possuiSaldo) {
             throw new RuntimeException(
-                    "Estoque insuficiente para a muda selecionada."
+                    "Estoque insuficiente para a muda selecionada. Restam "
+                            + estoqueService.quantidadeDisponivel(mudaId)
+                            + " unidades disponíveis."
             );
         }
 
@@ -136,7 +147,7 @@ public class SolicitacaoService {
 
     @Transactional
     public Solicitacao enviarSolicitacao(Long id) {
-        return enviarSolicitacao(id, "Sua solicitação foi enviada para análise.");
+        return enviarSolicitacao(id, "Recebemos sua solicitação! Ela está na fila para análise da Secretaria de Meio Ambiente.");
     }
 
     @Transactional
@@ -176,6 +187,7 @@ public class SolicitacaoService {
             );
         }
 
+        List<String> mudasIndisponiveis = new ArrayList<>();
         List<String> mudasEmFalta = new ArrayList<>();
 
         for (ItemSolicitacao item : solicitacao.getItens()) {
@@ -183,24 +195,36 @@ public class SolicitacaoService {
             Long mudaId = item.getMuda().getId();
             Integer quantidade = item.getQuantidade();
 
+            String nomeMuda =
+                    item.getMuda()
+                            .getNomesPopulares()
+                            .get(0);
+
+            if (!item.getMuda().isDisponivel()) {
+                mudasIndisponiveis.add(nomeMuda);
+                continue;
+            }
+
             boolean possuiSaldo =
-                    estoqueService.verificarDisponibilidade(
+                    estoqueService.verificarDisponibilidadeComBloqueio(
                             mudaId,
                             quantidade
                     );
 
             if (!possuiSaldo) {
-
-                String nomeMuda =
-                        item.getMuda()
-                                .getNomesPopulares()
-                                .get(0);
-
                 mudasEmFalta.add(
                         nomeMuda + " (" +
-                                quantidade + " solicitadas)"
+                                quantidade + " solicitadas, " +
+                                estoqueService.quantidadeDisponivel(mudaId) + " disponíveis)"
                 );
             }
+        }
+
+        if (!mudasIndisponiveis.isEmpty()) {
+            throw new RuntimeException(
+                    "Remova da solicitação as mudas indisponíveis no momento: " +
+                            String.join(", ", mudasIndisponiveis)
+            );
         }
 
         if (!mudasEmFalta.isEmpty()) {
@@ -227,70 +251,7 @@ public class SolicitacaoService {
     }
 
     public void validarLimites(ParametroAnual parametroAnual, List<ItemSolicitacao> itensSolicitacao) {
-
-        if (parametroAnual == null) {
-            throw new RuntimeException("Parâmetro anual não definido para esta solicitação.");
-        }
-
-        int totalFrutiferas = 0;
-        int totalOutras = 0;
-
-        Map<Long, Integer> qtdPorMudaFrutifera = new HashMap<>();
-        Map<Long, Integer> qtdPorMudaOutras = new HashMap<>();
-
-        for (ItemSolicitacao item : itensSolicitacao) {
-            Muda muda = item.getMuda();
-            int quantidade = item.getQuantidade();
-
-            boolean isFrutifera = muda.getCategoria() == CategoriaMuda.FRUTIFERAS;
-
-            if (isFrutifera) {
-                totalFrutiferas += quantidade;
-
-                int qtdAtual = qtdPorMudaFrutifera.getOrDefault(muda.getId(), 0) + quantidade;
-                if (qtdAtual > parametroAnual.getMaxPorEspecieFrutifera()) {
-                    throw new RuntimeException(
-                            "A espécie '" + muda.getNomesPopulares().get(0) + "' ultrapassa o limite máximo de " +
-                                    parametroAnual.getMaxPorEspecieFrutifera() + " unidades por espécie frutífera."
-                    );
-                }
-                qtdPorMudaFrutifera.put(muda.getId(), qtdAtual);
-
-            } else {
-                totalOutras += quantidade;
-
-                int qtdAtual = qtdPorMudaOutras.getOrDefault(muda.getId(), 0) + quantidade;
-                if (qtdAtual > parametroAnual.getMaxPorEspecieOutras()) {
-                    throw new RuntimeException(
-                            "A espécie '" + muda.getNomesPopulares().get(0) + "' ultrapassa o limite máximo de " +
-                                    parametroAnual.getMaxPorEspecieOutras() + " unidades por espécie."
-                    );
-                }
-                qtdPorMudaOutras.put(muda.getId(), qtdAtual);
-            }
-        }
-
-        if (totalFrutiferas > parametroAnual.getLimiteFrutiferas()) {
-            throw new RuntimeException(
-                    "O total de mudas frutíferas solicitadas (" + totalFrutiferas +
-                            ") excede o limite anual permitido (" + parametroAnual.getLimiteFrutiferas() + ")."
-            );
-        }
-
-        if (totalOutras > parametroAnual.getLimiteOutras()) {
-            throw new RuntimeException(
-                    "O total de outras mudas solicitadas (" + totalOutras +
-                            ") excede o limite anual permitido (" + parametroAnual.getLimiteOutras() + ")."
-            );
-        }
-
-        int totalGeral = totalFrutiferas + totalOutras;
-        if (totalGeral > parametroAnual.getLimiteTotalMudas()) {
-            throw new RuntimeException(
-                    "O total geral de mudas solicitadas (" + totalGeral +
-                            ") excede o limite global do programa (" + parametroAnual.getLimiteTotalMudas() + ")."
-            );
-        }
+        validadorLimites.validar(parametroAnual, itensSolicitacao);
     }
 
     @Transactional
@@ -330,6 +291,16 @@ public class SolicitacaoService {
                 solicitacao.getParametroAnual(),
                 solicitacao.getItens()
         );
+
+        Long mudaId = itemEncontrado.getMuda().getId();
+
+        if (!estoqueService.verificarDisponibilidade(mudaId, quantidade)) {
+            throw new RuntimeException(
+                    "Estoque insuficiente para a muda selecionada. Restam "
+                            + estoqueService.quantidadeDisponivel(mudaId)
+                            + " unidades disponíveis."
+            );
+        }
 
         return solicitacaoRepository.save(solicitacao);
     }

@@ -16,4 +16,8 @@ public class DadosMudaResumo {
     private String familia;
     private String linkImagemArvore;
     private Integer estoqueDisponivel;
+    private Integer estoqueTotal;
+    private Integer quantidadeReservada;
+    private boolean disponivel;
+    private String motivoIndisponibilidade;
 }

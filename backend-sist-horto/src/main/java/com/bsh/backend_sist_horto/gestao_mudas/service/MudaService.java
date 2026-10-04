@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -18,10 +19,14 @@ public class MudaService {
 
     private final MudaRepository mudaRepository;
     private final EstoqueRepository estoqueRepository;
+    private final EstoqueService estoqueService;
 
-    public MudaService(MudaRepository mudaRepository,  EstoqueRepository estoqueRepository) {
+    public MudaService(MudaRepository mudaRepository,
+                       EstoqueRepository estoqueRepository,
+                       EstoqueService estoqueService) {
         this.mudaRepository = mudaRepository;
         this.estoqueRepository = estoqueRepository;
+        this.estoqueService = estoqueService;
     }
 
     public List<Muda> listarTodas() {
@@ -34,6 +39,7 @@ public class MudaService {
 
     public List<DadosMudaResumo> listarResumo(MudaFilter mudaFilter) {
         List<Muda> mudas = mudaRepository.findAll(MudaSpecification.fromFilter(mudaFilter));
+        Map<Long, Integer> reservasPorMuda = estoqueService.quantidadesReservadasPorMuda();
 
         List<DadosMudaResumo> dadosMudaResumo = new ArrayList<>();
 
@@ -43,13 +49,20 @@ public class MudaService {
                     .map(Estoque::getQuantidade)
                     .orElse(0);
 
+            int quantidadeReservada = reservasPorMuda.getOrDefault(muda.getId(), 0);
+            int quantidadeDisponivel = Math.max(quantidadeEstoque - quantidadeReservada, 0);
+
             dadosMudaResumo.add(new DadosMudaResumo(
                     muda.getId(),
                     muda.getNomesPopulares(),
                     muda.getCategoria(),
                     muda.getFamilia(),
                     muda.getLinkImagemArvore(),
-                    quantidadeEstoque
+                    quantidadeDisponivel,
+                    quantidadeEstoque,
+                    quantidadeReservada,
+                    muda.isDisponivel(),
+                    muda.getMotivoIndisponibilidade()
             ));
         }
 
@@ -58,6 +71,14 @@ public class MudaService {
 
     public Muda salvar(Muda muda) {
         boolean novaMuda = muda.getId() == null;
+
+        if (!novaMuda) {
+            mudaRepository.findById(muda.getId()).ifPresent(existente -> {
+                muda.setDisponivel(existente.isDisponivel());
+                muda.setMotivoIndisponibilidade(existente.getMotivoIndisponibilidade());
+                muda.setEstoque(existente.getEstoque());
+            });
+        }
 
         Muda mudaSalva = mudaRepository.save(muda);
 
@@ -70,6 +91,17 @@ public class MudaService {
         }
 
         return mudaSalva;
+    }
+
+    public Muda alterarDisponibilidade(Long id, boolean disponivel, String motivo) {
+        Muda muda = getMudaPorId(id);
+
+        muda.setDisponivel(disponivel);
+        muda.setMotivoIndisponibilidade(
+                disponivel || motivo == null || motivo.isBlank() ? null : motivo.trim()
+        );
+
+        return mudaRepository.save(muda);
     }
 
     public Muda getMudaPorId(Long id) {

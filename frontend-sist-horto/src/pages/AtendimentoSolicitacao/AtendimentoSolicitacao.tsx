@@ -42,6 +42,7 @@ function AtendimentoSolicitacao() {
   const [mudas, setMudas] = useState<DadosMudaResumo[]>([]);
   const [busca, setBusca] = useState("");
   const [carregandoMudas, setCarregandoMudas] = useState(true);
+  const [versaoMudas, setVersaoMudas] = useState(0);
   const [quantidades, setQuantidades] = useState<Record<number, number>>({});
 
   const [processando, setProcessando] = useState(false);
@@ -87,7 +88,10 @@ function AtendimentoSolicitacao() {
     const temporizador = setTimeout(() => {
       setCarregandoMudas(true);
       listarMudas(busca ? { nomePopular: busca } : {})
-        .then(setMudas)
+        .then((resultado) => {
+          setMudas(resultado);
+          setVersaoMudas((versao) => versao + 1);
+        })
         .catch(() => setMudas([]))
         .finally(() => setCarregandoMudas(false));
     }, 300);
@@ -205,20 +209,35 @@ function AtendimentoSolicitacao() {
                 />
               </div>
 
-              {carregandoMudas && <p className="mensagem-central">Carregando mudas...</p>}
-
-              {!carregandoMudas && mudas.length === 0 && (
-                <p className="mensagem-central">Nenhuma muda encontrada.</p>
+              {carregandoMudas && versaoMudas === 0 && (
+                <p className="mensagem-central">Carregando mudas...</p>
               )}
 
-              {!carregandoMudas && mudas.length > 0 && (
-                <ul className="atendimento-lista-mudas">
+              {!carregandoMudas && mudas.length === 0 && (
+                <p className="mensagem-central surgir">Nenhuma muda encontrada.</p>
+              )}
+
+              {mudas.length > 0 && (
+                <ul
+                  key={versaoMudas}
+                  className={`atendimento-lista-mudas lista-animada conteudo-atualizavel${carregandoMudas ? " atualizando" : ""}`}
+                >
                   {mudas.map((muda) => {
                     const nome = muda.nomesPopulares.slice(0, 2).join(", ");
-                    const semEstoque = muda.estoqueDisponivel <= 0;
+                    const bloqueada = !muda.disponivel || muda.estoqueDisponivel <= 0;
+                    const textoEstoque = !muda.disponivel
+                      ? "Indisponível no momento"
+                      : muda.estoqueDisponivel <= 0
+                      ? "Sem unidades disponíveis"
+                      : muda.estoqueDisponivel === 1
+                      ? "1 unidade disponível"
+                      : `${muda.estoqueDisponivel} unidades disponíveis`;
 
                     return (
-                      <li key={muda.id} className="atendimento-muda">
+                      <li
+                        key={muda.id}
+                        className={bloqueada ? "atendimento-muda atendimento-muda-bloqueada" : "atendimento-muda"}
+                      >
                         <div className="atendimento-muda-imagem">
                           {muda.linkImagemArvore ? (
                             <img src={muda.linkImagemArvore} alt={nome} />
@@ -232,7 +251,7 @@ function AtendimentoSolicitacao() {
                           <span className="tag">{rotuloCategoria[muda.categoria]}</span>
                           <span className="atendimento-muda-estoque">
                             <Package size={14} />
-                            {semEstoque ? "Sem estoque" : `${muda.estoqueDisponivel} em estoque`}
+                            {textoEstoque}
                           </span>
                         </div>
 
@@ -244,13 +263,13 @@ function AtendimentoSolicitacao() {
                             }
                             minimo={1}
                             maximo={Math.max(muda.estoqueDisponivel, 1)}
-                            desabilitado={semEstoque || processando}
+                            desabilitado={bloqueada || processando}
                           />
                           <button
                             type="button"
                             className="botao-tabela atendimento-botao-adicionar"
                             onClick={() => handleAdicionar(muda)}
-                            disabled={semEstoque || processando}
+                            disabled={bloqueada || processando}
                           >
                             Adicionar
                           </button>
@@ -283,6 +302,11 @@ function AtendimentoSolicitacao() {
                         <div className="atendimento-item-info">
                           <p className="atendimento-muda-nome">{nome}</p>
                           <span className="tag">{rotuloCategoria[item.muda.categoria]}</span>
+                          {item.muda.disponivel === false && (
+                            <span className="atendimento-item-alerta">
+                              Indisponível no momento: remova antes de enviar
+                            </span>
+                          )}
                         </div>
                         <SeletorQuantidade
                           valor={item.quantidade}

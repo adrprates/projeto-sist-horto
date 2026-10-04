@@ -5,6 +5,7 @@ export interface MudaResumoItem {
   nomesPopulares: string[];
   categoria: CategoriaMuda;
   linkImagemArvore?: string;
+  disponivel?: boolean;
 }
 
 export interface ItemSolicitacao {

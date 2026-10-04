@@ -53,3 +53,10 @@ export async function deletarMuda(
 
   await apiClient.delete(`/mudas/${id}`);
 }
+export async function alterarDisponibilidadeMuda(
+  id: number,
+  disponivel: boolean,
+  motivo?: string
+): Promise<void> {
+  await apiClient.patch(`/mudas/${id}/disponibilidade`, { disponivel, motivo });
+}

@@ -45,7 +45,9 @@ function ModalDetalhesMuda({ idMuda, aoFechar }: ModalDetalhesMudaProps) {
             <div className="modal-corpo">
               <span className="tag">{rotuloCategoria[detalhes.categoria]}</span>
               <h2 className="modal-titulo">{detalhes.nomesPopulares.join(", ")}</h2>
-              <p className="modal-nome-cientifico">{detalhes.nomeCientifico}</p>
+              {detalhes.nomeCientifico && (
+                <p className="modal-nome-cientifico">{detalhes.nomeCientifico}</p>
+              )}
 
               <div className="modal-secao">
                 <h4>Taxonomia</h4>

@@ -20,7 +20,7 @@ function PaginaInicio() {
 
   useEffect(() => {
     listarMudas({})
-      .then((mudas) => setDestaques(mudas.filter((muda) => muda.estoqueDisponivel > 0).slice(0, 3)))
+      .then((mudas) => setDestaques(mudas.filter((muda) => muda.disponivel && muda.estoqueDisponivel > 0).slice(0, 3)))
       .catch(() => setDestaques([]))
       .finally(() => setCarregandoDestaques(false));
   }, []);

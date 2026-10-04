@@ -66,13 +66,6 @@
   margin: 0;
 }
 
-.card-cientifico {
-  font-size: 14px;
-  font-style: italic;
-  color: var(--kraft-700);
-  margin: 2px 0 0;
-}
-
 .card-conteudo .etiqueta-muda-rodape {
   margin-top: 2px;
 }
@@ -111,36 +104,30 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: var(--broto-400);
-  border: 1px solid var(--broto-500);
-  color: var(--floresta-950);
+  background: var(--branco);
+  border: 1px solid var(--floresta-200);
+  color: var(--floresta-800);
   font-weight: 700;
   font-size: 13px;
   padding: 10px;
   border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 6px rgba(15, 42, 29, 0.08);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .botao-solicitacao:hover:not(:disabled) {
-  background: var(--broto-300);
+  background: var(--floresta-700);
+  border-color: var(--floresta-700);
+  color: var(--branco);
 }
 
 .botao-solicitacao:disabled {
-  background: var(--kraft-200);
+  background: var(--branco);
   border-color: var(--kraft-300);
-  color: var(--kraft-700);
+  color: var(--kraft-600);
+  box-shadow: none;
   cursor: not-allowed;
-}
-
-.botao-solicitacao.botao-solicitacao-bloqueado {
-  background: var(--floresta-900);
-  border-color: var(--floresta-900);
-  color: var(--broto-300);
-}
-
-.botao-solicitacao.botao-solicitacao-bloqueado:hover:not(:disabled) {
-  background: var(--floresta-800);
 }
 
 .card-quantidade-linha {
@@ -226,4 +213,102 @@
 .card-acoes-admin-botoes .botao-admin-gerenciar {
   background: var(--kraft-700);
   color: var(--branco);
+}
+
+.card-indisponivel .card-imagem img {
+  filter: grayscale(0.85);
+  opacity: 0.75;
+}
+
+.etiqueta-selo.etiqueta-selo-indisponivel {
+  background: var(--vermelho-suave);
+  color: var(--vermelho);
+}
+
+.card-motivo-indisponivel {
+  font-size: 13px;
+  color: var(--vermelho);
+  background: var(--vermelho-suave);
+  border-radius: 10px;
+  padding: 6px 10px;
+  margin: 0;
+}
+
+.card-estoque-detalhe {
+  font-size: 12px;
+  color: var(--texto-suave);
+  margin: 0;
+}
+
+.card-estoque-detalhe strong {
+  color: var(--titulo);
+}
+
+.botao-disponibilidade {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--vermelho-borda);
+  background: var(--branco);
+  color: var(--vermelho);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botao-disponibilidade:hover:not(:disabled) {
+  background: var(--vermelho-suave);
+}
+
+.botao-disponibilidade-ativar {
+  border-color: var(--floresta-200);
+  color: var(--floresta-800);
+}
+
+.botao-disponibilidade-ativar:hover:not(:disabled) {
+  background: var(--floresta-100);
+}
+
+.botao-disponibilidade:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.card-form-motivo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-form-motivo input {
+  border: 1px solid var(--kraft-400);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 13px;
+  background: var(--branco);
+  color: var(--texto);
+}
+
+.card-form-motivo-acoes {
+  display: flex;
+  gap: 6px;
+}
+
+.card-form-motivo-acoes button {
+  flex: 1;
+}
+
+.card-form-motivo-cancelar {
+  border: 1px solid var(--kraft-300);
+  background: transparent;
+  color: var(--kraft-700);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
 }

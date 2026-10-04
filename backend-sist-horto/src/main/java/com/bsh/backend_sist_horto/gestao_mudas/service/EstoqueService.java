@@ -1,18 +1,33 @@
 package com.bsh.backend_sist_horto.gestao_mudas.service;
 
+import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Estoque;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.EstoqueRepository;
+import com.bsh.backend_sist_horto.gestao_mudas.repository.SolicitacaoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class EstoqueService {
 
-    private final EstoqueRepository estoqueRepository;
+    public static final Set<StatusSolicitacao> STATUS_QUE_RESERVAM_ESTOQUE = EnumSet.of(
+            StatusSolicitacao.PENDENTE,
+            StatusSolicitacao.APROVADA,
+            StatusSolicitacao.AGUARDANDO_CONFIRMACAO,
+            StatusSolicitacao.PRONTA_PARA_RETIRADA
+    );
 
-    public EstoqueService(EstoqueRepository estoqueRepository) {
+    private final EstoqueRepository estoqueRepository;
+    private final SolicitacaoRepository solicitacaoRepository;
+
+    public EstoqueService(EstoqueRepository estoqueRepository, SolicitacaoRepository solicitacaoRepository) {
         this.estoqueRepository = estoqueRepository;
+        this.solicitacaoRepository = solicitacaoRepository;
     }
 
     public Estoque atualizarEstoque(Long idMuda, Integer quantidade) {
@@ -81,8 +96,41 @@ public class EstoqueService {
                         "Estoque não encontrado para Muda com o id: " + idMuda
                 ));
 
-        int disponibilidade = estoque.getQuantidade() - quantidade;
+        return calcularDisponivel(estoque) >= quantidade;
+    }
 
-        return disponibilidade >= 0;
+    public boolean verificarDisponibilidadeComBloqueio(Long idMuda, Integer quantidade) {
+        Estoque estoque = estoqueRepository.buscarComBloqueio(idMuda).orElseThrow(() ->
+                new RuntimeException(
+                        "Estoque não encontrado para Muda com o id: " + idMuda
+                ));
+
+        return calcularDisponivel(estoque) >= quantidade;
+    }
+
+    public int quantidadeReservada(Long idMuda) {
+        return solicitacaoRepository
+                .somarQuantidadeReservada(idMuda, STATUS_QUE_RESERVAM_ESTOQUE)
+                .intValue();
+    }
+
+    public int quantidadeDisponivel(Long idMuda) {
+        return estoqueRepository.findById(idMuda)
+                .map(this::calcularDisponivel)
+                .orElse(0);
+    }
+
+    public Map<Long, Integer> quantidadesReservadasPorMuda() {
+        Map<Long, Integer> reservas = new HashMap<>();
+
+        for (Object[] linha : solicitacaoRepository.somarQuantidadeReservadaPorMuda(STATUS_QUE_RESERVAM_ESTOQUE)) {
+            reservas.put((Long) linha[0], ((Number) linha[1]).intValue());
+        }
+
+        return reservas;
+    }
+
+    private int calcularDisponivel(Estoque estoque) {
+        return Math.max(estoque.getQuantidade() - quantidadeReservada(estoque.getId()), 0);
     }
 }

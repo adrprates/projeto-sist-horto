@@ -106,7 +106,8 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 HttpMethod.PATCH,
-                                "/estoques/**"
+                                "/estoques/**",
+                                "/mudas/**"
                         ).hasRole("ADMINISTRADOR")
 
                         .requestMatchers(

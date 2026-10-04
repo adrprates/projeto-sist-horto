@@ -1,6 +1,7 @@
 import type { DadosMudaResumo } from "./DadosMudaResumo";
 
 export interface DadosMudaDetalhes extends DadosMudaResumo {
+  nomeCientifico?: string;
   reino: string;
   filo: string;
   classe: string;

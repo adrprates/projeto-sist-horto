@@ -1,40 +1,13 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { Package, Info, Lock, ClipboardCheck, Leaf } from "lucide-react";
-import { isAxiosError } from "axios";
+import { Package, Info, Lock, ClipboardCheck, Leaf, Ban, CircleCheck } from "lucide-react";
 import type { DadosMudaResumo } from "../../types/DadosMudaResumo";
 import { rotuloCategoria } from "../../types/CategoriaMuda";
+import { extrairMensagemErro } from "../../utils/extrairMensagemErro";
 import ModalDetalhesMuda from "../ModalDetalhesMuda/ModalDetalhesMuda";
 import SeletorQuantidade from "../SeletorQuantidade/SeletorQuantidade";
 import "../CardMudaVitrine/CardMudaVitrine.css";
 import "./CardMuda.css";
-
-const MENSAGEM_PADRAO = "Não foi possível adicionar essa muda à solicitação.";
-
-function extrairMensagemErro(erro: unknown): string {
-  if (!isAxiosError(erro)) {
-    return MENSAGEM_PADRAO;
-  }
-
-  const dados = erro.response?.data;
-
-  if (typeof dados === "string" && dados.trim().length > 0) {
-    return dados;
-  }
-
-  if (dados && typeof dados === "object") {
-    const possivelMensagem =
-      (dados as Record<string, unknown>).message ??
-      (dados as Record<string, unknown>).erro ??
-      (dados as Record<string, unknown>).error;
-
-    if (typeof possivelMensagem === "string" && possivelMensagem.trim().length > 0) {
-      return possivelMensagem;
-    }
-  }
-
-  return MENSAGEM_PADRAO;
-}
 
 interface CardMudaProps {
   muda: DadosMudaResumo;
@@ -46,6 +19,11 @@ interface CardMudaProps {
   aoAdicionarEstoque?: (muda: DadosMudaResumo, quantidade: number) => void;
   aoRemoverEstoque?: (muda: DadosMudaResumo, quantidade: number) => void;
   aoGerenciar?: (muda: DadosMudaResumo) => void;
+  aoAlterarDisponibilidade?: (muda: DadosMudaResumo, disponivel: boolean, motivo?: string) => Promise<void>;
+}
+
+function textoUnidades(quantidade: number) {
+  return quantidade === 1 ? "1 unidade disponível" : `${quantidade} unidades disponíveis`;
 }
 
 function CardMuda({
@@ -58,6 +36,7 @@ function CardMuda({
   aoAdicionarEstoque,
   aoRemoverEstoque,
   aoGerenciar,
+  aoAlterarDisponibilidade,
 }: CardMudaProps) {
   const [imagemComErro, setImagemComErro] = useState(false);
   const [modalAberto, setModalAberto] = useState(false);
@@ -67,8 +46,15 @@ function CardMuda({
   const [adicionando, setAdicionando] = useState(false);
   const [erroAdicionar, setErroAdicionar] = useState("");
 
+  const [informandoMotivo, setInformandoMotivo] = useState(false);
+  const [motivo, setMotivo] = useState("");
+  const [alterandoDisponibilidade, setAlterandoDisponibilidade] = useState(false);
+  const [erroDisponibilidade, setErroDisponibilidade] = useState("");
+
   const nomesParaExibir = muda.nomesPopulares.slice(0, 3).join(", ");
+  const indisponivel = !muda.disponivel;
   const semEstoque = muda.estoqueDisponivel <= 0;
+  const podeAdicionar = !indisponivel && !semEstoque;
   const navigate = useNavigate();
 
   async function handleAdicionarSolicitacao() {
@@ -94,8 +80,39 @@ function CardMuda({
     }
   }
 
+  async function alterarDisponibilidade(disponivel: boolean, motivoInformado?: string) {
+    if (!aoAlterarDisponibilidade) {
+      return;
+    }
+
+    setErroDisponibilidade("");
+    setAlterandoDisponibilidade(true);
+
+    try {
+      await aoAlterarDisponibilidade(muda, disponivel, motivoInformado);
+      setInformandoMotivo(false);
+      setMotivo("");
+    } catch (erro) {
+      setErroDisponibilidade(extrairMensagemErro(erro, "Não foi possível alterar a disponibilidade."));
+    } finally {
+      setAlterandoDisponibilidade(false);
+    }
+  }
+
+  function handleConfirmarIndisponibilidade(evento: FormEvent) {
+    evento.preventDefault();
+    alterarDisponibilidade(false, motivo);
+  }
+
+  function rotuloBotaoSolicitacao() {
+    if (indisponivel) return "Indisponível no momento";
+    if (semEstoque) return "Sem unidades disponíveis";
+    if (adicionando) return "Adicionando...";
+    return "Adicionar à Solicitação";
+  }
+
   return (
-    <article className="card etiqueta-muda">
+    <article className={indisponivel ? "card etiqueta-muda card-indisponivel" : "card etiqueta-muda"}>
       <span className="etiqueta-muda-furo" aria-hidden="true" />
 
       <div className="card-imagem">
@@ -115,14 +132,23 @@ function CardMuda({
 
       <div className="card-conteudo">
         <div className="card-cabecalho">
-          <div>
-            <h3 className="card-titulo">{nomesParaExibir}</h3>
-            <p className="card-cientifico">{muda.nomeCientifico}</p>
-          </div>
-          <span className={semEstoque ? "etiqueta-selo" : "etiqueta-selo etiqueta-selo-disponivel"}>
-            {semEstoque ? "Em falta" : "Disponível"}
+          <h3 className="card-titulo">{nomesParaExibir}</h3>
+          <span
+            className={
+              indisponivel
+                ? "etiqueta-selo etiqueta-selo-indisponivel"
+                : semEstoque
+                ? "etiqueta-selo"
+                : "etiqueta-selo etiqueta-selo-disponivel"
+            }
+          >
+            {indisponivel ? "Indisponível" : semEstoque ? "Esgotada" : "Disponível"}
           </span>
         </div>
+
+        {indisponivel && muda.motivoIndisponibilidade && (
+          <p className="card-motivo-indisponivel">{muda.motivoIndisponibilidade}</p>
+        )}
 
         <ul className="etiqueta-muda-rodape">
           <li>
@@ -131,7 +157,7 @@ function CardMuda({
           </li>
           <li>
             <Package size={16} />
-            {muda.estoqueDisponivel} em estoque
+            {indisponivel ? "Fora de distribuição" : textoUnidades(muda.estoqueDisponivel)}
           </li>
         </ul>
 
@@ -151,7 +177,7 @@ function CardMuda({
           {!podeSolicitar && (
             <button
               type="button"
-              className="botao-solicitacao botao-solicitacao-bloqueado"
+              className="botao-solicitacao"
               onClick={() => navigate("/login")}
               title="Faça login para solicitar mudas"
             >
@@ -163,7 +189,7 @@ function CardMuda({
           {podeSolicitar && solicitacaoBloqueada && (
             <button
               type="button"
-              className="botao-solicitacao botao-solicitacao-bloqueado"
+              className="botao-solicitacao"
               onClick={() => navigate("/solicitacao")}
               title="Você já possui uma solicitação enviada este ano"
             >
@@ -174,7 +200,7 @@ function CardMuda({
 
           {podeSolicitar && !solicitacaoBloqueada && (
             <>
-              {!semEstoque && (
+              {podeAdicionar && (
                 <div className="card-quantidade-linha">
                   <span className="card-quantidade-rotulo">Quantidade</span>
                   <SeletorQuantidade
@@ -193,13 +219,9 @@ function CardMuda({
                 type="button"
                 className="botao-solicitacao"
                 onClick={handleAdicionarSolicitacao}
-                disabled={semEstoque || adicionando}
+                disabled={!podeAdicionar || adicionando}
               >
-                {semEstoque
-                  ? "Sem estoque disponível"
-                  : adicionando
-                  ? "Adicionando..."
-                  : "Adicionar à Solicitação"}
+                {rotuloBotaoSolicitacao()}
               </button>
             </>
           )}
@@ -208,6 +230,11 @@ function CardMuda({
         {isAdmin && (
           <div className="card-acoes-admin">
             <p className="card-acoes-admin-titulo">Ações administrativas</p>
+
+            <p className="card-estoque-detalhe">
+              Estoque físico <strong>{muda.estoqueTotal}</strong> · Reservadas{" "}
+              <strong>{muda.quantidadeReservada}</strong>
+            </p>
 
             <SeletorQuantidade valor={quantidadeEstoque} aoAlterar={setQuantidadeEstoque} minimo={1} />
 
@@ -234,6 +261,57 @@ function CardMuda({
                 Gerenciar
               </button>
             </div>
+
+            {indisponivel ? (
+              <button
+                type="button"
+                className="botao-disponibilidade botao-disponibilidade-ativar"
+                onClick={() => alterarDisponibilidade(true)}
+                disabled={alterandoDisponibilidade}
+              >
+                <CircleCheck size={15} />
+                {alterandoDisponibilidade ? "Salvando..." : "Marcar como disponível"}
+              </button>
+            ) : informandoMotivo ? (
+              <form className="card-form-motivo" onSubmit={handleConfirmarIndisponibilidade}>
+                <input
+                  type="text"
+                  placeholder="Motivo (opcional): doença, perda..."
+                  value={motivo}
+                  maxLength={255}
+                  onChange={(evento) => setMotivo(evento.target.value)}
+                  autoFocus
+                />
+                <div className="card-form-motivo-acoes">
+                  <button
+                    type="button"
+                    className="card-form-motivo-cancelar"
+                    onClick={() => setInformandoMotivo(false)}
+                    disabled={alterandoDisponibilidade}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="botao-disponibilidade"
+                    disabled={alterandoDisponibilidade}
+                  >
+                    {alterandoDisponibilidade ? "Salvando..." : "Confirmar"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <button
+                type="button"
+                className="botao-disponibilidade"
+                onClick={() => setInformandoMotivo(true)}
+              >
+                <Ban size={15} />
+                Marcar como indisponível
+              </button>
+            )}
+
+            {erroDisponibilidade && <p className="card-erro">{erroDisponibilidade}</p>}
           </div>
         )}
       </div>
