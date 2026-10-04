@@ -30,8 +30,11 @@ public class EtapaSolicitacao {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dataHora;
 
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataLimiteRetirada;
+
+    @Column(length = 150)
+    private String motivo;
 
     @Column(length = 1000)
     private String descricao;
