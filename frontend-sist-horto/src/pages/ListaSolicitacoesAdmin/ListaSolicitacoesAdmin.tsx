@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { SolicitacaoAdmin } from "../../types/SolicitacaoAdmin";
 import type { SolicitacaoFilter } from "../../types/SolicitacaoFilter";
 import { listarSolicitacoes } from "../../api/solicitacaoAdminService";
+import { useValorAtrasado } from "../../hooks/useValorAtrasado";
 import FiltrosSolicitacoesAdmin from "../../components/FiltrosSolicitacoesAdmin/FiltrosSolicitacoesAdmin";
 import BadgeStatusSolicitacao from "../../components/BadgeStatusSolicitacao/BadgeStatusSolicitacao";
 import "./ListaSolicitacoesAdmin.css";
@@ -13,17 +14,22 @@ function ListaSolicitacoesAdmin() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [filtro, setFiltro] = useState<SolicitacaoFilter>({});
+  const filtroAtrasado = useValorAtrasado(filtro);
+  const [versaoLista, setVersaoLista] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     setCarregando(true);
     setErro("");
 
-    listarSolicitacoes(filtro)
-      .then(setSolicitacoes)
+    listarSolicitacoes(filtroAtrasado)
+      .then((resultado) => {
+        setSolicitacoes(resultado);
+        setVersaoLista((versao) => versao + 1);
+      })
       .catch(() => setErro("Não foi possível carregar as solicitações."))
       .finally(() => setCarregando(false));
-  }, [filtro]);
+  }, [filtroAtrasado]);
 
   return (
     <div>
@@ -39,14 +45,16 @@ function ListaSolicitacoesAdmin() {
 
         {erro && <p className="solicitacoes-admin-erro">{erro}</p>}
 
-        {carregando && <p className="mensagem-central">Carregando solicitações...</p>}
-
-        {!carregando && solicitacoes.length === 0 && (
-          <p className="mensagem-central">Nenhuma solicitação encontrada com esses filtros.</p>
+        {carregando && versaoLista === 0 && (
+          <p className="mensagem-central">Carregando solicitações...</p>
         )}
 
-        {!carregando && solicitacoes.length > 0 && (
-          <div className="tabela-wrapper">
+        {!carregando && !erro && solicitacoes.length === 0 && (
+          <p className="mensagem-central surgir">Nenhuma solicitação encontrada com esses filtros.</p>
+        )}
+
+        {solicitacoes.length > 0 && (
+          <div className={`tabela-wrapper conteudo-atualizavel${carregando ? " atualizando" : ""}`}>
             <table className="tabela">
               <thead>
                 <tr>
@@ -58,7 +66,7 @@ function ListaSolicitacoesAdmin() {
                   <th className="tabela-coluna-acoes">Ações</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody key={versaoLista} className="lista-animada">
                 {solicitacoes.map((solicitacao) => (
                   <tr key={solicitacao.id}>
                     <td>{solicitacao.beneficiario.nome}</td>

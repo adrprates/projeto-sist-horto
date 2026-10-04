@@ -248,6 +248,72 @@ textarea:focus-visible {
   color: var(--texto-suave);
 }
 
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.surgir,
+.lista-animada > * {
+  animation: surgir 0.4s ease both;
+}
+
+.lista-animada > *:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.lista-animada > *:nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+.lista-animada > *:nth-child(4) {
+  animation-delay: 0.12s;
+}
+
+.lista-animada > *:nth-child(5) {
+  animation-delay: 0.16s;
+}
+
+.lista-animada > *:nth-child(6) {
+  animation-delay: 0.20s;
+}
+
+.lista-animada > *:nth-child(7) {
+  animation-delay: 0.24s;
+}
+
+.lista-animada > *:nth-child(8) {
+  animation-delay: 0.28s;
+}
+
+.lista-animada > *:nth-child(9) {
+  animation-delay: 0.32s;
+}
+
+.lista-animada > *:nth-child(10) {
+  animation-delay: 0.36s;
+}
+
+.lista-animada > *:nth-child(n + 11) {
+  animation-delay: 0.4s;
+}
+
+.conteudo-atualizavel {
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.conteudo-atualizavel.atualizando {
+  opacity: 0.45;
+  filter: saturate(0.6);
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;
