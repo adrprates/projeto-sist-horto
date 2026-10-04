@@ -30,4 +30,5 @@ export interface SolicitacaoAdmin {
     ano: number;
   };
   etapas?: EtapaSolicitacao[];
+  itensPropostos?: ItemSolicitacaoAdmin[];
 }

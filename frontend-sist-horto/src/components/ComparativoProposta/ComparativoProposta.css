@@ -1,0 +1,85 @@
+.comparativo {
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--branco);
+}
+
+.comparativo-cabecalho,
+.comparativo-linha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 70px 24px 90px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.comparativo-cabecalho {
+  background: var(--fundo-suave);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--cinza);
+}
+
+.comparativo-cabecalho span:nth-child(2),
+.comparativo-cabecalho span:nth-child(4) {
+  text-align: center;
+}
+
+.comparativo-linha {
+  border-top: 1px solid var(--borda);
+  font-size: 14px;
+}
+
+.comparativo-nome {
+  font-weight: 600;
+  color: var(--titulo);
+  overflow-wrap: anywhere;
+}
+
+.comparativo-numero {
+  text-align: center;
+  color: var(--texto-suave);
+}
+
+.comparativo-numero-proposta {
+  font-weight: 700;
+  color: var(--titulo);
+}
+
+.comparativo-seta {
+  color: var(--cinza);
+}
+
+.comparativo-linha-alterada {
+  background: var(--amarelo-suave);
+}
+
+.comparativo-linha-nova {
+  background: var(--floresta-50);
+}
+
+.comparativo-linha-nova .comparativo-numero-proposta {
+  color: var(--floresta-700);
+}
+
+.comparativo-linha-removida {
+  background: var(--vermelho-suave);
+}
+
+.comparativo-linha-removida .comparativo-nome {
+  text-decoration: line-through;
+  color: var(--cinza);
+}
+
+.comparativo-linha-removida .comparativo-numero-proposta {
+  color: var(--vermelho);
+  font-size: 12px;
+}
+
+.comparativo-total {
+  background: var(--fundo-suave);
+  font-weight: 700;
+}

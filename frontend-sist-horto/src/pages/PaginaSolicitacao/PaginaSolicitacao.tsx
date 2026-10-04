@@ -24,6 +24,7 @@ import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 import CardSaldoParametro from "../../components/CardSaldoParametro/CardSaldoParametro";
 import SeletorQuantidade from "../../components/SeletorQuantidade/SeletorQuantidade";
 import DetalhesSolicitacaoCartao from "../../components/DetalhesSolicitacaoCartao/DetalhesSolicitacaoCartao";
+import ComparativoProposta from "../../components/ComparativoProposta/ComparativoProposta";
 import ListaSolicitacoesAnteriores from "../../components/ListaSolicitacoesAnteriores/ListaSolicitacoesAnteriores";
 import "./PaginaSolicitacao.css";
 
@@ -205,6 +206,13 @@ function PaginaSolicitacao() {
       return;
     }
 
+    if (
+      !aceitar &&
+      !window.confirm("Recusar a alteração encerra a sua solicitação deste ano. Deseja continuar?")
+    ) {
+      return;
+    }
+
     setErroResposta("");
     setRespondendo(true);
 
@@ -270,6 +278,11 @@ function PaginaSolicitacao() {
                   <div className="item-solicitacao-info">
                     <p className="item-solicitacao-nome">{nomeMuda}</p>
                     <span className="tag">{rotuloCategoria[item.muda.categoria]}</span>
+                    {item.muda.disponivel === false && (
+                      <span className="item-solicitacao-alerta">
+                        Indisponível no momento: remova antes de finalizar
+                      </span>
+                    )}
                     {maximoEspecie !== null && (
                       <span className="item-solicitacao-limite-especie">
                         {item.quantidade} / {maximoEspecie} desta espécie
@@ -328,14 +341,20 @@ function PaginaSolicitacao() {
   function renderizarSolicitacaoEnviada(enviada: SolicitacaoAdmin) {
     return (
       <>
-        <DetalhesSolicitacaoCartao solicitacao={enviada} />
-
         {precisaConfirmar && (
-          <div className="painel-confirmacao">
+          <div className="painel-confirmacao surgir">
+            <p className="painel-confirmacao-chamada">A Secretaria propôs uma alteração</p>
             <p className="painel-confirmacao-titulo">
-              O administrador propôs uma alteração na sua solicitação. Veja a descrição da etapa
-              mais recente acima e decida se aceita ou não.
+              Confira abaixo como ficaria a sua solicitação. Se aceitar, estes passam a ser os seus
+              itens. Se recusar, a solicitação deste ano é encerrada.
             </p>
+
+            {(enviada.itensPropostos?.length ?? 0) > 0 && (
+              <ComparativoProposta
+                itensAtuais={enviada.itens}
+                itensPropostos={enviada.itensPropostos ?? []}
+              />
+            )}
 
             {erroResposta && <p className="painel-confirmacao-erro">{erroResposta}</p>}
 
@@ -347,7 +366,7 @@ function PaginaSolicitacao() {
                 disabled={respondendo}
               >
                 <XCircle size={16} />
-                Recusar
+                Recusar e encerrar
               </button>
               <button
                 type="button"
@@ -361,6 +380,8 @@ function PaginaSolicitacao() {
             </div>
           </div>
         )}
+
+        <DetalhesSolicitacaoCartao solicitacao={enviada} />
       </>
     );
   }

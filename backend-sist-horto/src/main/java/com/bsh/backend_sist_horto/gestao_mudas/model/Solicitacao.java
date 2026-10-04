@@ -2,6 +2,7 @@ package com.bsh.backend_sist_horto.gestao_mudas.model;
 
 import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -51,10 +52,25 @@ public class Solicitacao {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @OrderBy("dataHora ASC, id ASC")
+    @JsonProperty("etapas")
     private List<EtapaSolicitacao> historicos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "solicitacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemPropostaAlteracao> itensPropostos = new ArrayList<>();
 
     public void adicionarItem(ItemSolicitacao item) {
         itens.add(item);
+        item.setSolicitacao(this);
+    }
+
+    public void adicionarEtapa(EtapaSolicitacao etapa) {
+        historicos.add(etapa);
+        etapa.setSolicitacao(this);
+    }
+
+    public void adicionarItemProposto(ItemPropostaAlteracao item) {
+        itensPropostos.add(item);
         item.setSolicitacao(this);
     }
 

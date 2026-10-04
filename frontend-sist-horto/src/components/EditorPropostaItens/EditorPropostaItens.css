@@ -1,0 +1,122 @@
+.editor-proposta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editor-proposta-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editor-proposta-linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border: 1px solid var(--borda);
+  border-left: 4px solid var(--borda);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: var(--branco);
+}
+
+.editor-proposta-linha-alterada {
+  border-left-color: var(--kraft-600);
+  background: var(--amarelo-suave);
+}
+
+.editor-proposta-linha-nova {
+  border-left-color: var(--floresta-600);
+  background: var(--floresta-50);
+}
+
+.editor-proposta-linha-removida {
+  border-left-color: var(--vermelho);
+  background: var(--vermelho-suave);
+}
+
+.editor-proposta-linha-removida .editor-proposta-nome {
+  text-decoration: line-through;
+  color: var(--cinza);
+}
+
+.editor-proposta-info {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editor-proposta-nome {
+  font-weight: 600;
+  color: var(--titulo);
+  margin: 0;
+}
+
+.editor-proposta-original {
+  font-size: 12px;
+  color: var(--cinza);
+}
+
+.editor-proposta-remover {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--vermelho-borda);
+  background: var(--branco);
+  color: var(--vermelho);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.editor-proposta-remover:hover:not(:disabled) {
+  background: var(--vermelho-suave);
+}
+
+.editor-proposta-botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--floresta-200);
+  background: var(--branco);
+  color: var(--floresta-800);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.editor-proposta-botao:hover:not(:disabled) {
+  background: var(--floresta-100);
+}
+
+.editor-proposta-botao:disabled,
+.editor-proposta-remover:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-proposta-incluir {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.editor-proposta-incluir select {
+  flex: 1;
+  min-width: 200px;
+  padding: 9px 12px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--branco);
+  color: var(--texto);
+}

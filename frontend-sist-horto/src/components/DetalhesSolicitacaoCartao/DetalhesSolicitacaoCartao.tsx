@@ -1,6 +1,7 @@
 import type { SolicitacaoAdmin } from "../../types/SolicitacaoAdmin";
 import { rotuloCategoria } from "../../types/CategoriaMuda";
 import BadgeStatusSolicitacao from "../BadgeStatusSolicitacao/BadgeStatusSolicitacao";
+import LinhaDoTempoSolicitacao from "../LinhaDoTempoSolicitacao/LinhaDoTempoSolicitacao";
 import "./DetalhesSolicitacaoCartao.css";
 
 interface DetalhesSolicitacaoCartaoProps {
@@ -42,23 +43,8 @@ function DetalhesSolicitacaoCartao({ solicitacao }: DetalhesSolicitacaoCartaoPro
 
       {solicitacao.etapas && solicitacao.etapas.length > 0 && (
         <div className="cartao-detalhes-timeline">
-          <p className="cartao-detalhes-timeline-titulo">Histórico</p>
-          {solicitacao.etapas.map((etapa) => (
-            <div key={etapa.id} className="etapa-timeline">
-              <div className="etapa-timeline-topo">
-                <BadgeStatusSolicitacao status={etapa.status} />
-                <span className="etapa-timeline-data">
-                  {etapa.dataHora}
-                </span>
-              </div>
-              <p className="etapa-timeline-descricao">{etapa.descricao}</p>
-              {etapa.dataLimiteRetirada && (
-                <p className="etapa-timeline-prazo">
-                  Prazo de retirada: {etapa.dataLimiteRetirada}
-                </p>
-              )}
-            </div>
-          ))}
+          <p className="cartao-detalhes-timeline-titulo">Acompanhamento</p>
+          <LinhaDoTempoSolicitacao etapas={solicitacao.etapas} statusAtual={solicitacao.statusAtual} />
         </div>
       )}
     </div>

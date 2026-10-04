@@ -31,17 +31,27 @@
 }
 
 .painel-confirmacao {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   background: var(--amarelo-suave);
   border: 1px solid var(--amarelo-borda);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 18px 20px;
-  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.painel-confirmacao-chamada {
+  font-family: var(--fonte-titulo);
+  font-size: 20px;
+  color: var(--titulo);
+  margin: 0;
 }
 
 .painel-confirmacao-titulo {
   font-size: 13px;
   color: var(--kraft-700);
-  margin: 0 0 14px;
+  margin: 0;
 }
 
 .painel-confirmacao-erro {
@@ -51,7 +61,7 @@
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 13px;
-  margin: 0 0 14px;
+  margin: 0;
 }
 
 .painel-confirmacao-acoes {
@@ -291,4 +301,9 @@
   .solicitacao-acoes button {
     width: 100%;
   }
+}
+.item-solicitacao-alerta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vermelho);
 }

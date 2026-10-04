@@ -77,41 +77,5 @@
   text-transform: uppercase;
   letter-spacing: 0.4px;
   color: var(--cinza);
-  margin: 0 0 10px;
-}
-
-.etapa-timeline {
-  border-left: 2px solid var(--floresta-200);
-  padding-left: 14px;
-  margin-bottom: 12px;
-}
-
-.etapa-timeline:last-child {
-  margin-bottom: 0;
-}
-
-.etapa-timeline-topo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
-}
-
-.etapa-timeline-data {
-  font-size: 12px;
-  color: var(--cinza);
-}
-
-.etapa-timeline-descricao {
-  font-size: 13px;
-  color: var(--texto);
-  margin: 0;
-}
-
-.etapa-timeline-prazo {
-  font-size: 12px;
-  color: var(--amarelo);
-  margin: 4px 0 0;
-  font-weight: 600;
+  margin: 0 0 16px;
 }

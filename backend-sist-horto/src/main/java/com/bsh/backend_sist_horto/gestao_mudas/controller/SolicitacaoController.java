@@ -34,21 +34,7 @@ public class SolicitacaoController {
 
     @GetMapping
     public List<Solicitacao> listar(SolicitacaoFilter filtro) {
-
-        List<Solicitacao> resultado =
-                solicitacaoService.listarPorFiltro(filtro);
-
-        System.out.println("Quantidade: " + resultado.size());
-
-        for (Solicitacao solicitacao : resultado) {
-            System.out.println(
-                    solicitacao.getId() +
-                            " - " +
-                            solicitacao.getDataSolicitacao()
-            );
-        }
-
-        return resultado;
+        return solicitacaoService.listarPorFiltro(filtro);
     }
 
     @GetMapping("/minhas-solicitacoes")
@@ -158,12 +144,7 @@ public class SolicitacaoController {
             @RequestBody AtualizarEtapaRequest request
     ) {
 
-        return etapaoService.atualizarEtapa(
-                id,
-                request.getStatus(),
-                request.getDescricao(),
-                request.getDataLimiteRetirada()
-        );
+        return etapaoService.atualizarEtapa(id, request);
     }
 
     @GetMapping("/minhas-solicitacoes/{id}")

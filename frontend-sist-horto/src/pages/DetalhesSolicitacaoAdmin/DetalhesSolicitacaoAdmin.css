@@ -84,43 +84,6 @@
   font-size: 16px;
 }
 
-.linha-do-tempo {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.etapa-timeline {
-  border-left: 2px solid var(--verde-claro, var(--floresta-200));
-  padding-left: 14px;
-}
-
-.etapa-timeline-topo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
-}
-
-.etapa-timeline-data {
-  font-size: 12px;
-  color: var(--cinza);
-}
-
-.etapa-timeline-descricao {
-  font-size: 13px;
-  color: var(--texto);
-  margin: 0;
-}
-
-.etapa-timeline-prazo {
-  font-size: 12px;
-  color: var(--amarelo);
-  margin: 4px 0 0;
-  font-weight: 600;
-}
-
 .formulario-etapa {
   display: flex;
   flex-direction: column;
@@ -202,4 +165,70 @@
   .detalhes-grade {
     grid-template-columns: 1fr;
   }
+}
+
+.opcoes-etapa {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.opcao-etapa {
+  border: 1px solid var(--borda);
+  background: var(--branco);
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.opcao-etapa:hover {
+  border-color: var(--floresta-500);
+}
+
+.opcao-etapa-selecionada {
+  background: var(--floresta-700);
+  border-color: var(--floresta-700);
+  color: var(--branco);
+}
+
+.opcao-etapa-rejeitada.opcao-etapa-selecionada,
+.opcao-etapa-expirada.opcao-etapa-selecionada {
+  background: var(--vermelho);
+  border-color: var(--vermelho);
+}
+
+.opcao-etapa-aguardando_confirmacao.opcao-etapa-selecionada {
+  background: var(--kraft-600);
+  border-color: var(--kraft-600);
+}
+
+.campo-ajuda {
+  font-size: 12px;
+  color: var(--cinza);
+  margin: 0;
+}
+
+.formulario-etapa-sucesso {
+  background: var(--sucesso-suave);
+  color: var(--floresta-800);
+  border: 1px solid var(--sucesso-borda);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.detalhes-proposta-pendente {
+  border-color: var(--amarelo-borda);
+  background: var(--amarelo-suave);
+}
+
+.detalhes-proposta-texto {
+  font-size: 13px;
+  color: var(--kraft-700);
+  margin: 0 0 12px;
 }

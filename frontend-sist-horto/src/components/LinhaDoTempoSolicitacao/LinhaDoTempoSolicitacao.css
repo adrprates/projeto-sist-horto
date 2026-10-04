@@ -1,0 +1,233 @@
+.linha-tempo {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.linha-tempo-progresso {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.linha-tempo-passo {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--cinza);
+}
+
+.linha-tempo-passo::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: calc(-50% + 18px);
+  right: calc(50% + 18px);
+  height: 3px;
+  border-radius: 999px;
+  background: var(--borda);
+}
+
+.linha-tempo-passo:first-child::before {
+  display: none;
+}
+
+.linha-tempo-passo-icone {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--branco);
+  border: 2px solid var(--borda);
+  color: var(--cinza);
+}
+
+.linha-tempo-passo-rotulo {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.linha-tempo-passo-concluido,
+.linha-tempo-passo-atencao,
+.linha-tempo-passo-erro {
+  color: var(--titulo);
+}
+
+.linha-tempo-passo-concluido::before,
+.linha-tempo-passo-atencao::before,
+.linha-tempo-passo-erro::before {
+  background: var(--floresta-600);
+}
+
+.linha-tempo-passo-concluido .linha-tempo-passo-icone {
+  background: var(--floresta-700);
+  border-color: var(--floresta-700);
+  color: var(--branco);
+}
+
+.linha-tempo-passo-atencao .linha-tempo-passo-icone {
+  background: var(--amarelo-suave);
+  border-color: var(--kraft-600);
+  color: var(--kraft-700);
+}
+
+.linha-tempo-passo-erro .linha-tempo-passo-icone {
+  background: var(--vermelho);
+  border-color: var(--vermelho);
+  color: var(--branco);
+}
+
+.linha-tempo-passo-atual .linha-tempo-passo-icone {
+  box-shadow: 0 0 0 4px rgba(141, 181, 31, 0.25);
+}
+
+.linha-tempo-passo-erro.linha-tempo-passo-atual .linha-tempo-passo-icone {
+  box-shadow: 0 0 0 4px rgba(179, 57, 43, 0.18);
+}
+
+.linha-tempo-etapas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.linha-tempo-etapa {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  padding-bottom: 18px;
+}
+
+.linha-tempo-etapa:last-child {
+  padding-bottom: 0;
+}
+
+.linha-tempo-etapa::before {
+  content: "";
+  position: absolute;
+  top: 34px;
+  bottom: 0;
+  left: 15px;
+  width: 2px;
+  background: var(--borda);
+}
+
+.linha-tempo-etapa:last-child::before {
+  display: none;
+}
+
+.linha-tempo-etapa-icone {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--fundo-suave);
+  color: var(--cinza);
+  border: 1px solid var(--borda);
+}
+
+.linha-tempo-tom-sucesso .linha-tempo-etapa-icone {
+  background: var(--floresta-100);
+  border-color: var(--floresta-200);
+  color: var(--floresta-700);
+}
+
+.linha-tempo-tom-concluido .linha-tempo-etapa-icone {
+  background: var(--floresta-700);
+  border-color: var(--floresta-700);
+  color: var(--branco);
+}
+
+.linha-tempo-tom-atencao .linha-tempo-etapa-icone {
+  background: var(--amarelo-suave);
+  border-color: var(--amarelo-borda);
+  color: var(--kraft-700);
+}
+
+.linha-tempo-tom-erro .linha-tempo-etapa-icone {
+  background: var(--vermelho-suave);
+  border-color: var(--vermelho-borda);
+  color: var(--vermelho);
+}
+
+.linha-tempo-etapa-conteudo {
+  flex: 1;
+  min-width: 0;
+  padding-top: 5px;
+}
+
+.linha-tempo-etapa-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  flex-wrap: wrap;
+}
+
+.linha-tempo-etapa-titulo {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--titulo);
+  margin: 0;
+}
+
+.linha-tempo-etapa-recente .linha-tempo-etapa-titulo {
+  font-size: 15px;
+}
+
+.linha-tempo-etapa-data {
+  font-size: 12px;
+  color: var(--cinza);
+  white-space: nowrap;
+}
+
+.linha-tempo-etapa-motivo {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vermelho);
+  background: var(--vermelho-suave);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.linha-tempo-etapa-descricao {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--texto-suave);
+  white-space: pre-line;
+  margin: 6px 0 0;
+}
+
+.linha-tempo-etapa-prazo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--floresta-800);
+  background: var(--floresta-100);
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+
+@media (max-width: 520px) {
+  .linha-tempo-passo-rotulo {
+    font-size: 11px;
+  }
+}
