@@ -32,7 +32,9 @@ public class AuthService {
 
     public void registrar(RegisterRequest registroRequest) {
 
-        if (beneficiarioRepository.existsByCpf(registroRequest.cpf())) {
+        String cpf = formatarCpf(registroRequest.cpf());
+
+        if (cpfJaCadastrado(cpf)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "CPF já cadastrado"
@@ -48,7 +50,7 @@ public class AuthService {
 
         if(registroRequest.senha().length() < 6) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
+                    HttpStatus.BAD_REQUEST,
                     "A senha deve ter pelo menos 6 caracteres"
             );
         }
@@ -59,7 +61,7 @@ public class AuthService {
         }
 
         Beneficiario beneficiario = new Beneficiario();
-        beneficiario.setCpf(registroRequest.cpf());
+        beneficiario.setCpf(cpf);
         beneficiario.setCelular(registroRequest.celular());
         beneficiario.setTelefone(registroRequest.telefone());
         beneficiario.setEmail(registroRequest.email());
@@ -90,7 +92,7 @@ public class AuthService {
 
         if(request.novaSenha().length() < 6) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
+                    HttpStatus.BAD_REQUEST,
                     "A nova senha deve ter pelo menos 6 caracteres"
             );
         }
@@ -108,16 +110,10 @@ public class AuthService {
 
     public CredenciaisResponse cadastrarPeloAdministrador(CadastroAssistidoRequest request) {
 
-        String login = request.cpf().replaceAll("\\D", "");
+        String cpf = formatarCpf(request.cpf());
+        String login = cpf.replaceAll("\\D", "");
 
-        if (login.length() != 11) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "O CPF deve conter 11 dígitos"
-            );
-        }
-
-        if (beneficiarioRepository.existsByCpf(request.cpf())) {
+        if (cpfJaCadastrado(cpf)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "CPF já cadastrado"
@@ -134,7 +130,7 @@ public class AuthService {
         String senhaGerada = gerarSenhaProvisoria();
 
         Beneficiario beneficiario = new Beneficiario();
-        beneficiario.setCpf(request.cpf());
+        beneficiario.setCpf(cpf);
         beneficiario.setCelular(request.celular());
         beneficiario.setTelefone(request.telefone());
         beneficiario.setEmail(request.email());
@@ -191,6 +187,27 @@ public class AuthService {
                 .findByLogin(login)
                 .map(Beneficiario::isSenhaProvisoria)
                 .orElse(false);
+    }
+
+    private String formatarCpf(String cpfInformado) {
+        String digitos = cpfInformado.replaceAll("\\D", "");
+
+        if (digitos.length() != 11) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "O CPF deve conter 11 dígitos"
+            );
+        }
+
+        return digitos.substring(0, 3) + "."
+                + digitos.substring(3, 6) + "."
+                + digitos.substring(6, 9) + "-"
+                + digitos.substring(9);
+    }
+
+    private boolean cpfJaCadastrado(String cpfFormatado) {
+        return beneficiarioRepository.existsByCpf(cpfFormatado)
+                || beneficiarioRepository.existsByCpf(cpfFormatado.replaceAll("\\D", ""));
     }
 
     private String gerarSenhaProvisoria() {

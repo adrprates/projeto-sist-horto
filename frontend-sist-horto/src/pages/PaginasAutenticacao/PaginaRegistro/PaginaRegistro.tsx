@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { registrarUsuario } from "../../../api/authService";
+import { extrairMensagemErro } from "../../../utils/extrairMensagemErro";
 import type { RegisterRequest } from "../../../api/authService";
 import { Button, TextField, Alert, Link } from "@mui/material";
 import CabecalhoPagina from "../../../components/CabecalhoPagina/CabecalhoPagina";
@@ -59,8 +60,9 @@ export const PaginaRegistro = () => {
         },
       });
     } catch (erro) {
-      setErro("Não foi possível concluir o cadastro. Por favor, tente novamente.");
-      console.error(erro);
+      setErro(
+        extrairMensagemErro(erro, "Não foi possível concluir o cadastro. Por favor, tente novamente.")
+      );
     } finally {
       setEnviando(false);
     }
