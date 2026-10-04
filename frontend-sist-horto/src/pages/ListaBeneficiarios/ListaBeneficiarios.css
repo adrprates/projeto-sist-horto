@@ -79,3 +79,13 @@
   background: var(--kraft-300);
   color: var(--kraft-700);
 }
+
+.beneficiarios-sucesso {
+  background: var(--sucesso-suave);
+  color: var(--floresta-800);
+  border: 1px solid var(--sucesso-borda);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ClipboardList, KeyRound, Pencil, UserPlus } from "lucide-react";
 import type { DadosBeneficiario } from "../../types/DadosBeneficiario";
 import type { BeneficiarioFilter } from "../../types/BeneficiarioFilter";
@@ -7,6 +7,7 @@ import type { Credenciais } from "../../types/Credenciais";
 import { Role, rotuloRole } from "../../types/Role";
 import { listarBeneficiarios, redefinirSenhaBeneficiario } from "../../api/beneficiarioService";
 import { extrairMensagemErro } from "../../utils/extrairMensagemErro";
+import { useValorAtrasado } from "../../hooks/useValorAtrasado";
 import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 import FiltrosBeneficiarios from "../../components/FiltrosBeneficiarios/FiltrosBeneficiarios";
 import ModalCredenciais from "../../components/ModalCredenciais/ModalCredenciais";
@@ -16,16 +17,23 @@ function ListaBeneficiarios() {
   const [beneficiarios, setBeneficiarios] = useState<DadosBeneficiario[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [filtro, setFiltro] = useState<BeneficiarioFilter>({});
+  const filtroAtrasado = useValorAtrasado(filtro);
+  const [versaoLista, setVersaoLista] = useState(0);
   const [credenciais, setCredenciais] = useState<Credenciais | null>(null);
   const [erro, setErro] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const mensagemSucesso = (location.state as { mensagem?: string } | null)?.mensagem;
 
   useEffect(() => {
     setCarregando(true);
-    listarBeneficiarios(filtro)
-      .then(setBeneficiarios)
+    listarBeneficiarios(filtroAtrasado)
+      .then((resultado) => {
+        setBeneficiarios(resultado);
+        setVersaoLista((versao) => versao + 1);
+      })
       .finally(() => setCarregando(false));
-  }, [filtro]);
+  }, [filtroAtrasado]);
 
   async function handleNovaSenha(beneficiario: DadosBeneficiario) {
     if (!beneficiario.id) {
@@ -70,16 +78,20 @@ function ListaBeneficiarios() {
       <section className="container-pagina container-beneficiarios">
         <FiltrosBeneficiarios filtro={filtro} aoMudarFiltro={setFiltro} />
 
+        {mensagemSucesso && <p className="beneficiarios-sucesso surgir">{mensagemSucesso}</p>}
+
         {erro && <p className="beneficiarios-erro">{erro}</p>}
 
-        {carregando && <p className="mensagem-central">Carregando beneficiários...</p>}
-
-        {!carregando && beneficiarios.length === 0 && (
-          <p className="mensagem-central">Nenhum beneficiário encontrado com esses filtros.</p>
+        {carregando && versaoLista === 0 && (
+          <p className="mensagem-central">Carregando beneficiários...</p>
         )}
 
-        {!carregando && beneficiarios.length > 0 && (
-          <div className="tabela-wrapper">
+        {!carregando && beneficiarios.length === 0 && (
+          <p className="mensagem-central surgir">Nenhum beneficiário encontrado com esses filtros.</p>
+        )}
+
+        {beneficiarios.length > 0 && (
+          <div className={`tabela-wrapper conteudo-atualizavel${carregando ? " atualizando" : ""}`}>
             <table className="tabela">
               <thead>
                 <tr>
@@ -91,7 +103,7 @@ function ListaBeneficiarios() {
                   <th className="tabela-coluna-acoes">Ações</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody key={versaoLista} className="lista-animada">
                 {beneficiarios.map((beneficiario) => {
                   const ehAdministrador = beneficiario.role === Role.ADMINISTRADOR;
 
@@ -149,9 +161,9 @@ function ListaBeneficiarios() {
                           <button
                             type="button"
                             className="beneficiario-botao-icone"
-                            disabled
-                            title="Atualização de dados disponível em breve"
-                            aria-label="Atualizar dados"
+                            onClick={() => navigate(`/beneficiarios/${beneficiario.id}/editar`)}
+                            title="Atualizar dados cadastrais"
+                            aria-label={`Atualizar dados de ${beneficiario.nome}`}
                           >
                             <Pencil size={16} />
                           </button>

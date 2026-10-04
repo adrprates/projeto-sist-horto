@@ -9,4 +9,5 @@ export interface DadosBeneficiario {
     email?: string;
     nome?: string;
     endereco?: string;
+    login?: string;
 }

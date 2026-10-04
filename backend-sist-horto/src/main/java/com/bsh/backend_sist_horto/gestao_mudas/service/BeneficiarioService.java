@@ -4,9 +4,12 @@ import com.bsh.backend_sist_horto.gestao_mudas.dto.AtualizarPerfilRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.BeneficiarioFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.PerfilResponse;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
+import com.bsh.backend_sist_horto.gestao_mudas.record.AtualizarBeneficiarioRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.BeneficiarioRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.specification.BeneficiarioSpecification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +63,69 @@ public class BeneficiarioService {
                 beneficiario.getLogin(),
                 beneficiario.isSenhaProvisoria()
         );
+    }
+
+    public Beneficiario atualizarPeloAdministrador(Long id, AtualizarBeneficiarioRequest request) {
+        Beneficiario beneficiario = getBeneficiarioPorId(id);
+
+        beneficiario.setNome(request.nome());
+        beneficiario.setEmail(request.email());
+        beneficiario.setCelular(request.celular());
+        beneficiario.setTelefone(
+                request.telefone() == null || request.telefone().isBlank() ? null : request.telefone()
+        );
+        beneficiario.setEndereco(request.endereco());
+
+        return beneficiarioRepository.save(beneficiario);
+    }
+
+    public Beneficiario corrigirCpf(Long id, String cpfInformado) {
+        Beneficiario beneficiario = getBeneficiarioPorId(id);
+
+        String digitosNovos = cpfInformado.replaceAll("\\D", "");
+
+        if (digitosNovos.length() != 11) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "O CPF deve conter 11 dígitos"
+            );
+        }
+
+        String cpfFormatado = digitosNovos.substring(0, 3) + "."
+                + digitosNovos.substring(3, 6) + "."
+                + digitosNovos.substring(6, 9) + "-"
+                + digitosNovos.substring(9);
+
+        String digitosAtuais = beneficiario.getCpf().replaceAll("\\D", "");
+
+        if (digitosNovos.equals(digitosAtuais)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "O CPF informado é igual ao atual"
+            );
+        }
+
+        if (beneficiarioRepository.existsByCpf(cpfFormatado) || beneficiarioRepository.existsByCpf(digitosNovos)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "CPF já cadastrado para outro beneficiário"
+            );
+        }
+
+        if (beneficiario.getLogin().equals(digitosAtuais)) {
+            if (beneficiarioRepository.existsByLogin(digitosNovos)) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Já existe um usuário com o login " + digitosNovos
+                );
+            }
+
+            beneficiario.setLogin(digitosNovos);
+        }
+
+        beneficiario.setCpf(cpfFormatado);
+
+        return beneficiarioRepository.save(beneficiario);
     }
 
     public Beneficiario getBeneficiarioPorId(Long id){

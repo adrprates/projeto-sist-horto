@@ -2,7 +2,9 @@ package com.bsh.backend_sist_horto.gestao_mudas.controller;
 
 import com.bsh.backend_sist_horto.gestao_mudas.dto.BeneficiarioFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
+import com.bsh.backend_sist_horto.gestao_mudas.record.AtualizarBeneficiarioRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.record.CadastroAssistidoRequest;
+import com.bsh.backend_sist_horto.gestao_mudas.record.CorrigirCpfRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.record.CredenciaisResponse;
 import com.bsh.backend_sist_horto.gestao_mudas.service.AuthService;
 import com.bsh.backend_sist_horto.gestao_mudas.service.BeneficiarioService;
@@ -39,6 +41,20 @@ public class BeneficiarioController {
     @ResponseStatus(HttpStatus.CREATED)
     public CredenciaisResponse cadastrar(@Valid @RequestBody CadastroAssistidoRequest request) {
         return authService.cadastrarPeloAdministrador(request);
+    }
+
+    @PutMapping("/{id}")
+    public Beneficiario atualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody AtualizarBeneficiarioRequest request) {
+        return beneficiarioService.atualizarPeloAdministrador(id, request);
+    }
+
+    @PatchMapping("/{id}/cpf")
+    public Beneficiario corrigirCpf(
+            @PathVariable Long id,
+            @Valid @RequestBody CorrigirCpfRequest request) {
+        return beneficiarioService.corrigirCpf(id, request.cpf());
     }
 
     @PostMapping("/{id}/redefinir-senha")

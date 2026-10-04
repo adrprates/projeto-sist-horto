@@ -24,3 +24,36 @@
     grid-template-columns: 1fr;
   }
 }
+
+.campo-cpf {
+  display: flex;
+  gap: 8px;
+}
+
+.campo-cpf input {
+  flex: 1;
+  min-width: 0;
+}
+
+.campo-cpf-botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  border: 1px solid var(--kraft-300);
+  background: var(--kraft-100);
+  color: var(--kraft-700);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.campo-cpf-botao:hover {
+  background: var(--kraft-200);
+}
+
+.campo-dica-alerta {
+  color: var(--kraft-700);
+}

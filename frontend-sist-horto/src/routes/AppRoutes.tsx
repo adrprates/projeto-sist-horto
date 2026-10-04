@@ -61,6 +61,7 @@ export const AppRoutes = () => {
             <Route path="/mudas/editar/:id" element={<FormularioMuda />} />
             <Route path="/beneficiarios" element={<ListaBeneficiarios />} />
             <Route path="/beneficiarios/novo" element={<FormularioBeneficiario />} />
+            <Route path="/beneficiarios/:id/editar" element={<FormularioBeneficiario />} />
             <Route path="/beneficiarios/:id/solicitacao" element={<AtendimentoSolicitacao />} />
             <Route path="/parametros" element={<ListaParametrosAnuais />} />
             <Route path="/parametros/novo" element={<FormularioParametroAnual />} />
