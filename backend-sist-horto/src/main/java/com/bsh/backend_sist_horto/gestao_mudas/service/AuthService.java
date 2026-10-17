@@ -20,6 +20,7 @@ public class AuthService {
 
     private static final String CARACTERES_SENHA = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
     private static final int TAMANHO_SENHA_PROVISORIA = 8;
+    private static final String PREFIXO_LOGIN = "horto";
 
     private final SecureRandom geradorAleatorio = new SecureRandom();
     private final BeneficiarioRepository beneficiarioRepository;
@@ -111,7 +112,6 @@ public class AuthService {
     public CredenciaisResponse cadastrarPeloAdministrador(CadastroAssistidoRequest request) {
 
         String cpf = formatarCpf(request.cpf());
-        String login = cpf.replaceAll("\\D", "");
 
         if (cpfJaCadastrado(cpf)) {
             throw new ResponseStatusException(
@@ -120,13 +120,7 @@ public class AuthService {
             );
         }
 
-        if (beneficiarioRepository.existsByLogin(login)) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Já existe um usuário com o login " + login
-            );
-        }
-
+        String login = gerarLoginDeAcesso();
         String senhaGerada = gerarSenhaProvisoria();
 
         Beneficiario beneficiario = new Beneficiario();
@@ -169,6 +163,10 @@ public class AuthService {
 
         String senhaGerada = gerarSenhaProvisoria();
 
+        if (beneficiario.getLogin().equals(beneficiario.getCpf().replaceAll("\\D", ""))) {
+            beneficiario.setLogin(gerarLoginDeAcesso());
+        }
+
         beneficiario.setSenha(passwordEncoder.encode(senhaGerada));
         beneficiario.setSenhaProvisoria(true);
 
@@ -208,6 +206,16 @@ public class AuthService {
     private boolean cpfJaCadastrado(String cpfFormatado) {
         return beneficiarioRepository.existsByCpf(cpfFormatado)
                 || beneficiarioRepository.existsByCpf(cpfFormatado.replaceAll("\\D", ""));
+    }
+
+    public String gerarLoginDeAcesso() {
+        String login;
+
+        do {
+            login = PREFIXO_LOGIN + (10000 + geradorAleatorio.nextInt(90000));
+        } while (beneficiarioRepository.existsByLogin(login));
+
+        return login;
     }
 
     private String gerarSenhaProvisoria() {
