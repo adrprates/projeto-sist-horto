@@ -7,6 +7,7 @@ import { obterPerfil, atualizarPerfil } from "../../api/perfilService";
 import ModalAlterarSenha from "../../components/ModalAlterarSenha/ModalAlterarSenha";
 import "./PaginaPerfil.css";
 import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
+import { formatarCpfExibicao, mascararTelefone, telefoneParaEdicao } from "../../utils/mascaras";
 
 function PaginaPerfil() {
   const [perfil, setPerfil] = useState<Perfil>({});
@@ -24,8 +25,13 @@ function PaginaPerfil() {
   const carregarPerfil = useCallback(() => {
     obterPerfil()
       .then((dados) => {
-        setPerfil(dados);
-        setPerfilOriginal(dados);
+        const formatado = {
+          ...dados,
+          celular: telefoneParaEdicao(dados.celular),
+          telefone: telefoneParaEdicao(dados.telefone),
+        };
+        setPerfil(formatado);
+        setPerfilOriginal(formatado);
       })
       .catch(() => setErro("Não foi possível carregar os dados do perfil."))
       .finally(() => setCarregando(false));
@@ -61,6 +67,19 @@ function PaginaPerfil() {
 
     if (!perfil.nome || !perfil.email || !perfil.celular || !perfil.endereco) {
       setErro("Nome, e-mail, celular e endereço são obrigatórios.");
+      return;
+    }
+
+    const celularAlterado = perfil.celular !== perfilOriginal.celular;
+    const telefoneAlterado = perfil.telefone !== perfilOriginal.telefone;
+
+    if (celularAlterado && perfil.celular.replace(/\D/g, "").length !== 11) {
+      setErro("Informe o celular com DDD: (00) 00000-0000.");
+      return;
+    }
+
+    if (telefoneAlterado && perfil.telefone && perfil.telefone.replace(/\D/g, "").length !== 10) {
+      setErro("Informe o telefone com DDD: (00) 0000-0000.");
       return;
     }
 
@@ -149,7 +168,7 @@ function PaginaPerfil() {
 
             <div className="campo">
               <label>CPF</label>
-              <input type="text" value={perfil.cpf ?? ""} disabled />
+              <input type="text" value={formatarCpfExibicao(perfil.cpf)} disabled />
             </div>
 
             <div className="campo">
@@ -168,7 +187,10 @@ function PaginaPerfil() {
                 type="text"
                 value={perfil.celular ?? ""}
                 disabled={!editando}
-                onChange={(evento) => atualizarCampo("celular", evento.target.value)}
+                placeholder="(00) 00000-0000"
+                onChange={(evento) =>
+                  atualizarCampo("celular", mascararTelefone(evento.target.value))
+                }
               />
             </div>
 
@@ -178,7 +200,10 @@ function PaginaPerfil() {
                 type="text"
                 value={perfil.telefone ?? ""}
                 disabled={!editando}
-                onChange={(evento) => atualizarCampo("telefone", evento.target.value)}
+                placeholder="(00) 0000-0000"
+                onChange={(evento) =>
+                  atualizarCampo("telefone", mascararTelefone(evento.target.value))
+                }
               />
             </div>
 

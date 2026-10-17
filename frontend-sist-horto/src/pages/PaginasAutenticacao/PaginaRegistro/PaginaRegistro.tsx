@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { registrarUsuario } from "../../../api/authService";
 import { extrairMensagemErro } from "../../../utils/extrairMensagemErro";
+import { mascararCpf, mascararTelefone } from "../../../utils/mascaras";
 import type { RegisterRequest } from "../../../api/authService";
 import { Button, TextField, Alert, Link } from "@mui/material";
 import CabecalhoPagina from "../../../components/CabecalhoPagina/CabecalhoPagina";
@@ -35,6 +36,23 @@ export const PaginaRegistro = () => {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErro("");
+
+    const digitos = (valor: string) => valor.replace(/\D/g, "");
+
+    if (digitos(campos.cpf).length !== 11) {
+      setErro("O CPF deve conter 11 dígitos.");
+      return;
+    }
+
+    if (digitos(campos.celular).length !== 11) {
+      setErro("Informe o celular com DDD: (00) 00000-0000.");
+      return;
+    }
+
+    if (campos.telefone && digitos(campos.telefone).length !== 10) {
+      setErro("Informe o telefone com DDD: (00) 0000-0000.");
+      return;
+    }
 
     const dadosParaEnviar: RegisterRequest = {
       cpf: campos.cpf,
@@ -97,7 +115,9 @@ export const PaginaRegistro = () => {
                 fullWidth
                 label="CPF"
                 value={campos.cpf}
-                onChange={(e) => atualizarCampo("cpf", e.target.value)}
+                placeholder="000.000.000-00"
+                slotProps={{ htmlInput: { inputMode: "numeric" } }}
+                onChange={(e) => atualizarCampo("cpf", mascararCpf(e.target.value))}
               />
 
               <TextField
@@ -114,14 +134,18 @@ export const PaginaRegistro = () => {
                 fullWidth
                 label="Celular"
                 value={campos.celular}
-                onChange={(e) => atualizarCampo("celular", e.target.value)}
+                placeholder="(00) 00000-0000"
+                slotProps={{ htmlInput: { inputMode: "tel" } }}
+                onChange={(e) => atualizarCampo("celular", mascararTelefone(e.target.value))}
               />
 
               <TextField
                 fullWidth
                 label="Telefone (opcional)"
                 value={campos.telefone}
-                onChange={(e) => atualizarCampo("telefone", e.target.value)}
+                placeholder="(00) 0000-0000"
+                slotProps={{ htmlInput: { inputMode: "tel" } }}
+                onChange={(e) => atualizarCampo("telefone", mascararTelefone(e.target.value))}
               />
 
               <TextField

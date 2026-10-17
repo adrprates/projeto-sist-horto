@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import type { BeneficiarioFilter } from "../../types/BeneficiarioFilter";
 import { Role, rotuloRole } from "../../types/Role";
+import { mascararCpf } from "../../utils/mascaras";
 import "./FiltrosBeneficiarios.css";
 
 type CampoBusca = "nome" | "cpf" | "email";
@@ -31,7 +32,8 @@ function FiltrosBeneficiarios({ filtro, aoMudarFiltro }: FiltrosBeneficiariosPro
   }
 
   function handleMudarValorBusca(valor: string) {
-    aoMudarFiltro({ ...filtro, [campoBusca]: valor || undefined });
+    const valorFormatado = campoBusca === "cpf" ? mascararCpf(valor) : valor;
+    aoMudarFiltro({ ...filtro, [campoBusca]: valorFormatado || undefined });
   }
 
   return (
@@ -51,7 +53,12 @@ function FiltrosBeneficiarios({ filtro, aoMudarFiltro }: FiltrosBeneficiariosPro
           <Search size={18} className="campo-busca-icone" />
           <input
             type="text"
-            placeholder={`Digite o ${RESUMO_CAMPO[campoBusca].toLowerCase()}...`}
+            placeholder={
+              campoBusca === "cpf"
+                ? "000.000.000-00"
+                : `Digite o ${RESUMO_CAMPO[campoBusca].toLowerCase()}...`
+            }
+            inputMode={campoBusca === "cpf" ? "numeric" : undefined}
             value={filtro[campoBusca] ?? ""}
             onChange={(evento) => handleMudarValorBusca(evento.target.value)}
           />

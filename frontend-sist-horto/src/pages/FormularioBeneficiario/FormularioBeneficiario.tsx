@@ -10,6 +10,12 @@ import {
   corrigirCpfBeneficiario,
 } from "../../api/beneficiarioService";
 import { extrairMensagemErro } from "../../utils/extrairMensagemErro";
+import {
+  cpfParaEdicao,
+  mascararCpf,
+  mascararTelefone,
+  telefoneParaEdicao,
+} from "../../utils/mascaras";
 import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 import ModalCredenciais from "../../components/ModalCredenciais/ModalCredenciais";
 import "./FormularioBeneficiario.css";
@@ -31,6 +37,7 @@ function FormularioBeneficiario() {
   const ehEdicao = beneficiarioId !== null;
 
   const [campos, setCampos] = useState<CadastroBeneficiario>(CAMPOS_VAZIOS);
+  const [camposOriginais, setCamposOriginais] = useState<CadastroBeneficiario>(CAMPOS_VAZIOS);
   const [cpfOriginal, setCpfOriginal] = useState("");
   const [loginOriginal, setLoginOriginal] = useState("");
   const [cpfDesbloqueado, setCpfDesbloqueado] = useState(false);
@@ -47,15 +54,17 @@ function FormularioBeneficiario() {
 
     buscarBeneficiario(beneficiarioId)
       .then((dados) => {
-        setCampos({
+        const carregados = {
           nome: dados.nome ?? "",
-          cpf: dados.cpf ?? "",
+          cpf: cpfParaEdicao(dados.cpf),
           email: dados.email ?? "",
-          celular: dados.celular ?? "",
-          telefone: dados.telefone ?? "",
+          celular: telefoneParaEdicao(dados.celular),
+          telefone: telefoneParaEdicao(dados.telefone),
           endereco: dados.endereco ?? "",
-        });
-        setCpfOriginal(dados.cpf ?? "");
+        };
+        setCampos(carregados);
+        setCamposOriginais(carregados);
+        setCpfOriginal(carregados.cpf);
         setLoginOriginal(dados.login ?? "");
       })
       .catch(() => setErro("Não foi possível carregar os dados do beneficiário."))
@@ -70,7 +79,7 @@ function FormularioBeneficiario() {
     const mensagem =
       "Corrigir o CPF altera um documento de identificação do beneficiário.\n\n" +
       (somenteDigitos(cpfOriginal) === loginOriginal
-        ? "Como o login desta pessoa é o próprio CPF, o login também passará a ser o CPF corrigido.\n\n"
+        ? "Como o login desta pessoa ainda é o próprio CPF, ele será trocado por um novo código de acesso, sem dados pessoais.\n\n"
         : "") +
       "Deseja continuar?";
 
@@ -93,8 +102,22 @@ function FormularioBeneficiario() {
       return;
     }
 
-    if (somenteDigitos(campos.cpf).length !== 11) {
+    const validarCpf = !ehEdicao || cpfDesbloqueado;
+    const validarCelular = !ehEdicao || campos.celular !== camposOriginais.celular;
+    const validarTelefone = !ehEdicao || campos.telefone !== camposOriginais.telefone;
+
+    if (validarCpf && somenteDigitos(campos.cpf).length !== 11) {
       setErro("O CPF deve conter 11 dígitos.");
+      return;
+    }
+
+    if (validarCelular && somenteDigitos(campos.celular).length !== 11) {
+      setErro("Informe o celular com DDD: (00) 00000-0000.");
+      return;
+    }
+
+    if (validarTelefone && campos.telefone && somenteDigitos(campos.telefone).length !== 10) {
+      setErro("Informe o telefone com DDD: (00) 0000-0000.");
       return;
     }
 
@@ -165,9 +188,9 @@ function FormularioBeneficiario() {
         {!ehEdicao && (
           <p className="formulario-beneficiario-dica">
             <Info size={18} />
-            O login será o CPF (somente números) e uma senha provisória será gerada. A pessoa pode
-            usar esse acesso para acompanhar o pedido ou nunca entrar no sistema: a Secretaria faz a
-            solicitação por ela.
+            O sistema gera um login próprio (sem usar CPF ou outros dados pessoais) e uma senha
+            provisória. A pessoa pode usar esse acesso para acompanhar o pedido ou nunca entrar no
+            sistema: a Secretaria faz a solicitação por ela.
           </p>
         )}
 
@@ -201,7 +224,7 @@ function FormularioBeneficiario() {
                       placeholder="000.000.000-00"
                       value={campos.cpf}
                       disabled={cpfBloqueado}
-                      onChange={(evento) => atualizarCampo("cpf", evento.target.value)}
+                      onChange={(evento) => atualizarCampo("cpf", mascararCpf(evento.target.value))}
                     />
                     {ehEdicao &&
                       (cpfDesbloqueado ? (
@@ -255,7 +278,9 @@ function FormularioBeneficiario() {
                     id="celular"
                     type="tel"
                     value={campos.celular}
-                    onChange={(evento) => atualizarCampo("celular", evento.target.value)}
+                    onChange={(evento) =>
+                      atualizarCampo("celular", mascararTelefone(evento.target.value))
+                    }
                   />
                 </div>
 
@@ -265,7 +290,9 @@ function FormularioBeneficiario() {
                     id="telefone"
                     type="tel"
                     value={campos.telefone}
-                    onChange={(evento) => atualizarCampo("telefone", evento.target.value)}
+                    onChange={(evento) =>
+                      atualizarCampo("telefone", mascararTelefone(evento.target.value))
+                    }
                   />
                 </div>
 

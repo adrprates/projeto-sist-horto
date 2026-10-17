@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import type { SolicitacaoFilter } from "../../types/SolicitacaoFilter";
 import { StatusSolicitacao, rotuloStatusSolicitacao } from "../../types/StatusSolicitacao";
+import { mascararCpf } from "../../utils/mascaras";
 import "./FiltrosSolicitacoesAdmin.css";
 
 interface FiltrosSolicitacoesAdminProps {
@@ -28,9 +29,13 @@ function FiltrosSolicitacoesAdmin({ filtro, aoMudarFiltro }: FiltrosSolicitacoes
           type="text"
           className="campo-texto"
           placeholder="CPF do beneficiário"
+          inputMode="numeric"
           value={filtro.cpfBeneficiario ?? ""}
           onChange={(evento) =>
-            aoMudarFiltro({ ...filtro, cpfBeneficiario: evento.target.value || undefined })
+            aoMudarFiltro({
+              ...filtro,
+              cpfBeneficiario: mascararCpf(evento.target.value) || undefined,
+            })
           }
         />
       </div>
