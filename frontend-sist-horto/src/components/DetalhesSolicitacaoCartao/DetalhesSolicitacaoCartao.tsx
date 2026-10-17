@@ -10,6 +10,8 @@ interface DetalhesSolicitacaoCartaoProps {
 
 function DetalhesSolicitacaoCartao({ solicitacao }: DetalhesSolicitacaoCartaoProps) {
   const quantidadeTotal = solicitacao.itens.reduce((total, item) => total + item.quantidade, 0);
+  const ultimaAtualizacao =
+    solicitacao.dataAtualizacao ?? solicitacao.etapas?.[solicitacao.etapas.length - 1]?.dataHora;
 
   return (
     <div className="cartao-detalhes-solicitacao">
@@ -20,6 +22,7 @@ function DetalhesSolicitacaoCartao({ solicitacao }: DetalhesSolicitacaoCartaoPro
           </h3>
           <p className="cartao-detalhes-data">
             Enviada em {solicitacao.dataSolicitacao}
+            {ultimaAtualizacao && ` · Atualizada em ${ultimaAtualizacao}`}
           </p>
         </div>
         <BadgeStatusSolicitacao status={solicitacao.statusAtual} />

@@ -90,6 +90,7 @@ public class EtapaService {
         etapa.setMotivo(motivo);
         etapa.setDescricao(descricao);
         etapa.setDataHora(LocalDateTime.now());
+        solicitacao.setDataAtualizacao(etapa.getDataHora());
         etapa.setDataLimiteRetirada(dataLimiteRetirada);
 
         solicitacao.adicionarEtapa(etapa);

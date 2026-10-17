@@ -186,7 +186,13 @@ function DetalhesSolicitacaoAdmin() {
               <strong>Ano:</strong> {solicitacao.parametroAnual.ano}
             </p>
             <p>
-              <strong>Data da solicitação:</strong> {solicitacao.dataSolicitacao}
+              <strong>Enviada em:</strong> {solicitacao.dataSolicitacao}
+            </p>
+            <p>
+              <strong>Última atualização:</strong>{" "}
+              {solicitacao.dataAtualizacao ??
+                solicitacao.etapas?.[solicitacao.etapas.length - 1]?.dataHora ??
+                "—"}
             </p>
             {solicitacao.beneficiario.email && (
               <p>

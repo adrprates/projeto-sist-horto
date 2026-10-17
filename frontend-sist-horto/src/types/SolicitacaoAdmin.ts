@@ -23,6 +23,7 @@ export interface ItemSolicitacaoAdmin {
 export interface SolicitacaoAdmin {
   id: number;
   dataSolicitacao: string;
+  dataAtualizacao?: string | null;
   statusAtual: StatusSolicitacao;
   beneficiario: BeneficiarioResumo;
   itens: ItemSolicitacaoAdmin[];
