@@ -5,12 +5,15 @@ import type { DadosBeneficiario } from "../types/DadosBeneficiario";
 import type { CadastroBeneficiario } from "../types/CadastroBeneficiario";
 import type { Credenciais } from "../types/Credenciais";
 import type { AtualizarPerfil } from "../types/AtualizarPerfil";
+import type { PaginaResponse } from "../types/PaginaResponse";
 
 export async function listarBeneficiarios(
-    filtro: BeneficiarioFilter
-): Promise<DadosBeneficiario[]> {
+  filtro: BeneficiarioFilter,
+  pagina: number,
+  tamanho: number
+): Promise<PaginaResponse<DadosBeneficiario>> {
   const response = await apiClient.get("/beneficiarios", {
-    params: filtro,
+    params: { ...filtro, pagina, tamanho },
   });
 
   return response.data;

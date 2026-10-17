@@ -1,5 +1,6 @@
 package com.bsh.backend_sist_horto.gestao_mudas.service;
 
+import com.bsh.backend_sist_horto.gestao_mudas.dto.PaginaResponse;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.ParametroAnualDisponivel;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.SolicitacaoBeneficiarioResumo;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.SolicitacaoFilter;
@@ -11,6 +12,9 @@ import com.bsh.backend_sist_horto.gestao_mudas.repository.ParametroAnualReposito
 import com.bsh.backend_sist_horto.gestao_mudas.repository.SolicitacaoRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.specification.SolicitacaoSpecification;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -48,8 +52,21 @@ public class SolicitacaoService {
         return solicitacaoRepository.findAll();
     }
 
-    public List<Solicitacao> listarPorFiltro(SolicitacaoFilter solicitacaoFilter) {
-        return solicitacaoRepository.findAll(SolicitacaoSpecification.fromFilter(solicitacaoFilter));
+    public PaginaResponse<Solicitacao> listarPorFiltro(
+            SolicitacaoFilter solicitacaoFilter,
+            int pagina,
+            int tamanho,
+            String ordem) {
+
+        Specification<Solicitacao> especificacao = SolicitacaoSpecification.fromFilter(solicitacaoFilter)
+                .and(SolicitacaoSpecification.ordenar(ordem));
+
+        Page<Solicitacao> resultado = solicitacaoRepository.findAll(
+                especificacao,
+                PageRequest.of(Math.max(pagina, 0), Math.min(Math.max(tamanho, 1), 50))
+        );
+
+        return PaginaResponse.de(resultado);
     }
 
     public Solicitacao montarSolicitacao(Long mudaId, Integer quantidade, Beneficiario beneficiario) {
@@ -242,6 +259,7 @@ public class SolicitacaoService {
         solicitacao.setStatusAtual(
                 StatusSolicitacao.PENDENTE
         );
+        solicitacao.setDataSolicitacao(LocalDate.now());
 
         etapaService.salvar(solicitacao, StatusSolicitacao.PENDENTE, descricaoEtapa);
 

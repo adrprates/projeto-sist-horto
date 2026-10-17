@@ -33,8 +33,12 @@ public class SolicitacaoController {
     }
 
     @GetMapping
-    public List<Solicitacao> listar(SolicitacaoFilter filtro) {
-        return solicitacaoService.listarPorFiltro(filtro);
+    public PaginaResponse<Solicitacao> listar(
+            SolicitacaoFilter filtro,
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanho,
+            @RequestParam(defaultValue = "prioridade") String ordem) {
+        return solicitacaoService.listarPorFiltro(filtro, pagina, tamanho, ordem);
     }
 
     @GetMapping("/minhas-solicitacoes")

@@ -3,9 +3,12 @@ package com.bsh.backend_sist_horto.gestao_mudas.specification;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.SolicitacaoFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Solicitacao;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Order;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public final class SolicitacaoSpecification {
 
@@ -73,6 +76,29 @@ public final class SolicitacaoSpecification {
                         root.get("beneficiario").get("cpf"),
                         "%" + cpf + "%"
                 );
+    }
+
+    public static Specification<Solicitacao> ordenar(String ordem) {
+        return (root, query, builder) -> {
+            Expression<Integer> prioridade = builder.<Integer>selectCase()
+                    .when(builder.equal(root.get("statusAtual"), StatusSolicitacao.PENDENTE), 1)
+                    .when(builder.equal(root.get("statusAtual"), StatusSolicitacao.APROVADA), 2)
+                    .when(builder.equal(root.get("statusAtual"), StatusSolicitacao.PRONTA_PARA_RETIRADA), 3)
+                    .when(builder.equal(root.get("statusAtual"), StatusSolicitacao.AGUARDANDO_CONFIRMACAO), 4)
+                    .otherwise(5);
+
+            List<Order> ordenacao = switch (ordem == null ? "" : ordem) {
+                case "recentes" -> List.of(builder.desc(root.get("dataSolicitacao")), builder.desc(root.get("id")));
+                case "antigas" -> List.of(builder.asc(root.get("dataSolicitacao")), builder.asc(root.get("id")));
+                default -> List.of(builder.asc(prioridade), builder.asc(root.get("dataSolicitacao")), builder.asc(root.get("id")));
+            };
+
+            if (query != null && !Long.class.equals(query.getResultType())) {
+                query.orderBy(ordenacao);
+            }
+
+            return builder.conjunction();
+        };
     }
 
     public static Specification<Solicitacao> fromFilter(SolicitacaoFilter solicitacaoFilter) {

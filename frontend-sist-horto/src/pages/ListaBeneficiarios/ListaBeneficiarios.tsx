@@ -11,6 +11,9 @@ import { useValorAtrasado } from "../../hooks/useValorAtrasado";
 import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 import FiltrosBeneficiarios from "../../components/FiltrosBeneficiarios/FiltrosBeneficiarios";
 import ModalCredenciais from "../../components/ModalCredenciais/ModalCredenciais";
+import BarraPaginacao from "../../components/Paginacao/BarraPaginacao";
+import Paginacao from "../../components/Paginacao/Paginacao";
+import { formatarCpfExibicao, formatarTelefoneExibicao } from "../../utils/mascaras";
 import "./ListaBeneficiarios.css";
 
 function ListaBeneficiarios() {
@@ -19,6 +22,10 @@ function ListaBeneficiarios() {
   const [filtro, setFiltro] = useState<BeneficiarioFilter>({});
   const filtroAtrasado = useValorAtrasado(filtro);
   const [versaoLista, setVersaoLista] = useState(0);
+  const [pagina, setPagina] = useState(0);
+  const [tamanho, setTamanho] = useState(10);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+  const [totalElementos, setTotalElementos] = useState(0);
   const [credenciais, setCredenciais] = useState<Credenciais | null>(null);
   const [erro, setErro] = useState("");
   const navigate = useNavigate();
@@ -27,13 +34,20 @@ function ListaBeneficiarios() {
 
   useEffect(() => {
     setCarregando(true);
-    listarBeneficiarios(filtroAtrasado)
+    listarBeneficiarios(filtroAtrasado, pagina, tamanho)
       .then((resultado) => {
-        setBeneficiarios(resultado);
+        setBeneficiarios(resultado.conteudo);
+        setTotalPaginas(resultado.totalPaginas);
+        setTotalElementos(resultado.totalElementos);
         setVersaoLista((versao) => versao + 1);
       })
       .finally(() => setCarregando(false));
-  }, [filtroAtrasado]);
+  }, [filtroAtrasado, pagina, tamanho]);
+
+  function handleMudarFiltro(novoFiltro: BeneficiarioFilter) {
+    setFiltro(novoFiltro);
+    setPagina(0);
+  }
 
   async function handleNovaSenha(beneficiario: DadosBeneficiario) {
     if (!beneficiario.id) {
@@ -76,7 +90,18 @@ function ListaBeneficiarios() {
       />
 
       <section className="container-pagina container-beneficiarios">
-        <FiltrosBeneficiarios filtro={filtro} aoMudarFiltro={setFiltro} />
+        <FiltrosBeneficiarios filtro={filtro} aoMudarFiltro={handleMudarFiltro} />
+
+        <BarraPaginacao
+          pagina={pagina}
+          tamanho={tamanho}
+          totalElementos={totalElementos}
+          rotuloItens="beneficiários"
+          aoMudarTamanho={(novoTamanho) => {
+            setTamanho(novoTamanho);
+            setPagina(0);
+          }}
+        />
 
         {mensagemSucesso && <p className="beneficiarios-sucesso surgir">{mensagemSucesso}</p>}
 
@@ -112,13 +137,15 @@ function ListaBeneficiarios() {
                       <td className="beneficiario-nome">
                         {beneficiario.nome ?? "Nome não informado"}
                       </td>
-                      <td>{beneficiario.cpf ?? "—"}</td>
+                      <td>{formatarCpfExibicao(beneficiario.cpf)}</td>
                       <td>{beneficiario.email ?? "—"}</td>
                       <td>
-                        <span className="beneficiario-contato">{beneficiario.celular ?? "—"}</span>
+                        <span className="beneficiario-contato">
+                          {formatarTelefoneExibicao(beneficiario.celular)}
+                        </span>
                         {beneficiario.telefone && (
                           <span className="beneficiario-contato beneficiario-contato-secundario">
-                            {beneficiario.telefone}
+                            {formatarTelefoneExibicao(beneficiario.telefone)}
                           </span>
                         )}
                       </td>
@@ -176,6 +203,8 @@ function ListaBeneficiarios() {
             </table>
           </div>
         )}
+
+        <Paginacao pagina={pagina} totalPaginas={totalPaginas} aoMudarPagina={setPagina} />
       </section>
 
       {credenciais && (

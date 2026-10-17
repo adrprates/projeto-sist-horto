@@ -1,6 +1,7 @@
 package com.bsh.backend_sist_horto.gestao_mudas.controller;
 
 import com.bsh.backend_sist_horto.gestao_mudas.dto.BeneficiarioFilter;
+import com.bsh.backend_sist_horto.gestao_mudas.dto.PaginaResponse;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.record.AtualizarBeneficiarioRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.record.CadastroAssistidoRequest;
@@ -12,7 +13,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/beneficiarios")
@@ -28,8 +28,11 @@ public class BeneficiarioController {
     }
 
     @GetMapping
-    public List<Beneficiario> buscarTodos(BeneficiarioFilter beneficiarioFilter) {
-        return beneficiarioService.listarPorFiltro(beneficiarioFilter);
+    public PaginaResponse<Beneficiario> buscarTodos(
+            BeneficiarioFilter beneficiarioFilter,
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanho) {
+        return beneficiarioService.listarPorFiltro(beneficiarioFilter, pagina, tamanho);
     }
 
     @GetMapping("/{id}")

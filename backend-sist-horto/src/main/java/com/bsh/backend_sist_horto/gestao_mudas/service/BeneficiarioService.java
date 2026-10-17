@@ -2,11 +2,15 @@ package com.bsh.backend_sist_horto.gestao_mudas.service;
 
 import com.bsh.backend_sist_horto.gestao_mudas.dto.AtualizarPerfilRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.BeneficiarioFilter;
+import com.bsh.backend_sist_horto.gestao_mudas.dto.PaginaResponse;
 import com.bsh.backend_sist_horto.gestao_mudas.dto.PerfilResponse;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.record.AtualizarBeneficiarioRequest;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.BeneficiarioRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.specification.BeneficiarioSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,9 +22,11 @@ import java.util.Optional;
 public class BeneficiarioService {
 
     private final BeneficiarioRepository beneficiarioRepository;
+    private final AuthService authService;
 
-    public BeneficiarioService(BeneficiarioRepository beneficiarioRepository) {
+    public BeneficiarioService(BeneficiarioRepository beneficiarioRepository, AuthService authService) {
         this.beneficiarioRepository = beneficiarioRepository;
+        this.authService = authService;
     }
 
     public List<Beneficiario> listarTodos() {
@@ -31,8 +37,17 @@ public class BeneficiarioService {
         return beneficiarioRepository.findByCpfContainingIgnoreCase(cpf);
     }
 
-    public List<Beneficiario> listarPorFiltro(BeneficiarioFilter beneficiarioFilter){
-        return beneficiarioRepository.findAll(BeneficiarioSpecification.fromFilter(beneficiarioFilter));
+    public PaginaResponse<Beneficiario> listarPorFiltro(BeneficiarioFilter beneficiarioFilter, int pagina, int tamanho){
+        Page<Beneficiario> resultado = beneficiarioRepository.findAll(
+                BeneficiarioSpecification.fromFilter(beneficiarioFilter),
+                PageRequest.of(
+                        Math.max(pagina, 0),
+                        Math.min(Math.max(tamanho, 1), 50),
+                        Sort.by("nome").ascending().and(Sort.by("id").ascending())
+                )
+        );
+
+        return PaginaResponse.de(resultado);
     }
 
     public PerfilResponse atualizarPerfil(
@@ -113,14 +128,7 @@ public class BeneficiarioService {
         }
 
         if (beneficiario.getLogin().equals(digitosAtuais)) {
-            if (beneficiarioRepository.existsByLogin(digitosNovos)) {
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
-                        "Já existe um usuário com o login " + digitosNovos
-                );
-            }
-
-            beneficiario.setLogin(digitosNovos);
+            beneficiario.setLogin(authService.gerarLoginDeAcesso());
         }
 
         beneficiario.setCpf(cpfFormatado);
