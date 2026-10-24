@@ -10,6 +10,7 @@ import java.util.List;
 
 @Getter @Setter
 public class AtualizarEtapaRequest {
+
     private StatusSolicitacao status;
     private String motivo;
     private String descricao;

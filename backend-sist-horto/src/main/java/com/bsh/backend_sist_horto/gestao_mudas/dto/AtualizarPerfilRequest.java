@@ -7,6 +7,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter @Setter
 public class AtualizarPerfilRequest {
+
     private String nome;
     private String email;
     private String celular;
