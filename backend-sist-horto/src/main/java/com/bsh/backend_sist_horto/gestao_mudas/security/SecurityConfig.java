@@ -113,7 +113,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/beneficiarios/**",
                                 "/parametros/**",
-                                "/solicitacoes/beneficiarios/**"
+                                "/solicitacoes/beneficiarios/**",
+                                "/relatorios/**"
                         ).hasRole("ADMINISTRADOR")
 
                         .requestMatchers(
