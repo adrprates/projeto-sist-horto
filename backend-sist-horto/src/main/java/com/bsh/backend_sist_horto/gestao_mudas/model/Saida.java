@@ -11,25 +11,25 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
-@Table(name = "distribuicoes",
+@Table(name = "saidas",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        columnNames = {"id_beneficiario", "ano_retirada"}
+                        columnNames = {"id_beneficiario", "ano_saida"}
                 )
         })
-public class Distribuicao {
+public class Saida {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_distribuicao")
+    @Column(name = "id_saida")
     private Long id;
 
     @NotNull
     @Column(nullable = false)
-    private LocalDate dataRetirada;
+    private LocalDate dataSaida;
 
     @ManyToOne
-    @JoinColumn(name = "ano_retirada", nullable = false)
+    @JoinColumn(name = "ano_saida", nullable = false)
     private ParametroAnual parametroAnual;
 
     @ManyToOne
@@ -44,20 +44,20 @@ public class Distribuicao {
     )
     private Solicitacao solicitacao;
 
-    @OneToMany(mappedBy = "distribuicao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemDistribuicao> itens = new ArrayList<>();
+    @OneToMany(mappedBy = "saida", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemSaida> itens = new ArrayList<>();
 
-    public void adicionarItem(ItemDistribuicao item) {
+    public void adicionarItem(ItemSaida item) {
         itens.add(item);
-        item.setDistribuicao(this);
+        item.setSaida(this);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Distribuicao distribuicao = (Distribuicao) o;
-        return id != null && id.equals(distribuicao.id);
+        Saida saida = (Saida) o;
+        return id != null && id.equals(saida.id);
     }
 
     @Override

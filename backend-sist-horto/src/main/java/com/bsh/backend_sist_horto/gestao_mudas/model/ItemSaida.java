@@ -8,17 +8,17 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter
-@Table(name = "itens_distribuicao")
-public class ItemDistribuicao {
+@Table(name = "itens_saida")
+public class ItemSaida {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_item_distribuicao")
+    @Column(name = "id_item_saida")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_distribuicao", nullable = false)
-    private Distribuicao distribuicao;
+    @JoinColumn(name = "id_saida", nullable = false)
+    private Saida saida;
 
     @ManyToOne
     @JoinColumn(name = "id_muda", nullable = false)
@@ -32,8 +32,8 @@ public class ItemDistribuicao {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemDistribuicao itemDistribuicao = (ItemDistribuicao) o;
-        return id != null && id.equals(itemDistribuicao.id);
+        ItemSaida itemSaida = (ItemSaida) o;
+        return id != null && id.equals(itemSaida.id);
     }
 
     @Override

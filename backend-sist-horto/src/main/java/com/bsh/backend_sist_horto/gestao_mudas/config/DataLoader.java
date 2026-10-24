@@ -3,6 +3,7 @@ package com.bsh.backend_sist_horto.gestao_mudas.config;
 import com.bsh.backend_sist_horto.gestao_mudas.enums.Role;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.BeneficiarioRepository;
+import com.bsh.backend_sist_horto.gestao_mudas.service.SaidaService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -12,13 +13,16 @@ public class DataLoader implements CommandLineRunner {
 
     private final BeneficiarioRepository beneficiarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SaidaService saidaService;
 
     public DataLoader(
             BeneficiarioRepository beneficiarioRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            SaidaService saidaService) {
 
         this.beneficiarioRepository = beneficiarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.saidaService = saidaService;
     }
 
     @Override
@@ -55,5 +59,7 @@ public class DataLoader implements CommandLineRunner {
 
             beneficiarioRepository.save(beneficiario);
         }
+
+        saidaService.registrarSaidasAnteriores();
     }
 }

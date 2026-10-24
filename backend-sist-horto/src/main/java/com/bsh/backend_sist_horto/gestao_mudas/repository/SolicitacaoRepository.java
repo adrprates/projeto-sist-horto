@@ -15,6 +15,7 @@ import java.util.Optional;
 public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long>, JpaSpecificationExecutor<Solicitacao>{
     Optional <Solicitacao> findByBeneficiarioAndStatusAtual(Beneficiario beneficiario, StatusSolicitacao status);
     Optional <Solicitacao> findByBeneficiarioIdAndParametroAnualAno(Long idBeneficiario, Integer anoAtual);
+    List<Solicitacao> findByStatusAtual(StatusSolicitacao status);
     List<Solicitacao> findByBeneficiarioIdOrderByParametroAnualAnoDesc(
             Long beneficiarioId
     );

@@ -56,17 +56,20 @@ public class EtapaService {
     private final MudaRepository mudaRepository;
     private final EstoqueService estoqueService;
     private final ValidadorLimitesService validadorLimites;
+    private final SaidaService saidaService;
 
     public EtapaService(EtapaSolicitacaoRepository etapaSolicitacaoRepository,
                         SolicitacaoRepository solicitacaoRepository,
                         MudaRepository mudaRepository,
                         EstoqueService estoqueService,
-                        ValidadorLimitesService validadorLimites) {
+                        ValidadorLimitesService validadorLimites,
+                        SaidaService saidaService) {
         this.etapaSolicitacaoRepository = etapaSolicitacaoRepository;
         this.solicitacaoRepository = solicitacaoRepository;
         this.mudaRepository = mudaRepository;
         this.estoqueService = estoqueService;
         this.validadorLimites = validadorLimites;
+        this.saidaService = saidaService;
     }
 
     public EtapaSolicitacao salvar(
@@ -336,12 +339,7 @@ public class EtapaService {
 
     private void marcarComoEntregue(Solicitacao solicitacao, String descricao) {
 
-        for (ItemSolicitacao item : solicitacao.getItens()) {
-            estoqueService.removerQuantidade(
-                    item.getMuda().getId(),
-                    item.getQuantidade()
-            );
-        }
+        saidaService.registrar(solicitacao);
 
         registrar(solicitacao, StatusSolicitacao.ENTREGUE, null,
                 padrao(descricao, MENSAGEM_ENTREGUE), null);

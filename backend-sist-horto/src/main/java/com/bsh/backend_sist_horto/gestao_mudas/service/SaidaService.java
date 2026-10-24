@@ -1,119 +1,116 @@
 package com.bsh.backend_sist_horto.gestao_mudas.service;
 
-import com.bsh.backend_sist_horto.gestao_mudas.dto.DistribuicaoFilter;
+import com.bsh.backend_sist_horto.gestao_mudas.dto.SaidaFilter;
 import com.bsh.backend_sist_horto.gestao_mudas.enums.StatusSolicitacao;
-import com.bsh.backend_sist_horto.gestao_mudas.model.Distribuicao;
-import com.bsh.backend_sist_horto.gestao_mudas.model.ItemDistribuicao;
+import com.bsh.backend_sist_horto.gestao_mudas.model.EtapaSolicitacao;
+import com.bsh.backend_sist_horto.gestao_mudas.model.ItemSaida;
 import com.bsh.backend_sist_horto.gestao_mudas.model.ItemSolicitacao;
+import com.bsh.backend_sist_horto.gestao_mudas.model.Saida;
 import com.bsh.backend_sist_horto.gestao_mudas.model.Solicitacao;
-import com.bsh.backend_sist_horto.gestao_mudas.repository.DistribuicaoRepository;
+import com.bsh.backend_sist_horto.gestao_mudas.repository.ItemSaidaRepository;
+import com.bsh.backend_sist_horto.gestao_mudas.repository.SaidaRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.SolicitacaoRepository;
-import com.bsh.backend_sist_horto.gestao_mudas.specification.DistribuicaoSpecification;
+import com.bsh.backend_sist_horto.gestao_mudas.specification.SaidaSpecification;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DistribuicaoService {
+public class SaidaService {
 
-    private final DistribuicaoRepository distribuicaoRepository;
+    private final SaidaRepository saidaRepository;
+    private final ItemSaidaRepository itemSaidaRepository;
     private final SolicitacaoRepository solicitacaoRepository;
+    private final EstoqueService estoqueService;
 
-    private EstoqueService estoqueService;
-
-    public DistribuicaoService(DistribuicaoRepository distribuicaoRepository,  SolicitacaoRepository solicitacaoRepository) {
-        this.distribuicaoRepository = distribuicaoRepository;
+    public SaidaService(SaidaRepository saidaRepository,
+                        ItemSaidaRepository itemSaidaRepository,
+                        SolicitacaoRepository solicitacaoRepository,
+                        EstoqueService estoqueService) {
+        this.saidaRepository = saidaRepository;
+        this.itemSaidaRepository = itemSaidaRepository;
         this.solicitacaoRepository = solicitacaoRepository;
+        this.estoqueService = estoqueService;
     }
 
-    public List<Distribuicao> listarTodas() {
-        return distribuicaoRepository.findAll();
-    }
-
-    public List<Distribuicao> listarPorFiltro(DistribuicaoFilter distribuicaoFilter){
-        return distribuicaoRepository.findAll(DistribuicaoSpecification.fromFilter(distribuicaoFilter));
+    public List<ItemSaida> listarItensPorFiltro(SaidaFilter saidaFilter) {
+        return itemSaidaRepository.findAll(
+                SaidaSpecification.fromFilter(saidaFilter),
+                Sort.by("saida.dataSaida").ascending().and(Sort.by("id").ascending())
+        );
     }
 
     @Transactional
-    public Distribuicao salvar(Distribuicao distribuicao) {
-        Long solicitacaoId = distribuicao.getSolicitacao().getId();
-        Solicitacao solicitacao = solicitacaoRepository.findById(solicitacaoId)
-                .orElseThrow(() -> new RuntimeException("Solicitação não encontrada para o id " + solicitacaoId));
-
-        if (solicitacao.getStatusAtual()
-                != StatusSolicitacao.PRONTA_PARA_RETIRADA) {
-
+    public Saida registrar(Solicitacao solicitacao) {
+        if (saidaRepository.existsBySolicitacaoId(solicitacao.getId())) {
             throw new RuntimeException(
-                    "Somente solicitações prontas para retirada podem ser entregues"
+                    "Já existe uma saída registrada para esta solicitação"
             );
         }
 
-        if (distribuicaoRepository.existsBySolicitacaoId(solicitacaoId)) {
-            throw new RuntimeException(
-                    "Já existe uma distribuição para esta solicitação"
+        for (ItemSolicitacao item : solicitacao.getItens()) {
+            estoqueService.removerQuantidade(
+                    item.getMuda().getId(),
+                    item.getQuantidade()
             );
         }
 
-        List<String> mudasEmFalta = new ArrayList<>();
+        return saidaRepository.save(montarSaida(solicitacao, LocalDate.now()));
+    }
 
-        for(ItemSolicitacao itemSolicitado : solicitacao.getItens()){
-            Long mudaId = itemSolicitado.getMuda().getId();
-            Integer quantidadeSolicitada = itemSolicitado.getQuantidade();
+    @Transactional
+    public int registrarSaidasAnteriores() {
+        int registradas = 0;
 
-            boolean possuiSaldo = estoqueService.verificarDisponibilidade(mudaId, quantidadeSolicitada);
-
-            if(!possuiSaldo){
-                String nomeMuda = itemSolicitado.getMuda().getNomesPopulares().get(0);
-                mudasEmFalta.add(
-                        nomeMuda + " (" +
-                                quantidadeSolicitada + " solicitadas)"
-                );
+        for (Solicitacao solicitacao : solicitacaoRepository.findByStatusAtual(StatusSolicitacao.ENTREGUE)) {
+            if (saidaRepository.existsBySolicitacaoId(solicitacao.getId())) {
+                continue;
             }
+
+            LocalDate dataEntrega = solicitacao.getHistoricos().stream()
+                    .filter(etapa -> etapa.getStatus() == StatusSolicitacao.ENTREGUE)
+                    .map(EtapaSolicitacao::getDataHora)
+                    .filter(dataHora -> dataHora != null)
+                    .map(dataHora -> dataHora.toLocalDate())
+                    .reduce((primeira, segunda) -> segunda)
+                    .orElse(solicitacao.getDataSolicitacao());
+
+            saidaRepository.save(montarSaida(solicitacao, dataEntrega));
+            registradas++;
         }
 
-        if(!mudasEmFalta.isEmpty()){
-            throw new RuntimeException(
-                    "Estoque insuficiente para: " +
-                            String.join(", ", mudasEmFalta)
-            );
-        }
-
-        distribuicao.setSolicitacao(solicitacao);
-        distribuicao.setBeneficiario(solicitacao.getBeneficiario());
-        distribuicao.setParametroAnual(solicitacao.getParametroAnual());
-        distribuicao.setDataRetirada(LocalDate.now());
-
-        for(ItemSolicitacao itemSolicitado : solicitacao.getItens()){
-            ItemDistribuicao itemDistribuicao = new ItemDistribuicao();
-            itemDistribuicao.setMuda(itemSolicitado.getMuda());
-            itemDistribuicao.setQuantidade(itemSolicitado.getQuantidade());
-            distribuicao.adicionarItem(itemDistribuicao);
-            estoqueService.removerQuantidade(itemDistribuicao.getMuda().getId(), itemDistribuicao.getQuantidade());
-        }
-
-        Distribuicao distribuicaoSalva = distribuicaoRepository.save(distribuicao);
-
-        solicitacao.setStatusAtual(StatusSolicitacao.ENTREGUE);
-
-        return distribuicaoSalva;
+        return registradas;
     }
 
-    public Distribuicao getDistribuicaoPorId(Long id) {
-        Optional<Distribuicao> distribuicaoOptional = distribuicaoRepository.findById(id);
-        Distribuicao distribuicao = null;
-        if (distribuicaoOptional.isPresent()) {
-            distribuicao = distribuicaoOptional.get();
+    public Saida getSaidaPorId(Long id) {
+        Optional<Saida> saidaOptional = saidaRepository.findById(id);
+        Saida saida = null;
+        if (saidaOptional.isPresent()) {
+            saida = saidaOptional.get();
         } else {
-            throw new RuntimeException("Distribuição não encontrada para o id: " + id);
+            throw new RuntimeException("Saída não encontrada para o id: " + id);
         }
-        return distribuicao;
+        return saida;
     }
 
-    public void deletar(Distribuicao distribuicao) {
-        distribuicaoRepository.delete(distribuicao);
+    private Saida montarSaida(Solicitacao solicitacao, LocalDate dataSaida) {
+        Saida saida = new Saida();
+        saida.setSolicitacao(solicitacao);
+        saida.setBeneficiario(solicitacao.getBeneficiario());
+        saida.setParametroAnual(solicitacao.getParametroAnual());
+        saida.setDataSaida(dataSaida);
+
+        for (ItemSolicitacao itemSolicitado : solicitacao.getItens()) {
+            ItemSaida itemSaida = new ItemSaida();
+            itemSaida.setMuda(itemSolicitado.getMuda());
+            itemSaida.setQuantidade(itemSolicitado.getQuantidade());
+            saida.adicionarItem(itemSaida);
+        }
+
+        return saida;
     }
 }

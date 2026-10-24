@@ -1,105 +1,90 @@
 package com.bsh.backend_sist_horto.gestao_mudas.specification;
 
-import com.bsh.backend_sist_horto.gestao_mudas.dto.DistribuicaoFilter;
-import com.bsh.backend_sist_horto.gestao_mudas.model.Distribuicao;
+import com.bsh.backend_sist_horto.gestao_mudas.dto.SaidaFilter;
+import com.bsh.backend_sist_horto.gestao_mudas.enums.CategoriaMuda;
+import com.bsh.backend_sist_horto.gestao_mudas.model.ItemSaida;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 
-public final class DistribuicaoSpecification {
+public final class SaidaSpecification {
 
-    private DistribuicaoSpecification() {}
+    private SaidaSpecification() {}
 
-    private static Specification<Distribuicao> buscarPorDataMaiorOuIgual(LocalDate dataInicial){
+    private static Specification<ItemSaida> buscarPorDataMaiorOuIgual(LocalDate dataInicial){
         return (root, query, builder) ->
                 builder.greaterThanOrEqualTo(
-                        root.get("dataRetirada"),
+                        root.get("saida").get("dataSaida"),
                         dataInicial
                 );
     }
 
-    private static Specification<Distribuicao> buscarPorDataMenorOuIgual(LocalDate dataFinal){
+    private static Specification<ItemSaida> buscarPorDataMenorOuIgual(LocalDate dataFinal){
         return (root, query, builder) ->
                 builder.lessThanOrEqualTo(
-                        root.get("dataRetirada"),
+                        root.get("saida").get("dataSaida"),
                         dataFinal
                 );
     }
 
-    private static Specification<Distribuicao> buscarEntreDatas(LocalDate dataInicial, LocalDate dataFinal){
+    private static Specification<ItemSaida> buscarEntreDatas(LocalDate dataInicial, LocalDate dataFinal){
         return (root, query, builder) ->
                 builder.between(
-                        root.get("dataRetirada"),
+                        root.get("saida").get("dataSaida"),
                         dataInicial,
                         dataFinal
                 );
     }
 
-    private static Specification<Distribuicao> buscarPorAno(Integer ano) {
+    private static Specification<ItemSaida> buscarPorCategoria(CategoriaMuda categoria) {
         return (root, query, builder) ->
                 builder.equal(
-                        root.get("parametroAnual").get("ano"),
-                        ano
+                        root.get("muda").get("categoria"),
+                        categoria
                 );
     }
 
-    private static Specification<Distribuicao> buscarPorNomeBeneficiario(String nome) {
+    private static Specification<ItemSaida> buscarPorMuda(Long mudaId) {
         return (root, query, builder) ->
-                builder.like(
-                        builder.lower(
-                                root.get("beneficiario").get("nome")
-                        ),
-                        "%" + nome.toLowerCase() + "%"
+                builder.equal(
+                        root.get("muda").get("id"),
+                        mudaId
                 );
     }
 
-    private static Specification<Distribuicao> buscarPorCpfBeneficiario(String cpf) {
-        return (root, query, builder) ->
-                builder.like(
-                        root.get("beneficiario").get("cpf"),
-                        "%" + cpf + "%"
-                );
-    }
-
-    public static Specification<Distribuicao> fromFilter(DistribuicaoFilter distribuicaoFilter) {
-        if (distribuicaoFilter == null) {
+    public static Specification<ItemSaida> fromFilter(SaidaFilter saidaFilter) {
+        if (saidaFilter == null) {
             return (root, query, builder) -> builder.conjunction();
         }
 
-        Specification<Distribuicao> distribuicaoSpecification = (root, query, builder) -> builder.conjunction();
+        Specification<ItemSaida> saidaSpecification = (root, query, builder) -> builder.conjunction();
 
-        if (distribuicaoFilter.getDataInicial() != null && distribuicaoFilter.getDataFinal() != null) {
-            distribuicaoSpecification = distribuicaoSpecification.and(
-                    buscarEntreDatas(distribuicaoFilter.getDataInicial(), distribuicaoFilter.getDataFinal())
+        if (saidaFilter.getDataInicial() != null && saidaFilter.getDataFinal() != null) {
+            saidaSpecification = saidaSpecification.and(
+                    buscarEntreDatas(saidaFilter.getDataInicial(), saidaFilter.getDataFinal())
             );
-        } else if (distribuicaoFilter.getDataInicial() != null) {
-            distribuicaoSpecification = distribuicaoSpecification.and(
-                    buscarPorDataMaiorOuIgual(distribuicaoFilter.getDataInicial())
+        } else if (saidaFilter.getDataInicial() != null) {
+            saidaSpecification = saidaSpecification.and(
+                    buscarPorDataMaiorOuIgual(saidaFilter.getDataInicial())
             );
-        } else if (distribuicaoFilter.getDataFinal() != null) {
-            distribuicaoSpecification = distribuicaoSpecification.and(
-                    buscarPorDataMenorOuIgual(distribuicaoFilter.getDataFinal())
+        } else if (saidaFilter.getDataFinal() != null) {
+            saidaSpecification = saidaSpecification.and(
+                    buscarPorDataMenorOuIgual(saidaFilter.getDataFinal())
             );
         }
 
-        if(distribuicaoFilter.getAno() != null){
-            distribuicaoSpecification = distribuicaoSpecification.and(
-                    buscarPorAno(distribuicaoFilter.getAno())
+        if (saidaFilter.getCategoria() != null) {
+            saidaSpecification = saidaSpecification.and(
+                    buscarPorCategoria(saidaFilter.getCategoria())
             );
         }
 
-        if(distribuicaoFilter.getNomeBeneficiario() != null && !distribuicaoFilter.getNomeBeneficiario().isBlank()){
-            distribuicaoSpecification = distribuicaoSpecification.and(
-                    buscarPorNomeBeneficiario(distribuicaoFilter.getNomeBeneficiario())
+        if (saidaFilter.getMudaId() != null) {
+            saidaSpecification = saidaSpecification.and(
+                    buscarPorMuda(saidaFilter.getMudaId())
             );
         }
 
-        if(distribuicaoFilter.getCpfBeneficiario() != null  && !distribuicaoFilter.getCpfBeneficiario().isBlank()){
-            distribuicaoSpecification = distribuicaoSpecification.and(
-                    buscarPorCpfBeneficiario(distribuicaoFilter.getCpfBeneficiario())
-            );
-        }
-
-        return distribuicaoSpecification;
+        return saidaSpecification;
     }
 }
