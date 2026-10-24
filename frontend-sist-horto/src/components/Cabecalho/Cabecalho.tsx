@@ -24,6 +24,7 @@ const LINKS_ADMIN: LinkNavegacao[] = [
   { para: "/admin/solicitacoes", rotulo: "Gerenciar Solicitações" },
   { para: "/beneficiarios", rotulo: "Beneficiários" },
   { para: "/parametros", rotulo: "Parâmetros Anuais" },
+  { para: "/relatorios", rotulo: "Relatórios" },
 ];
 
 function classeLink({ isActive }: { isActive: boolean }) {

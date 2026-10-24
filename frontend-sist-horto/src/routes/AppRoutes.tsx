@@ -20,6 +20,7 @@ import DetalhesSolicitacaoAdmin from '../pages/DetalhesSolicitacaoAdmin/Detalhes
 import FormularioBeneficiario from '../pages/FormularioBeneficiario/FormularioBeneficiario';
 import AtendimentoSolicitacao from '../pages/AtendimentoSolicitacao/AtendimentoSolicitacao';
 import ListaSolicitacoesAdmin from '../pages/ListaSolicitacoesAdmin/ListaSolicitacoesAdmin';
+import PaginaRelatorios from '../pages/PaginaRelatorios/PaginaRelatorios';
 
 export const AppRoutes = () => {
   return (
@@ -68,6 +69,7 @@ export const AppRoutes = () => {
             <Route path="/parametros/:ano/editar" element={<FormularioParametroAnual />} />
             <Route path="/admin/solicitacoes" element={<ListaSolicitacoesAdmin />} />
             <Route path="/admin/solicitacoes/:id" element={<DetalhesSolicitacaoAdmin />} />
+            <Route path="/relatorios" element={<PaginaRelatorios />} />
           </Route>
 
           <Route path="*" element={<PaginaNotFound />} />

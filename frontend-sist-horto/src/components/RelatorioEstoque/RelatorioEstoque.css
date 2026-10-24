@@ -1,0 +1,30 @@
+.situacao-estoque {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.situacao-estoque-disponivel {
+  background: var(--sucesso-suave);
+  color: var(--verde);
+}
+
+.situacao-estoque-baixo {
+  background: var(--amarelo-suave);
+  color: var(--kraft-700);
+}
+
+.situacao-estoque-esgotada {
+  background: var(--vermelho-suave);
+  color: var(--vermelho);
+}
+
+.situacao-estoque-indisponivel {
+  background: var(--fundo-suave);
+  color: var(--cinza);
+}

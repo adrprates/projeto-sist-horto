@@ -1,0 +1,32 @@
+.resumo-relatorio {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.resumo-relatorio-card {
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-left: 4px solid var(--broto-400);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.resumo-relatorio-rotulo {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--cinza);
+}
+
+.resumo-relatorio-valor {
+  font-family: var(--fonte-titulo);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--titulo);
+}
