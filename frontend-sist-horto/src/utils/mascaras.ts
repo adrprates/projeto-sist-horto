@@ -27,6 +27,11 @@ export function mascararTelefone(valor: string): string {
   return `(${ddd}) ${numero.slice(0, tamanhoInicio)}-${numero.slice(tamanhoInicio)}`;
 }
 
+export function telefoneValido(valor: string): boolean {
+  const tamanho = somenteDigitos(valor).length;
+  return tamanho === 10 || tamanho === 11;
+}
+
 export function formatarCpfExibicao(valor?: string | null): string {
   if (!valor) return "—";
   return somenteDigitos(valor).length === 11 ? mascararCpf(valor) : valor;

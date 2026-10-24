@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { registrarUsuario } from "../../../api/authService";
 import { extrairMensagemErro } from "../../../utils/extrairMensagemErro";
-import { mascararCpf, mascararTelefone } from "../../../utils/mascaras";
+import { mascararCpf, mascararTelefone, telefoneValido } from "../../../utils/mascaras";
 import type { RegisterRequest } from "../../../api/authService";
 import { Button, TextField, Alert, Link } from "@mui/material";
 import CabecalhoPagina from "../../../components/CabecalhoPagina/CabecalhoPagina";
@@ -49,8 +49,8 @@ export const PaginaRegistro = () => {
       return;
     }
 
-    if (campos.telefone && digitos(campos.telefone).length !== 10) {
-      setErro("Informe o telefone com DDD: (00) 0000-0000.");
+    if (campos.telefone && !telefoneValido(campos.telefone)) {
+      setErro("Informe o telefone com DDD: (00) 0000-0000 ou (00) 00000-0000.");
       return;
     }
 

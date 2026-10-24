@@ -15,6 +15,7 @@ import {
   mascararCpf,
   mascararTelefone,
   telefoneParaEdicao,
+  telefoneValido,
 } from "../../utils/mascaras";
 import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
 import ModalCredenciais from "../../components/ModalCredenciais/ModalCredenciais";
@@ -116,8 +117,8 @@ function FormularioBeneficiario() {
       return;
     }
 
-    if (validarTelefone && campos.telefone && somenteDigitos(campos.telefone).length !== 10) {
-      setErro("Informe o telefone com DDD: (00) 0000-0000.");
+    if (validarTelefone && campos.telefone && !telefoneValido(campos.telefone)) {
+      setErro("Informe o telefone com DDD: (00) 0000-0000 ou (00) 00000-0000.");
       return;
     }
 

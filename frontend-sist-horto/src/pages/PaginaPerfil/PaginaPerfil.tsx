@@ -7,7 +7,7 @@ import { obterPerfil, atualizarPerfil } from "../../api/perfilService";
 import ModalAlterarSenha from "../../components/ModalAlterarSenha/ModalAlterarSenha";
 import "./PaginaPerfil.css";
 import CabecalhoPagina from "../../components/CabecalhoPagina/CabecalhoPagina";
-import { formatarCpfExibicao, mascararTelefone, telefoneParaEdicao } from "../../utils/mascaras";
+import { formatarCpfExibicao, mascararTelefone, telefoneParaEdicao, telefoneValido } from "../../utils/mascaras";
 
 function PaginaPerfil() {
   const [perfil, setPerfil] = useState<Perfil>({});
@@ -78,8 +78,8 @@ function PaginaPerfil() {
       return;
     }
 
-    if (telefoneAlterado && perfil.telefone && perfil.telefone.replace(/\D/g, "").length !== 10) {
-      setErro("Informe o telefone com DDD: (00) 0000-0000.");
+    if (telefoneAlterado && perfil.telefone && !telefoneValido(perfil.telefone)) {
+      setErro("Informe o telefone com DDD: (00) 0000-0000 ou (00) 00000-0000.");
       return;
     }
 
