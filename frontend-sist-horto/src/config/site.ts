@@ -12,8 +12,7 @@ export const SITE = {
   nome: "Horto Municipal de Patrocínio",
   cidade: "Patrocínio, Minas Gerais",
   secretaria: {
-    nome: "Secretaria Municipal de Meio Ambiente",
-    sigla: "SEMMA",
+    nome: "Secretaria Municipal de Agricultura e Pecuária",
     endereco: "Av. Marciano Pires, 629 — Distrito Industrial",
     cep: "38740-500",
     horario: "Segunda a sexta, 8h às 16h",
@@ -34,7 +33,7 @@ export const SITE = {
 } satisfies {
   nome: string;
   cidade: string;
-  secretaria: DadosLocal & { sigla: string };
+  secretaria: DadosLocal;
   horto: DadosLocal;
   prefeitura: { nome: string };
 };

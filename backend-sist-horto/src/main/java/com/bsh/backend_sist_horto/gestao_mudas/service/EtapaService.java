@@ -34,7 +34,7 @@ public class EtapaService {
 
     private static final String MENSAGEM_REJEITADA =
             "Infelizmente não foi possível atender à sua solicitação desta vez. "
-                    + "Em caso de dúvidas, procure a Secretaria de Meio Ambiente.";
+                    + "Em caso de dúvidas, procure a Secretaria de Agricultura e Pecuária.";
 
     private static final String MENSAGEM_PROPOSTA =
             "A Secretaria precisou ajustar os itens da sua solicitação. "
@@ -49,7 +49,7 @@ public class EtapaService {
 
     private static final String MENSAGEM_EXPIRADA =
             "O prazo de retirada terminou e as mudas voltaram para o estoque. "
-                    + "Se ainda tiver interesse, procure a Secretaria de Meio Ambiente.";
+                    + "Se ainda tiver interesse, procure a Secretaria de Agricultura e Pecuária.";
 
     private final EtapaSolicitacaoRepository etapaSolicitacaoRepository;
     private final SolicitacaoRepository solicitacaoRepository;

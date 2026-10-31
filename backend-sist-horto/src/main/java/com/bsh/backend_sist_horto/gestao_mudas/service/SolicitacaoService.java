@@ -164,7 +164,7 @@ public class SolicitacaoService {
 
     @Transactional
     public Solicitacao enviarSolicitacao(Long id) {
-        return enviarSolicitacao(id, "Recebemos sua solicitação! Ela está na fila para análise da Secretaria de Meio Ambiente.");
+        return enviarSolicitacao(id, "Recebemos sua solicitação! Ela está na fila para análise da Secretaria de Agricultura e Pecuária.");
     }
 
     @Transactional

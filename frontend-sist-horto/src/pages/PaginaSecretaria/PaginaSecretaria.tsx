@@ -15,7 +15,7 @@ function PaginaSecretaria() {
   return (
     <div>
       <CabecalhoPagina
-        titulo={`${secretaria.nome} (${secretaria.sigla})`}
+        titulo={secretaria.nome}
         texto={`Responsável pelo meio ambiente, pelo apoio à agricultura e pela produção de mudas de ${SITE.cidade}, incluindo o Horto Florestal e o programa de doação à população.`}
       />
 
@@ -36,7 +36,7 @@ function PaginaSecretaria() {
           <h2 className="secao-titulo">Patrocínio e a agricultura</h2>
           <p className="secao-texto">
             Conhecida como a Capital Nacional do Café, Patrocínio tem na agricultura uma das bases
-            da sua economia. A {secretaria.sigla} apoia quem planta no campo e amplia o verde da
+            da sua economia. A Secretaria apoia quem planta no campo e amplia o verde da
             cidade, unindo produção rural, arborização urbana e educação ambiental em uma só pasta.
           </p>
         </div>

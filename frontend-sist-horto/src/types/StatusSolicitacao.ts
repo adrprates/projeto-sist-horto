@@ -46,14 +46,14 @@ export const mensagemPadraoEtapa: Partial<Record<StatusSolicitacao, string>> = {
   [StatusSolicitacao.APROVADA]:
     "Boa notícia: sua solicitação foi aprovada! Agora as mudas serão separadas no Horto Florestal. Avisaremos por aqui assim que estiverem prontas para retirada.",
   [StatusSolicitacao.REJEITADA]:
-    "Infelizmente não foi possível atender à sua solicitação desta vez. Em caso de dúvidas, procure a Secretaria de Meio Ambiente.",
+    "Infelizmente não foi possível atender à sua solicitação desta vez. Em caso de dúvidas, procure a Secretaria de Agricultura e Pecuária.",
   [StatusSolicitacao.AGUARDANDO_CONFIRMACAO]:
     "A Secretaria precisou ajustar os itens da sua solicitação. Confira as alterações abaixo e responda se aceita a nova proposta.",
   [StatusSolicitacao.PRONTA_PARA_RETIRADA]:
     "Suas mudas estão separadas e esperando por você no Horto Florestal. Leve um documento com foto e faça a retirada até a data limite.",
   [StatusSolicitacao.ENTREGUE]: "Mudas entregues! Obrigado por ajudar a deixar Patrocínio mais verde.",
   [StatusSolicitacao.EXPIRADA]:
-    "O prazo de retirada terminou e as mudas voltaram para o estoque. Se ainda tiver interesse, procure a Secretaria de Meio Ambiente.",
+    "O prazo de retirada terminou e as mudas voltaram para o estoque. Se ainda tiver interesse, procure a Secretaria de Agricultura e Pecuária.",
 };
 
 export const MOTIVOS_REJEICAO = [

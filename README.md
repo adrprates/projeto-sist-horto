@@ -1,8 +1,10 @@
 # 🌱 Sistema Horto — Doação de Mudas de Patrocínio
 
-Sistema web desenvolvido como Trabalho de Conclusão de Curso para resolver um problema real: **automatizar e facilitar o processo de doação de mudas do Horto Florestal de Patrocínio/MG**, serviço mantido pela **Secretaria Municipal de Agricultura e Pecuária**.
+Sistema web desenvolvido como Trabalho de Conclusão de Curso para resolver um problema real: **automatizar e facilitar o processo de doação de mudas do Horto Florestal de Patrocínio/MG**, serviço mantido pela **Secretaria Municipal de Agricultura e Pecuária de Patrocínio (MG)**.
 
 Antes, todo o processo (pedido, análise, separação e entrega das mudas) dependia de atendimento presencial e de controles manuais. Com o sistema, o morador consegue conhecer o Horto, consultar as mudas disponíveis e fazer a sua solicitação pela internet. Já a Secretaria acompanha cada pedido, controla o estoque e gera relatórios em um só lugar.
+
+O atendimento presencial continua existindo: quando necessário, a própria Secretaria pode gerar o pedido para o morador, seja porque ele tem dificuldade com o sistema, seja para agilizar quem foi até lá se informar e já quer aproveitar para retirar as mudas.
 
 ---
 
@@ -34,18 +36,33 @@ A partir daí, ela pode **criar a própria conta e fazer a solicitação sozinha
 ### Como funciona uma doação
 
 ```
-Rascunho → Pendente → Aprovada → Pronta para retirada → Entregue
-                 ↘           ↘
-           Aguardando confirmação (proposta de alteração)
-                 ↘
-          Rejeitada / Expirada
+Rascunho
+   │  pedido confirmado
+   ▼
+Pendente ────── Secretaria rejeita ────────────────▶ Rejeitada (fim)
+   │  │                                                  ▲
+   │  │                                                  │ beneficiário recusa
+   │  └──────── Secretaria propõe alteração ───▶ Aguardando confirmação
+   │                                                     │
+   │  Secretaria aprova                                  │ beneficiário aceita
+   ▼                                                     │
+Aprovada ◀───────────────────────────────────────────────┘
+   │  mudas separadas e prazo definido
+   ▼
+Pronta para retirada ── prazo encerrado ───────────▶ Expirada (fim)
+   │  mudas retiradas no Horto
+   ▼
+Entregue (fim)
 ```
 
-1. O beneficiário escolhe as mudas no catálogo e monta a sua solicitação, respeitando os limites do ano;
-2. Ao enviar, as mudas ficam **reservadas** no estoque e a solicitação fica **Pendente**;
-3. A Secretaria analisa e **aprova**, **rejeita** (informando o motivo) ou **propõe uma alteração** dos itens, que o beneficiário pode aceitar ou recusar;
-4. Quando as mudas estão separadas, a solicitação fica **Pronta para retirada**, com uma data limite;
-5. Na retirada, a Secretaria marca como **Entregue**, e o estoque é baixado automaticamente. Se o prazo passar, a solicitação **expira** e as mudas voltam a ficar disponíveis.
+1. **Rascunho:** o pedido é montado a partir do catálogo, respeitando os limites do ano;
+2. **Pendente:** ao ser confirmado, o rascunho vira um pedido válido, as mudas ficam **reservadas** no estoque e o pedido segue para análise da Secretaria;
+3. **Análise:** a Secretaria pode **aprovar**, **rejeitar** (informando o motivo) ou **propor uma alteração** nos itens, já que às vezes falta alguma muda e é possível sugerir outra para compensar;
+4. **Aguardando confirmação:** quando há proposta de alteração, o pedido volta para o beneficiário. Se ele aceitar, o pedido é aprovado com os novos itens; se recusar, é rejeitado. Essa proposta também pode ser feita depois da aprovação, caso falte alguma muda durante a separação;
+5. **Pronta para retirada:** com o pedido aprovado e as mudas separadas, a Secretaria define uma data limite para a retirada no Horto;
+6. **Entregue ou Expirada:** na retirada, a Secretaria marca o pedido como **Entregue** e o estoque é baixado automaticamente. Se o prazo terminar sem retirada, a Secretaria marca o pedido como **Expirada** e as mudas voltam a ficar disponíveis.
+
+Um pedido **Rejeitado** ou **Expirado** é encerrado e não avança mais.
 
 Cada mudança de etapa fica registrada em uma **linha do tempo**, com data e mensagem, que o beneficiário acompanha como se fosse o rastreio de uma compra.
 

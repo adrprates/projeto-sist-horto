@@ -7,7 +7,7 @@ const ESTRUTURA_DO_HORTO = [
   ["Viveiro de mudas", "Estufas de germinação, área sombreada de aclimatação e canteiros de crescimento."],
   ["Espécies do Cerrado", "Produção de nativas do Cerrado do Alto Paranaíba, como ipê, pequi e jatobá."],
   ["Frutíferas e arborização", "Mudas de frutíferas para quintais e escolas, e espécies próprias para ruas e praças."],
-  ["Compensação ambiental", "Recebe mudas doadas como compensação por supressão de árvores autorizada pela SEMMA."],
+  ["Compensação ambiental", "Recebe mudas doadas como compensação por supressão de árvores autorizada pela Secretaria."],
 ];
 
 const ETAPAS_DE_PRODUCAO = [
