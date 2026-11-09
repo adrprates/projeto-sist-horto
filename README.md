@@ -114,6 +114,8 @@ O morador cadastrado no sistema pode:
 - Spring Security + JWT (autenticação sem estado e controle de acesso por perfil)
 - MySQL + Hibernate
 - Lombok
+- springdoc-openapi (documentação Swagger)
+- JUnit 6, Spring Boot Test (MockMvc), AssertJ e H2 em memória (testes automatizados)
 
 **Frontend**
 - React 19 + TypeScript + Vite
@@ -143,7 +145,11 @@ O morador cadastrado no sistema pode:
 │       ├── specification/  filtros dinâmicos
 │       ├── model/          entidades JPA
 │       ├── dto/ record/    objetos de entrada e saída
-│       └── security/       JWT e permissões
+│       ├── security/       JWT e permissões
+│       └── config/         Swagger e dados iniciais
+│   └── src/test/java/.../
+│       ├── suporte/        dados e cenários reaproveitados pelos testes
+│       └── autenticacao/ catalogo/ solicitacao/ relatorio/ ...   testes por funcionalidade
 └── frontend-sist-horto/    Aplicação web (React + Vite)
     └── src/
         ├── pages/          telas
@@ -182,6 +188,39 @@ Na primeira execução, o sistema cria dois usuários de teste:
 | Beneficiário | `joao` | `benef123` |
 
 > ⚠️ Esses usuários servem apenas para desenvolvimento. Troque as senhas antes de usar o sistema em produção.
+
+### 📖 Documentação da API (Swagger)
+
+Com o backend em execução, a documentação interativa fica em **http://localhost:8080/swagger-ui.html** (especificação OpenAPI em `/v3/api-docs`). Para testar rotas protegidas, faça o login em `POST /auth/login`, copie o `token` retornado e informe-o no botão **Authorize**.
+
+### 🧪 Testes automatizados
+
+```bash
+cd backend-sist-horto
+./mvnw test
+```
+
+São **125 casos de teste** que comprovam a confiabilidade das regras de negócio, a validação dos dados e a segurança do backend.
+
+**Como os testes funcionam**
+- **Testes de integração com MockMvc**: a aplicação sobe por completo (filtro JWT, Spring Security, controllers, serviços e JPA) e o **MockMvc** simula as requisições HTTP do frontend, sem precisar abrir um servidor de verdade. Assim, cada teste percorre o mesmo caminho de uma chamada real.
+- **Banco H2 em memória** (perfil `test`): os testes **não precisam do MySQL**. O banco é limpo antes de cada teste, então nenhum teste depende do outro.
+- **Testes unitários** (sem Spring e sem banco) para as regras isoladas: a geração e validação do JWT, usando `MockEnvironment` para simular a configuração do segredo e da validade, e a regra de limites do parâmetro anual.
+- **Dados reaproveitáveis** em `src/test/java/.../suporte`: `CenarioTeste` cria usuários de cada perfil já com token, mudas com estoque, parâmetros do ano e solicitações em qualquer etapa; `DadosTeste` monta os corpos de requisição válidos, que cada teste altera para gerar o caso inválido.
+
+**O que está sendo comprovado**
+
+| Área | O que os testes garantem |
+|---|---|
+| **Registro e login** | Os dados são gravados como enviados, o CPF é formatado e a senha fica criptografada com BCrypt. CPF ou login repetido é recusado (409), assim como dados inválidos (400). O login devolve um token válido e não revela quais usuários existem. |
+| **Segurança e JWT** | Cada perfil (visitante, beneficiário, administrador) acessa só as rotas permitidas. Tokens adulterados, forjados com outro segredo, sem assinatura ou expirados são rejeitados, e o perfil de acesso vem do banco, não do token. Um beneficiário não vê nem altera a solicitação de outra pessoa. |
+| **Perfil** | Os dados de contato são alterados sem permitir mudar CPF, login, perfil ou senha. A troca de senha exige a senha atual e invalida a anterior. |
+| **Catálogo e estoque** | A pesquisa por nome e os filtros combinados (`MudaSpecification`) retornam o esperado. O disponível desconta as mudas reservadas. As ações do administrador no estoque nunca deixam a quantidade negativa. |
+| **Mudas** | Cadastro, edição (preservando estoque e disponibilidade), indisponibilidade com motivo e exclusão. Uma muda indisponível não entra em solicitações. |
+| **Parâmetros anuais** | Cadastro e manutenção dos limites. O rascunho respeita o máximo por espécie, os totais de frutíferas e das demais espécies e o total geral, com o saldo correto. |
+| **Solicitações** | Todo o fluxo: rascunho, envio com reserva do estoque, aprovação, rejeição com motivo, proposta de alteração com aceite ou recusa do beneficiário, data limite de retirada, entrega com baixa do estoque e expiração liberando as mudas. Transições fora do fluxo e solicitações finalizadas são bloqueadas. Também cobre o atendimento presencial feito pela Secretaria. |
+| **Relatórios** | Os totais, o resumo por espécie e por categoria e a situação de cada muda (disponível, estoque baixo, esgotada, indisponível) conferem com um cenário de valores conhecidos, inclusive com os filtros. |
+| **Documentação** | A especificação OpenAPI e o Swagger UI estão acessíveis e descrevem as rotas e a autenticação JWT. |
 
 ---
 
