@@ -5,10 +5,12 @@ import com.bsh.backend_sist_horto.gestao_mudas.model.Beneficiario;
 import com.bsh.backend_sist_horto.gestao_mudas.repository.BeneficiarioRepository;
 import com.bsh.backend_sist_horto.gestao_mudas.service.SaidaService;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!test") // nos testes cada classe monta os próprios dados
 public class DataLoader implements CommandLineRunner {
 
     private final BeneficiarioRepository beneficiarioRepository;
