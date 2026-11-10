@@ -88,7 +88,7 @@ O morador cadastrado no sistema pode:
 
 | Área | O que faz |
 |---|---|
-| **Gestão de Mudas** | Cadastra, edita e remove espécies do catálogo, controla a quantidade em estoque e marca uma muda como indisponível, informando o motivo. |
+| **Gestão de Mudas** | Cadastra, edita e remove espécies do catálogo (com características e links das imagens da árvore, das flores e dos frutos), controla a quantidade em estoque e marca uma muda como indisponível, informando o motivo. |
 | **Gerenciar Solicitações** | Lista os pedidos com filtros (nome, CPF, status, ano e período) e ordenação por prioridade de atendimento ou por data. Em cada pedido é possível aprovar, rejeitar, propor alteração, marcar como pronta para retirada (com data limite), entregue ou expirada. |
 | **Beneficiários** | Consulta e edita os cadastros e faz o **cadastro assistido** de quem não consegue se registrar sozinho. O sistema gera um login (sem dados pessoais) e uma senha provisória, e o administrador pode fazer a solicitação em nome da pessoa e redefinir a senha quando ela esquecer. |
 | **Parâmetros Anuais** | Define as regras de cada ano: limite total de mudas por pessoa, limite de frutíferas, limite das demais espécies e máximo por espécie. |
@@ -104,6 +104,7 @@ O morador cadastrado no sistema pode:
 - **Atenção à LGPD**: o login gerado pelo sistema não usa o CPF, os relatórios não expõem documentos pessoais e as senhas são armazenadas criptografadas.
 - **Máscaras e validações** de CPF, celular e telefone, compatíveis com cadastros antigos.
 - **Interface responsiva**, que funciona no computador e no celular.
+- **API documentada e testada**: todos os endpoints estão descritos no Swagger, e 125 testes automatizados comprovam as regras de negócio, a validação dos dados e a segurança.
 
 ---
 
@@ -120,9 +121,9 @@ O morador cadastrado no sistema pode:
 **Frontend**
 - React 19 + TypeScript + Vite
 - React Router (rotas protegidas por perfil)
-- Axios (com interceptador para o token JWT)
+- Axios (com interceptador para o token JWT) e jwt-decode (leitura do perfil do usuário logado)
 - Material UI (telas de autenticação) e CSS próprio com variáveis de tema
-- Lucide (ícones) e jsPDF (geração dos relatórios em PDF)
+- Lucide (ícones) e jsPDF + AutoTable (geração dos relatórios em PDF)
 
 ### Estratégias e padrões adotados
 
@@ -138,24 +139,29 @@ O morador cadastrado no sistema pode:
 
 ```
 ├── backend-sist-horto/     API REST (Spring Boot)
-│   └── src/main/java/.../gestao_mudas/
-│       ├── controller/     endpoints
-│       ├── service/        regras de negócio
-│       ├── repository/     acesso a dados
-│       ├── specification/  filtros dinâmicos
-│       ├── model/          entidades JPA
-│       ├── dto/ record/    objetos de entrada e saída
-│       ├── security/       JWT e permissões
-│       └── config/         Swagger e dados iniciais
+│   ├── src/main/java/.../gestao_mudas/
+│   │   ├── controller/     endpoints
+│   │   ├── service/        regras de negócio
+│   │   ├── repository/     acesso a dados
+│   │   ├── specification/  filtros dinâmicos
+│   │   ├── model/          entidades JPA
+│   │   ├── enums/          status, perfis e categorias
+│   │   ├── dto/ record/    objetos de entrada e saída
+│   │   ├── security/       JWT e permissões
+│   │   ├── exceptions/     tratamento padronizado de erros
+│   │   └── config/         Swagger e dados iniciais
 │   └── src/test/java/.../
 │       ├── suporte/        dados e cenários reaproveitados pelos testes
-│       └── autenticacao/ catalogo/ solicitacao/ relatorio/ ...   testes por funcionalidade
+│       └── autenticacao/, catalogo/, solicitacao/, relatorio/...   testes por funcionalidade
 └── frontend-sist-horto/    Aplicação web (React + Vite)
     └── src/
         ├── pages/          telas
         ├── components/     componentes reutilizáveis
         ├── api/            chamadas ao backend
         ├── types/          tipos TypeScript
+        ├── context/ hooks/ autenticação do usuário logado
+        ├── utils/          máscaras, mensagens de erro e geração de PDF
+        ├── config/         dados do site e tema
         └── routes/         rotas e proteção por perfil
 ```
 
@@ -163,14 +169,15 @@ O morador cadastrado no sistema pode:
 
 ## ▶️ Executando localmente
 
-**Pré-requisitos:** Java 17+, Node.js 20+ e MySQL 8.
+**Pré-requisitos:** Java 17+, Node.js 20.19+ ou 22.12+ (versões exigidas pelo Vite) e MySQL 8. Não é preciso instalar o Maven: o projeto traz o Maven Wrapper (`mvnw`).
 
 1. **Banco de dados**: com o MySQL em execução, ajuste usuário e senha em `backend-sist-horto/src/main/resources/application.properties`. O banco `bd_sist_horto` e as tabelas são criados automaticamente.
 
 2. **Backend** (sobe em `http://localhost:8080`):
    ```bash
    cd backend-sist-horto
-   ./mvnw spring-boot:run
+   ./mvnw spring-boot:run        # Linux, macOS ou Git Bash
+   .\mvnw.cmd spring-boot:run    # Windows (PowerShell ou Prompt de Comando)
    ```
 
 3. **Frontend** (sobe em `http://localhost:5173`):
@@ -179,6 +186,7 @@ O morador cadastrado no sistema pode:
    npm install
    npm run dev
    ```
+   Outros comandos: `npm run build` gera a versão de produção em `dist/` e `npm run lint` verifica o código.
 
 Na primeira execução, o sistema cria dois usuários de teste:
 
@@ -189,6 +197,24 @@ Na primeira execução, o sistema cria dois usuários de teste:
 
 > ⚠️ Esses usuários servem apenas para desenvolvimento. Troque as senhas antes de usar o sistema em produção.
 
+### ⚙️ Configuração
+
+| O quê | Onde | Padrão |
+|---|---|---|
+| Conexão com o MySQL | `spring.datasource.*` no `application.properties` | `localhost:3306/bd_sist_horto` |
+| Segredo do token JWT | `app.jwt.secret` (ou variável de ambiente `APP_JWT_SECRET`) | valor fixo no código, **somente para desenvolvimento** |
+| Validade do token JWT | `app.jwt.expiration`, em milissegundos (ou `APP_JWT_EXPIRATION`) | `3600000` (1 hora) |
+| Origem liberada no CORS | `corsConfigurationSource()` em `SecurityConfig.java` | `http://localhost:5173` |
+| Endereço da API usado pelo frontend | `baseURL` em `frontend-sist-horto/src/api/axiosConfig.ts` | `http://localhost:8080` |
+
+### 🚀 Antes de colocar em produção
+
+- Defina um `APP_JWT_SECRET` próprio, longo e aleatório. Se o segredo padrão for usado, qualquer pessoa que leia o código consegue gerar tokens válidos.
+- Remova ou troque as senhas dos usuários de teste (`admin` e `joao`), que são criados pelo `DataLoader`.
+- Use um usuário do MySQL com senha forte, sem ser o `root`.
+- Ajuste a origem do CORS e o `baseURL` do frontend para o endereço real do sistema.
+- Se a documentação não deve ficar pública, desative o Swagger com `springdoc.api-docs.enabled=false` e `springdoc.swagger-ui.enabled=false`.
+
 ### 📖 Documentação da API (Swagger)
 
 Com o backend em execução, a documentação interativa fica em **http://localhost:8080/swagger-ui.html** (especificação OpenAPI em `/v3/api-docs`). Para testar rotas protegidas, faça o login em `POST /auth/login`, copie o `token` retornado e informe-o no botão **Authorize**.
@@ -197,7 +223,7 @@ Com o backend em execução, a documentação interativa fica em **http://localh
 
 ```bash
 cd backend-sist-horto
-./mvnw test
+./mvnw test          # ou .\mvnw.cmd test no Windows
 ```
 
 São **125 casos de teste** que comprovam a confiabilidade das regras de negócio, a validação dos dados e a segurança do backend.
@@ -215,10 +241,11 @@ São **125 casos de teste** que comprovam a confiabilidade das regras de negóci
 | **Registro e login** | Os dados são gravados como enviados, o CPF é formatado e a senha fica criptografada com BCrypt. CPF ou login repetido é recusado (409), assim como dados inválidos (400). O login devolve um token válido e não revela quais usuários existem. |
 | **Segurança e JWT** | Cada perfil (visitante, beneficiário, administrador) acessa só as rotas permitidas. Tokens adulterados, forjados com outro segredo, sem assinatura ou expirados são rejeitados, e o perfil de acesso vem do banco, não do token. Um beneficiário não vê nem altera a solicitação de outra pessoa. |
 | **Perfil** | Os dados de contato são alterados sem permitir mudar CPF, login, perfil ou senha. A troca de senha exige a senha atual e invalida a anterior. |
+| **Beneficiários** | O cadastro assistido gera um login sem dados pessoais e uma senha provisória que funcionam no login, e recusa CPF já cadastrado. A listagem filtra por nome, é paginada e nunca expõe senhas. A correção de CPF formata o valor e recusa CPF de outra pessoa. Redefinir a senha invalida a anterior e não vale para administradores. |
 | **Catálogo e estoque** | A pesquisa por nome e os filtros combinados (`MudaSpecification`) retornam o esperado. O disponível desconta as mudas reservadas. As ações do administrador no estoque nunca deixam a quantidade negativa. |
-| **Mudas** | Cadastro, edição (preservando estoque e disponibilidade), indisponibilidade com motivo e exclusão. Uma muda indisponível não entra em solicitações. |
+| **Mudas** | Cadastro, edição (preservando estoque e disponibilidade), indisponibilidade com motivo e exclusão (uma muda que já faz parte de uma solicitação não é excluída). Uma muda indisponível não entra em solicitações. |
 | **Parâmetros anuais** | Cadastro e manutenção dos limites. O rascunho respeita o máximo por espécie, os totais de frutíferas e das demais espécies e o total geral, com o saldo correto. |
-| **Solicitações** | Todo o fluxo: rascunho, envio com reserva do estoque, aprovação, rejeição com motivo, proposta de alteração com aceite ou recusa do beneficiário, data limite de retirada, entrega com baixa do estoque e expiração liberando as mudas. Transições fora do fluxo e solicitações finalizadas são bloqueadas. Também cobre o atendimento presencial feito pela Secretaria. |
+| **Solicitações** | Todo o fluxo: rascunho, envio com reserva do estoque, aprovação, rejeição com motivo, proposta de alteração com aceite ou recusa do beneficiário, data limite de retirada, entrega com baixa do estoque e expiração liberando as mudas. Transições fora do fluxo e solicitações finalizadas são bloqueadas, cada beneficiário tem uma solicitação por ano e a entrega é bloqueada sem baixar nada quando falta estoque físico. Também cobre a listagem da Secretaria (filtros, ordenação por prioridade e paginação) e o atendimento presencial. |
 | **Relatórios** | Os totais, o resumo por espécie e por categoria e a situação de cada muda (disponível, estoque baixo, esgotada, indisponível) conferem com um cenário de valores conhecidos, inclusive com os filtros. |
 | **Documentação** | A especificação OpenAPI e o Swagger UI estão acessíveis e descrevem as rotas e a autenticação JWT. |
 
