@@ -67,8 +67,7 @@ public class OpenApiConfig {
                         new Tag().name("Solicitações").description("Rascunho, envio e acompanhamento das solicitações"),
                         new Tag().name("Solicitações (Administração)").description("Análise e atendimento das solicitações pela Secretaria"),
                         new Tag().name("Beneficiários").description("Cadastro e manutenção dos beneficiários (administrador)"),
-                        new Tag().name("Relatórios").description("Saída de mudas e posição de estoque (administrador)"),
-                        new Tag().name("GBIF").description("Consulta de dados taxonômicos na API pública do GBIF")
+                        new Tag().name("Relatórios").description("Saída de mudas e posição de estoque (administrador)")
                 ));
     }
 }

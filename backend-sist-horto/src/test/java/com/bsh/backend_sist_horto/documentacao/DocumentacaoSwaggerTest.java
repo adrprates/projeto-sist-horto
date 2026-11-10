@@ -20,7 +20,10 @@ class DocumentacaoSwaggerTest extends TesteIntegracaoBase {
                 .andExpect(jsonPath("$.paths['/solicitacoes/{id}/etapas']").exists())
                 .andExpect(jsonPath("$.components.securitySchemes.bearerAuth.scheme").value("bearer"))
                 .andExpect(jsonPath("$.paths['/auth/login'].post.security", empty()))
-                .andExpect(jsonPath("$.paths['/perfil'].get.parameters").doesNotExist());
+                .andExpect(jsonPath("$.paths['/perfil'].get.parameters").doesNotExist())
+                // a integração com o GBIF foi removida do sistema
+                .andExpect(jsonPath("$.paths['/gbif/mudas']").doesNotExist())
+                .andExpect(jsonPath("$.tags[?(@.name == 'GBIF')]", empty()));
     }
 
     @Test
